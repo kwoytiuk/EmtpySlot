@@ -41,11 +41,10 @@ export default function ProviderDetailPage() {
 
   const handleBookNow = (serviceId: string) => {
     if (!user) {
-      router.push('/auth/login')
+      router.push(`/auth/login?redirect=/booking?provider=${params.id}&service=${serviceId}`)
       return
     }
-    // In future: Navigate to booking page
-    alert('Booking flow coming soon!')
+    router.push(`/booking?provider=${params.id}&service=${serviceId}`)
   }
 
   if (loading) {
