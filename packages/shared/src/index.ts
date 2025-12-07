@@ -1,3 +1,18 @@
+// Utilities
 export * from './utils'
-export * from './types'
 export * from './constants'
+
+// Types
+export * from './types'
+export * from './types/database.types'
+
+// Configuration
+export * from './config/env'
+
+// Supabase client and types
+export * from './lib/supabase'
+
+// API
+export * as authApi from './api/auth'
+export * as providersApi from './api/providers'
+export * as categoriesApi from './api/categories'
