@@ -1,15 +1,16 @@
 /**
  * Environment configuration
  * Validates required environment variables at runtime
+ * Supports both Next.js (NEXT_PUBLIC_) and Expo (EXPO_PUBLIC_) prefixes
  */
 
 export const env = {
   supabase: {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL || '',
+    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
   },
   app: {
-    url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    url: process.env.NEXT_PUBLIC_APP_URL || process.env.EXPO_PUBLIC_APP_URL || 'http://localhost:3000',
     env: process.env.NODE_ENV || 'development',
   },
 } as const
