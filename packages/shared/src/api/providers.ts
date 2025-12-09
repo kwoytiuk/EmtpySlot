@@ -56,7 +56,12 @@ export async function searchProviders(params: SearchProvidersParams) {
         name,
         price,
         duration_minutes,
-        category_id
+        category_id,
+        service_categories (
+          id,
+          name,
+          slug
+        )
       )
     `)
 
@@ -70,15 +75,11 @@ export async function searchProviders(params: SearchProvidersParams) {
     query = query.gte('rating_average', params.minRating)
   }
 
-  // Filter by category if specified (server-side now)
-  if (params.categoryId) {
-    query = query.eq('services.category_id', params.categoryId)
-  }
-
-  // Pagination
+  // Pagination - get more to account for category filtering
   const limit = params.limit || 20
   const offset = params.offset || 0
-  query = query.range(offset, offset + limit - 1)
+  // Fetch more records to ensure we have enough after filtering
+  query = query.range(offset, offset + (limit * 3) - 1)
 
   // Order by rating for better results
   query = query.order('rating_average', { ascending: false, nullsFirst: false })
@@ -89,7 +90,16 @@ export async function searchProviders(params: SearchProvidersParams) {
 
   let results = data || []
 
-  // Filter by distance if location provided (client-side for now)
+  // Filter by category if specified (client-side since Supabase doesn't support nested filtering)
+  if (params.categoryId) {
+    results = results.filter((provider) => {
+      return provider.services?.some(
+        (service: any) => service.category_id === params.categoryId
+      )
+    })
+  }
+
+  // Filter by distance if location provided
   if (params.latitude && params.longitude && params.radiusKm) {
     results = results.filter((provider) => {
       if (!provider.provider_locations || provider.provider_locations.length === 0) {
@@ -107,6 +117,9 @@ export async function searchProviders(params: SearchProvidersParams) {
       })
     })
   }
+
+  // Limit results after filtering
+  results = results.slice(0, limit)
 
   return results
 }
