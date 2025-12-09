@@ -108,28 +108,59 @@ async function cleanupSeedData() {
 
     console.log(`Found ${testUsers.length} seed test accounts to remove`)
 
+    if (testUsers.length === 0) {
+      console.log('No test accounts to clean up\n')
+      return
+    }
+
     let deleteCount = 0
     let errorCount = 0
 
-    // Delete each user (this will cascade to profiles, providers, and all related data)
+    // Extract user IDs
+    const userIds = testUsers.map(u => u.id)
+
+    // Step 1: Delete providers (this will cascade to locations, services, employees, schedules)
+    console.log('  Deleting providers and related data...')
+    const { error: providerError } = await supabase
+      .from('providers')
+      .delete()
+      .in('user_id', userIds)
+
+    if (providerError && providerError.code !== 'PGRST116') { // PGRST116 = no rows found
+      console.error(`  ⚠️  Provider deletion warning:`, providerError.message)
+    }
+
+    // Step 2: Delete profiles
+    console.log('  Deleting profiles...')
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .delete()
+      .in('id', userIds)
+
+    if (profileError && profileError.code !== 'PGRST116') {
+      console.error(`  ⚠️  Profile deletion warning:`, profileError.message)
+    }
+
+    // Step 3: Delete auth users
+    console.log('  Deleting auth users...')
     for (const user of testUsers) {
       try {
         const { error } = await supabase.auth.admin.deleteUser(user.id)
 
         if (error) {
-          console.error(`  ❌ Failed to delete ${user.email}:`, error.message)
+          console.error(`    ❌ Failed to delete ${user.email}:`, error.message)
           errorCount++
         } else {
           deleteCount++
           if (deleteCount % 10 === 0) {
-            console.log(`  Deleted ${deleteCount}/${testUsers.length}...`)
+            console.log(`    Deleted ${deleteCount}/${testUsers.length}...`)
           }
         }
 
         // Small delay to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 50))
       } catch (err: any) {
-        console.error(`  ❌ Error deleting ${user.email}:`, err.message)
+        console.error(`    ❌ Error deleting ${user.email}:`, err.message)
         errorCount++
       }
     }
