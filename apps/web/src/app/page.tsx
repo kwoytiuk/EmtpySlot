@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { categoriesApi, providersApi } from 'shared';
+import { HomeNavigation } from '@/components/navigation/HomeNavigation';
+import { HomeSearch } from '@/components/search/HomeSearch';
 
 export default async function Home() {
   const categories = await categoriesApi.getCategories();
@@ -14,29 +16,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       {/* Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-black text-white">
-              EmptySlot
-            </Link>
-            <div className="flex items-center gap-6">
-              <Link href="/search" className="text-white hover:text-blue-200 font-medium">
-                Find Services
-              </Link>
-              <Link href="/auth/login" className="text-white hover:text-blue-200 font-medium">
-                Log In
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="bg-white text-blue-600 px-6 py-2 rounded-full font-bold hover:bg-blue-50 transition-colors"
-              >
-                Sign Up
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <HomeNavigation />
 
       {/* Hero Section - Provocative */}
       <section className="relative bg-gradient-to-br from-violet-600 via-blue-600 to-cyan-600 text-white overflow-hidden">
@@ -65,28 +45,7 @@ export default async function Home() {
             </p>
 
             {/* Search Bar */}
-            <div className="max-w-4xl mx-auto mb-12">
-              <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl p-3">
-                <div className="flex flex-col md:flex-row gap-3">
-                  <input
-                    type="text"
-                    placeholder="What do you need? (haircut, plumber, dentist...)"
-                    className="flex-1 px-8 py-5 text-gray-900 placeholder-gray-500 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500 font-medium text-lg"
-                  />
-                  <input
-                    type="text"
-                    placeholder="📍 Calgary, AB"
-                    className="px-8 py-5 text-gray-900 placeholder-gray-500 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500 md:w-72 font-medium text-lg"
-                  />
-                  <Link
-                    href="/search"
-                    className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-black px-12 py-5 rounded-2xl transition-all text-lg shadow-lg hover:shadow-xl hover:scale-105"
-                  >
-                    Find Slots →
-                  </Link>
-                </div>
-              </div>
-            </div>
+            <HomeSearch categories={categories} />
 
             {/* Stats */}
             <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto">
