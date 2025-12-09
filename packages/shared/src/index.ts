@@ -18,3 +18,13 @@ export * as providersApi from './api/providers'
 export * as categoriesApi from './api/categories'
 export * as appointmentsApi from './api/appointments'
 export * as reviewsApi from './api/reviews'
+export * as employeesApi from './api/employees'
+
+// Employee types
+export type {
+  Employee,
+  EmployeeSchedule,
+  EmployeeTimeOff,
+  CreateEmployeeInput,
+  CreateScheduleInput,
+} from './api/employees'
