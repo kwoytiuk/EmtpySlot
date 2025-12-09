@@ -117,7 +117,8 @@ async function createProviders() {
 
       console.log(`Creating ${i}/200: ${businessName}`)
 
-      // 1. Create auth user
+      // 1. Create auth user (or get existing)
+      let userId: string
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email,
         password,
@@ -128,15 +129,27 @@ async function createProviders() {
         }
       })
 
-      if (authError || !authData.user) {
-        console.error(`  ❌ Auth error for ${businessName}:`, authError?.message)
+      if (authError) {
+        // Check if user already exists
+        if (authError.message.includes('already been registered')) {
+          console.log(`  ⚠️  User already exists, skipping: ${email}`)
+          successCount++
+          continue
+        }
+        console.error(`  ❌ Auth error for ${businessName}:`, authError.message)
         failCount++
         continue
       }
 
-      const userId = authData.user.id
+      if (!authData.user) {
+        console.error(`  ❌ No user data returned for ${businessName}`)
+        failCount++
+        continue
+      }
 
-      // 2. Create profile
+      userId = authData.user.id
+
+      // 2. Create profile (skip if already exists)
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -147,6 +160,12 @@ async function createProviders() {
         })
 
       if (profileError) {
+        // Skip if profile already exists
+        if (profileError.message.includes('duplicate key') || profileError.code === '23505') {
+          console.log(`  ⚠️  Profile already exists, skipping`)
+          successCount++
+          continue
+        }
         console.error(`  ❌ Profile error:`, profileError.message)
         failCount++
         continue
