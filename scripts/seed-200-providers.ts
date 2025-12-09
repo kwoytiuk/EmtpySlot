@@ -169,6 +169,7 @@ async function cleanupSeedData() {
     console.log('  Verifying cleanup...')
     await new Promise(resolve => setTimeout(resolve, 2000)) // 2 second delay
 
+    // Check for any remaining profiles with old user IDs
     const { data: remainingProfiles } = await supabase
       .from('profiles')
       .select('id')
@@ -177,6 +178,22 @@ async function cleanupSeedData() {
     if (remainingProfiles && remainingProfiles.length > 0) {
       console.log(`  ⚠️  Warning: ${remainingProfiles.length} profiles still exist, forcing delete...`)
       for (const profile of remainingProfiles) {
+        await supabase.from('profiles').delete().eq('id', profile.id)
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+
+    // Step 5: Nuclear option - delete ALL profiles with test user_type='provider' that might be orphaned
+    console.log('  Cleaning up any orphaned test profiles...')
+    const { data: allProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name')
+      .eq('user_type', 'provider')
+      .or(`full_name.ilike.%Barber Shop%,full_name.ilike.%Hair Salon%,full_name.ilike.%Nail Salon%,full_name.ilike.%Spa%,full_name.ilike.%Massage Therapy%,full_name.ilike.%Dental Clinic%,full_name.ilike.%Physiotherapy%,full_name.ilike.%Plumbing%,full_name.ilike.%HVAC%,full_name.ilike.%Car Repair%`)
+
+    if (allProfiles && allProfiles.length > 0) {
+      console.log(`  Found ${allProfiles.length} orphaned test profiles, removing...`)
+      for (const profile of allProfiles) {
         await supabase.from('profiles').delete().eq('id', profile.id)
       }
       await new Promise(resolve => setTimeout(resolve, 1000))
@@ -251,7 +268,20 @@ async function createProviders() {
 
       userId = authData.user.id
 
-      // 2. Create profile
+      // 2. Check if profile already exists (debugging)
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single()
+
+      if (existingProfile) {
+        console.log(`  ⚠️  Profile already exists for user ${userId}, deleting first...`)
+        await supabase.from('profiles').delete().eq('id', userId)
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+
+      // 3. Create profile
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -262,7 +292,8 @@ async function createProviders() {
         })
 
       if (profileError) {
-        console.error(`  ❌ Profile error:`, profileError.message)
+        console.error(`  ❌ Profile error for user ${userId}:`, profileError.message)
+        console.error(`     Email: ${email}, Name: ${businessName}`)
         failCount++
         continue
       }
