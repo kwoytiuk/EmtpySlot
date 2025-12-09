@@ -175,6 +175,20 @@ export default function ProviderDashboard() {
             </Link>
           </Card>
 
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 bg-blue-50/50">
+            <Link href="/provider/employees">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  👥 Manage Employees
+                  <span className="text-xs font-normal bg-blue-600 text-white px-2 py-0.5 rounded-full">New</span>
+                </CardTitle>
+                <CardDescription>
+                  Add staff members and manage their schedules
+                </CardDescription>
+              </CardHeader>
+            </Link>
+          </Card>
+
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <Link href="/provider/settings">
               <CardHeader>

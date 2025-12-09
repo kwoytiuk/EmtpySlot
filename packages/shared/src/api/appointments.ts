@@ -208,12 +208,14 @@ export async function updateAppointmentStatus(
 
 /**
  * Get available time slots for a service on a specific date
+ * Optionally filter by employee/staff member
  * This is a simplified version - in production, use an Edge Function
  */
 export async function getAvailableTimeSlots(
   providerId: string,
   serviceId: string,
-  date: string
+  date: string,
+  employeeId?: string
 ): Promise<TimeSlot[]> {
   // Get the service to know duration
   const { data: service, error: serviceError } = await supabase
@@ -224,53 +226,145 @@ export async function getAvailableTimeSlots(
 
   if (serviceError) throw serviceError
 
+  // If employee is specified, check their schedule for this day
+  let employeeSchedule = null
+  if (employeeId) {
+    const dayOfWeek = new Date(date + 'T00:00:00').getDay()
+
+    const { data: schedules } = await supabase
+      .from('employee_schedules')
+      .select('*')
+      .eq('employee_id', employeeId)
+      .eq('day_of_week', dayOfWeek)
+      .eq('is_available', true)
+
+    employeeSchedule = schedules && schedules.length > 0 ? schedules : null
+
+    // Check for time off
+    const { data: timeOff } = await supabase
+      .from('employee_time_off')
+      .select('*')
+      .eq('employee_id', employeeId)
+      .lte('start_date', date)
+      .gte('end_date', date)
+
+    // If employee has time off on this day, return no slots
+    if (timeOff && timeOff.length > 0) {
+      return []
+    }
+
+    // If no schedule found for this day, return no slots
+    if (!employeeSchedule || employeeSchedule.length === 0) {
+      return []
+    }
+  }
+
   // Get existing appointments for that day
-  const { data: appointments, error: appointmentsError } = await supabase
+  let appointmentsQuery = supabase
     .from('appointments')
-    .select('start_time, end_time')
+    .select('start_time, end_time, staff_id')
     .eq('provider_id', providerId)
     .eq('appointment_date', date)
     .in('status', ['pending', 'confirmed'])
 
+  // If employee specified, only check their appointments
+  if (employeeId) {
+    appointmentsQuery = appointmentsQuery.eq('staff_id', employeeId)
+  }
+
+  const { data: appointments, error: appointmentsError } = await appointmentsQuery
+
   if (appointmentsError) throw appointmentsError
 
-  // Generate time slots (9 AM to 6 PM, every 30 minutes)
-  // In production, this would be based on provider's actual schedule
+  // Generate time slots based on employee schedule or default (9 AM to 6 PM)
   const slots: TimeSlot[] = []
-  const startHour = 9
-  const endHour = 18
+  let startHour = 9
+  let endHour = 18
 
-  for (let hour = startHour; hour < endHour; hour++) {
-    for (let minute = 0; minute < 60; minute += 30) {
-      const startTime = `${hour.toString().padStart(2, '0')}:${minute
-        .toString()
-        .padStart(2, '0')}:00`
+  // If employee schedule exists, use their hours
+  if (employeeSchedule && employeeSchedule.length > 0) {
+    for (const schedule of employeeSchedule) {
+      const scheduleStartHour = parseInt(schedule.start_time.split(':')[0])
+      const scheduleStartMinute = parseInt(schedule.start_time.split(':')[1])
+      const scheduleEndHour = parseInt(schedule.end_time.split(':')[0])
+      const scheduleEndMinute = parseInt(schedule.end_time.split(':')[1])
 
-      // Calculate end time based on service duration
-      const endMinutes = hour * 60 + minute + service.duration_minutes
-      const endHour = Math.floor(endMinutes / 60)
-      const endMinute = endMinutes % 60
+      // Generate slots for this schedule block
+      let currentMinutes = scheduleStartHour * 60 + scheduleStartMinute
+      const endMinutes = scheduleEndHour * 60 + scheduleEndMinute
 
-      if (endHour >= 18) continue // Don't create slots that end after closing
+      while (currentMinutes < endMinutes) {
+        const hour = Math.floor(currentMinutes / 60)
+        const minute = currentMinutes % 60
 
-      const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute
-        .toString()
-        .padStart(2, '0')}:00`
+        const startTime = `${hour.toString().padStart(2, '0')}:${minute
+          .toString()
+          .padStart(2, '0')}:00`
 
-      // Check if slot conflicts with existing appointments
-      const isAvailable = !appointments?.some((apt) => {
-        return (
-          (startTime >= apt.start_time && startTime < apt.end_time) ||
-          (endTime > apt.start_time && endTime <= apt.end_time) ||
-          (startTime <= apt.start_time && endTime >= apt.end_time)
-        )
-      })
+        // Calculate end time based on service duration
+        const slotEndMinutes = currentMinutes + service.duration_minutes
+        const slotEndHour = Math.floor(slotEndMinutes / 60)
+        const slotEndMinute = slotEndMinutes % 60
 
-      slots.push({
-        start_time: startTime,
-        end_time: endTime,
-        available: isAvailable,
-      })
+        // Skip if slot would end after employee's schedule ends
+        if (slotEndMinutes > endMinutes) break
+
+        const endTime = `${slotEndHour.toString().padStart(2, '0')}:${slotEndMinute
+          .toString()
+          .padStart(2, '0')}:00`
+
+        // Check if slot conflicts with existing appointments
+        const isAvailable = !appointments?.some((apt) => {
+          return (
+            (startTime >= apt.start_time && startTime < apt.end_time) ||
+            (endTime > apt.start_time && endTime <= apt.end_time) ||
+            (startTime <= apt.start_time && endTime >= apt.end_time)
+          )
+        })
+
+        slots.push({
+          start_time: startTime,
+          end_time: endTime,
+          available: isAvailable,
+        })
+
+        currentMinutes += 30 // 30 minute intervals
+      }
+    }
+  } else {
+    // Default schedule (9 AM to 6 PM, every 30 minutes)
+    for (let hour = startHour; hour < endHour; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const startTime = `${hour.toString().padStart(2, '0')}:${minute
+          .toString()
+          .padStart(2, '0')}:00`
+
+        // Calculate end time based on service duration
+        const endMinutes = hour * 60 + minute + service.duration_minutes
+        const endHour = Math.floor(endMinutes / 60)
+        const endMinute = endMinutes % 60
+
+        if (endHour >= 18) continue // Don't create slots that end after closing
+
+        const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute
+          .toString()
+          .padStart(2, '0')}:00`
+
+        // Check if slot conflicts with existing appointments
+        const isAvailable = !appointments?.some((apt) => {
+          return (
+            (startTime >= apt.start_time && startTime < apt.end_time) ||
+            (endTime > apt.start_time && endTime <= apt.end_time) ||
+            (startTime <= apt.start_time && endTime >= apt.end_time)
+          )
+        })
+
+        slots.push({
+          start_time: startTime,
+          end_time: endTime,
+          available: isAvailable,
+        })
+      }
     }
   }
 

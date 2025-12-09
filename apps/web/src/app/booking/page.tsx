@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
-import { providersApi, appointmentsApi } from 'shared'
+import { providersApi, appointmentsApi, employeesApi, type Employee } from 'shared'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -25,6 +25,8 @@ export default function BookingPage() {
 
   const [provider, setProvider] = useState<any>(null)
   const [service, setService] = useState<any>(null)
+  const [employees, setEmployees] = useState<Employee[]>([])
+  const [selectedEmployee, setSelectedEmployee] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState('')
   const [timeSlots, setTimeSlots] = useState<any[]>([])
@@ -61,6 +63,16 @@ export default function BookingPage() {
       }
       setService(serviceData)
 
+      // Load employees for this provider
+      try {
+        const employeesData = await employeesApi.getProviderEmployees(providerId!)
+        const activeEmployees = employeesData.filter((e: Employee) => e.is_active)
+        setEmployees(activeEmployees)
+      } catch (err) {
+        // No employees or error loading - continue without employee selection
+        console.log('No employees available for this provider')
+      }
+
       // Set default date to tomorrow
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
@@ -72,14 +84,15 @@ export default function BookingPage() {
     }
   }
 
-  const loadTimeSlots = async (date: string) => {
+  const loadTimeSlots = async (date: string, employeeId?: string) => {
     setLoadingSlots(true)
     setSelectedSlot(null)
     try {
       const slots = await appointmentsApi.getAvailableTimeSlots(
         providerId!,
         serviceId!,
-        date
+        date,
+        employeeId || undefined
       )
       setTimeSlots(slots)
     } catch (err: any) {
@@ -91,9 +104,9 @@ export default function BookingPage() {
 
   useEffect(() => {
     if (selectedDate && provider) {
-      loadTimeSlots(selectedDate)
+      loadTimeSlots(selectedDate, selectedEmployee || undefined)
     }
-  }, [selectedDate, provider])
+  }, [selectedDate, selectedEmployee, provider])
 
   const handleBooking = async () => {
     if (!selectedSlot) return
@@ -111,6 +124,7 @@ export default function BookingPage() {
         provider_id: providerId!,
         location_id: location.id,
         service_id: serviceId!,
+        staff_id: selectedEmployee || undefined,
         appointment_date: selectedDate,
         start_time: selectedSlot.start_time,
         end_time: selectedSlot.end_time,
@@ -208,6 +222,68 @@ export default function BookingPage() {
               </CardContent>
             </Card>
 
+            {/* Employee Selection */}
+            {employees.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Select Staff Member (Optional)</CardTitle>
+                  <CardDescription>
+                    Choose a specific staff member or leave blank for any available
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {/* Any Staff Member Option */}
+                    <button
+                      onClick={() => setSelectedEmployee('')}
+                      className={`p-4 rounded-lg border-2 transition-all ${
+                        selectedEmployee === ''
+                          ? 'border-blue-600 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                          ?
+                        </div>
+                        <div className="text-center">
+                          <p className="font-semibold text-sm">Any Staff</p>
+                          <p className="text-xs text-gray-600">First available</p>
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Individual Staff Members */}
+                    {employees.map((employee) => (
+                      <button
+                        key={employee.id}
+                        onClick={() => setSelectedEmployee(employee.id)}
+                        className={`p-4 rounded-lg border-2 transition-all ${
+                          selectedEmployee === employee.id
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            {employee.first_name[0]}{employee.last_name[0]}
+                          </div>
+                          <div className="text-center">
+                            <p className="font-semibold text-sm">
+                              {employee.first_name} {employee.last_name}
+                            </p>
+                            {employee.position && (
+                              <p className="text-xs text-gray-600">{employee.position}</p>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Date Selection */}
             <Card>
               <CardHeader>
@@ -296,6 +372,15 @@ export default function BookingPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2 text-sm">
+                  {selectedEmployee && employees.length > 0 && (
+                    <div className="flex justify-between pb-2 border-b">
+                      <span className="text-muted-foreground">Staff:</span>
+                      <span className="font-medium">
+                        {employees.find(e => e.id === selectedEmployee)?.first_name}{' '}
+                        {employees.find(e => e.id === selectedEmployee)?.last_name}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Date:</span>
                     <span className="font-medium">
