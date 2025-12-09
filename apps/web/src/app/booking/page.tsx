@@ -120,9 +120,16 @@ export default function BookingPage() {
       const slot = timeSlots.find((s) => s.start_time === prefilledTime && s.available)
       if (slot) {
         setSelectedSlot(slot)
+        // Scroll to show the selected slot is pre-filled
+        setTimeout(() => {
+          const element = document.querySelector('[data-slot-selected="true"]')
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }, 100)
       }
     }
-  }, [prefilledTime, timeSlots, selectedSlot])
+  }, [prefilledTime, timeSlots])
 
   const handleBooking = async () => {
     if (!selectedSlot) return
@@ -340,13 +347,17 @@ export default function BookingPage() {
                       <button
                         key={index}
                         onClick={() => setSelectedSlot(slot)}
-                        className={`p-3 text-sm rounded-lg border transition-colors ${
+                        data-slot-selected={selectedSlot?.start_time === slot.start_time ? 'true' : 'false'}
+                        className={`p-3 text-sm rounded-lg border-2 transition-all ${
                           selectedSlot?.start_time === slot.start_time
-                            ? 'bg-primary text-primary-foreground border-primary'
-                            : 'hover:border-primary hover:bg-primary/5'
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white border-purple-600 shadow-lg scale-110 font-bold'
+                            : 'border-gray-200 hover:border-primary hover:bg-primary/5'
                         }`}
                       >
                         {formatTime(slot.start_time)}
+                        {selectedSlot?.start_time === slot.start_time && prefilledTime && (
+                          <div className="text-xs mt-1 text-purple-100">✓ Selected</div>
+                        )}
                       </button>
                     ))}
                   </div>

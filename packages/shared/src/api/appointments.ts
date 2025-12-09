@@ -79,6 +79,11 @@ export async function getMyAppointments() {
         name,
         duration_minutes,
         price
+      ),
+      customer:profiles!customer_id (
+        full_name,
+        phone,
+        email
       )
     `)
     .eq('customer_id', userData.user.id)
@@ -98,9 +103,10 @@ export async function getProviderAppointments(providerId: string) {
     .from('appointments')
     .select(`
       *,
-      profiles (
+      customer:profiles!customer_id (
         full_name,
-        phone
+        phone,
+        email
       ),
       services (
         name,
@@ -143,7 +149,7 @@ export async function getAppointment(id: string) {
         duration_minutes,
         price
       ),
-      profiles (
+      customer:profiles!customer_id (
         full_name,
         phone,
         email
