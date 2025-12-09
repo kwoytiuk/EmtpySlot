@@ -165,6 +165,23 @@ async function cleanupSeedData() {
       }
     }
 
+    // Step 4: Verify cleanup and wait for database to process deletions
+    console.log('  Verifying cleanup...')
+    await new Promise(resolve => setTimeout(resolve, 2000)) // 2 second delay
+
+    const { data: remainingProfiles } = await supabase
+      .from('profiles')
+      .select('id')
+      .in('id', userIds)
+
+    if (remainingProfiles && remainingProfiles.length > 0) {
+      console.log(`  ⚠️  Warning: ${remainingProfiles.length} profiles still exist, forcing delete...`)
+      for (const profile of remainingProfiles) {
+        await supabase.from('profiles').delete().eq('id', profile.id)
+      }
+      await new Promise(resolve => setTimeout(resolve, 1000))
+    }
+
     console.log(`\n✅ Cleanup complete!`)
     console.log(`   Deleted: ${deleteCount}`)
     console.log(`   Errors: ${errorCount}\n`)
