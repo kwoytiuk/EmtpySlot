@@ -8,9 +8,10 @@
  * - Services
  * - Employees with schedules
  *
- * Run with: npx ts-node scripts/seed-200-providers.ts
+ * Run with: npm run seed:providers
  */
 
+import 'dotenv/config'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL || ''
@@ -20,6 +21,9 @@ if (!supabaseUrl || !supabaseServiceKey) {
   console.error('❌ Missing environment variables!')
   console.error('Required: SUPABASE_SERVICE_ROLE_KEY')
   console.error('Optional: NEXT_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_URL')
+  console.error('\n📁 Make sure you have a .env file in the scripts directory with:')
+  console.error('  NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co')
+  console.error('  SUPABASE_SERVICE_ROLE_KEY=your-service-role-key')
   process.exit(1)
 }
 
