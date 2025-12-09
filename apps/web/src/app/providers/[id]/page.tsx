@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { useAuth } from '@/contexts/AuthContext'
+import { QuickBooking } from '@/components/booking/QuickBooking'
 
 export default function ProviderDetailPage() {
   const params = useParams()
@@ -101,6 +102,19 @@ export default function ProviderDetailPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Quick Booking - OpenTable Style */}
+            {provider.services && provider.services.length > 0 && (
+              <QuickBooking
+                providerId={provider.id}
+                services={provider.services.map((s: any) => ({
+                  id: s.id,
+                  name: s.name,
+                  price: s.price,
+                  duration_minutes: s.duration_minutes,
+                }))}
+              />
+            )}
+
             {/* Provider Info */}
             <Card>
               <CardHeader>

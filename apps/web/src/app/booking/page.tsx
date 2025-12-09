@@ -22,6 +22,8 @@ export default function BookingPage() {
 
   const providerId = searchParams.get('provider')
   const serviceId = searchParams.get('service')
+  const prefilledDate = searchParams.get('date')
+  const prefilledTime = searchParams.get('time')
 
   const [provider, setProvider] = useState<any>(null)
   const [service, setService] = useState<any>(null)
@@ -73,10 +75,14 @@ export default function BookingPage() {
         console.log('No employees available for this provider')
       }
 
-      // Set default date to tomorrow
-      const tomorrow = new Date()
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      setSelectedDate(tomorrow.toISOString().split('T')[0])
+      // Set default date (use prefilled or tomorrow)
+      if (prefilledDate) {
+        setSelectedDate(prefilledDate)
+      } else {
+        const tomorrow = new Date()
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        setSelectedDate(tomorrow.toISOString().split('T')[0])
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load booking data')
     } finally {
@@ -107,6 +113,16 @@ export default function BookingPage() {
       loadTimeSlots(selectedDate, selectedEmployee || undefined)
     }
   }, [selectedDate, selectedEmployee, provider])
+
+  // Auto-select prefilled time slot
+  useEffect(() => {
+    if (prefilledTime && timeSlots.length > 0 && !selectedSlot) {
+      const slot = timeSlots.find((s) => s.start_time === prefilledTime && s.available)
+      if (slot) {
+        setSelectedSlot(slot)
+      }
+    }
+  }, [prefilledTime, timeSlots, selectedSlot])
 
   const handleBooking = async () => {
     if (!selectedSlot) return

@@ -370,3 +370,86 @@ export async function getAvailableTimeSlots(
 
   return slots
 }
+
+/**
+ * Get available slots for TODAY - OpenTable style
+ * Shows next 3 hours of availability with both taken and available slots
+ */
+export async function getQuickBookingSlots(
+  providerId: string,
+  serviceId: string
+): Promise<TimeSlot[]> {
+  const now = new Date()
+  const today = now.toISOString().split('T')[0]
+
+  // Get current time in minutes since midnight
+  const currentHour = now.getHours()
+  const currentMinute = now.getMinutes()
+  const currentTimeMinutes = currentHour * 60 + currentMinute
+
+  // Round up to next 30-minute interval
+  const roundedMinutes = Math.ceil(currentTimeMinutes / 30) * 30
+
+  // Calculate end time (3 hours from now)
+  const endTimeMinutes = roundedMinutes + (3 * 60)
+
+  // Get the service to know duration
+  const { data: service, error: serviceError } = await supabase
+    .from('services')
+    .select('duration_minutes')
+    .eq('id', serviceId)
+    .single()
+
+  if (serviceError) throw serviceError
+
+  // Get existing appointments for today
+  const { data: appointments, error: appointmentsError } = await supabase
+    .from('appointments')
+    .select('start_time, end_time, staff_id')
+    .eq('provider_id', providerId)
+    .eq('appointment_date', today)
+    .in('status', ['pending', 'confirmed'])
+
+  if (appointmentsError) throw appointmentsError
+
+  // Generate slots from now until 3 hours from now
+  const slots: TimeSlot[] = []
+  let currentSlotMinutes = roundedMinutes
+
+  while (currentSlotMinutes < endTimeMinutes && currentSlotMinutes < 22 * 60) {
+    const hour = Math.floor(currentSlotMinutes / 60)
+    const minute = currentSlotMinutes % 60
+
+    const startTime = `${hour.toString().padStart(2, '0')}:${minute
+      .toString()
+      .padStart(2, '0')}:00`
+
+    // Calculate end time based on service duration
+    const slotEndMinutes = currentSlotMinutes + service.duration_minutes
+    const slotEndHour = Math.floor(slotEndMinutes / 60)
+    const slotEndMinute = slotEndMinutes % 60
+
+    const endTime = `${slotEndHour.toString().padStart(2, '0')}:${slotEndMinute
+      .toString()
+      .padStart(2, '0')}:00`
+
+    // Check if slot conflicts with existing appointments
+    const isAvailable = !appointments?.some((apt) => {
+      return (
+        (startTime >= apt.start_time && startTime < apt.end_time) ||
+        (endTime > apt.start_time && endTime <= apt.end_time) ||
+        (startTime <= apt.start_time && endTime >= apt.end_time)
+      )
+    })
+
+    slots.push({
+      start_time: startTime,
+      end_time: endTime,
+      available: isAvailable,
+    })
+
+    currentSlotMinutes += 30 // 30 minute intervals
+  }
+
+  return slots
+}

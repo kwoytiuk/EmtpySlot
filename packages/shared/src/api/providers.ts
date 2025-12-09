@@ -31,14 +31,32 @@ export interface CreateProviderData {
  * Note: For MVP, we'll use simple filtering. PostGIS queries will be added via Edge Functions
  */
 export async function searchProviders(params: SearchProvidersParams) {
+  // Optimized query - only select fields we need for search results
   let query = supabase
     .from('providers')
     .select(`
-      *,
-      provider_locations (*),
+      id,
+      business_name,
+      description,
+      phone,
+      email,
+      verified,
+      rating_average,
+      rating_count,
+      provider_locations!inner (
+        id,
+        city,
+        state_province,
+        latitude,
+        longitude,
+        is_primary
+      ),
       services (
-        *,
-        service_categories (*)
+        id,
+        name,
+        price,
+        duration_minutes,
+        category_id
       )
     `)
 
@@ -52,26 +70,32 @@ export async function searchProviders(params: SearchProvidersParams) {
     query = query.gte('rating_average', params.minRating)
   }
 
+  // Filter by category if specified (server-side now)
+  if (params.categoryId) {
+    query = query.eq('services.category_id', params.categoryId)
+  }
+
   // Pagination
   const limit = params.limit || 20
   const offset = params.offset || 0
   query = query.range(offset, offset + limit - 1)
 
+  // Order by rating for better results
+  query = query.order('rating_average', { ascending: false, nullsFirst: false })
+
   const { data, error } = await query
 
   if (error) throw error
 
-  // If location parameters are provided, we'll filter by distance client-side for now
-  // TODO: Implement server-side PostGIS distance query via Edge Function
   let results = data || []
 
+  // Filter by distance if location provided (client-side for now)
   if (params.latitude && params.longitude && params.radiusKm) {
     results = results.filter((provider) => {
       if (!provider.provider_locations || provider.provider_locations.length === 0) {
         return false
       }
 
-      // Check if any location is within radius
       return provider.provider_locations.some((location: any) => {
         const distance = calculateDistance(
           params.latitude!,
@@ -84,35 +108,40 @@ export async function searchProviders(params: SearchProvidersParams) {
     })
   }
 
-  // Filter by category if specified
-  if (params.categoryId) {
-    results = results.filter((provider) => {
-      return provider.services?.some(
-        (service: any) => service.category_id === params.categoryId
-      )
-    })
-  }
-
   return results
 }
 
 /**
- * Get a single provider by ID with all related data
+ * Get a single provider by ID with all related data (optimized - no reviews)
+ * Reviews should be loaded separately on-demand
  */
 export async function getProvider(id: string) {
-  const { data, error } = await supabase
+  const { data, error} = await supabase
     .from('providers')
     .select(`
-      *,
+      id,
+      business_name,
+      description,
+      phone,
+      email,
+      website,
+      verified,
+      rating_average,
+      rating_count,
+      cancellation_policy,
       provider_locations (*),
       services (
-        *,
-        service_categories (*)
-      ),
-      staff_members (*),
-      reviews (
-        *,
-        profiles (full_name, avatar_url)
+        id,
+        name,
+        description,
+        price,
+        duration_minutes,
+        category_id,
+        service_categories (
+          id,
+          name,
+          slug
+        )
       )
     `)
     .eq('id', id)
@@ -121,6 +150,32 @@ export async function getProvider(id: string) {
   if (error) throw error
 
   return data
+}
+
+/**
+ * Get provider reviews separately for better performance
+ */
+export async function getProviderReviews(providerId: string, limit: number = 10) {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(`
+      id,
+      rating,
+      comment,
+      response,
+      created_at,
+      profiles (
+        full_name,
+        avatar_url
+      )
+    `)
+    .eq('provider_id', providerId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) throw error
+
+  return data || []
 }
 
 /**
