@@ -21,10 +21,34 @@ export function ProviderCard({ provider }: ProviderCardProps) {
     : null
 
   // Get category from first service
-  const category = provider.services?.[0]?.categories?.name || 'Service'
+  const category = provider.services?.[0]?.service_categories?.slug ||
+                   provider.services?.[0]?.categories?.slug ||
+                   'service'
 
   // Get first service for quick booking
   const firstService = provider.services?.[0]
+
+  // Get category-appropriate image
+  const getCategoryImage = (categorySlug: string) => {
+    const images: Record<string, string> = {
+      'hair-salon': 'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&h=400&fit=crop',
+      'barber-shop': 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&h=400&fit=crop',
+      'nail-salon': 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=800&h=400&fit=crop',
+      'spa-massage': 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=400&fit=crop',
+      'dental': 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=800&h=400&fit=crop',
+      'medical': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&h=400&fit=crop',
+      'plumbing': 'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=800&h=400&fit=crop',
+      'hvac': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=400&fit=crop',
+      'electrical': 'https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=400&fit=crop',
+      'cleaning': 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=400&fit=crop',
+      'automotive': 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=800&h=400&fit=crop',
+      'fitness': 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=400&fit=crop',
+      'beauty': 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&h=400&fit=crop',
+    }
+    return images[categorySlug] || 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=800&h=400&fit=crop'
+  }
+
+  const categoryImage = getCategoryImage(category)
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Only navigate if not clicking on interactive elements
@@ -44,9 +68,19 @@ export function ProviderCard({ provider }: ProviderCardProps) {
       className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border-gray-200"
       onClick={handleCardClick}
     >
-        {/* Image Placeholder with Gradient */}
-        <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 overflow-hidden">
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
+        {/* Image with actual category photo */}
+        <div className="relative h-48 overflow-hidden bg-gray-200">
+          <img
+            src={categoryImage}
+            alt={provider.business_name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={(e) => {
+              // Fallback to gradient if image fails to load
+              e.currentTarget.style.display = 'none'
+              e.currentTarget.parentElement!.style.background = 'linear-gradient(to bottom right, rgb(59, 130, 246), rgb(168, 85, 247), rgb(236, 72, 153))'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
           {provider.verified && (
             <div className="absolute top-3 right-3 bg-white text-blue-600 text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
@@ -55,8 +89,10 @@ export function ProviderCard({ provider }: ProviderCardProps) {
           )}
 
           {/* Category badge */}
-          <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full">
-            {category}
+          <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm text-gray-800 text-xs font-medium px-3 py-1.5 rounded-full shadow-lg">
+            {provider.services?.[0]?.service_categories?.name ||
+             provider.services?.[0]?.categories?.name ||
+             'Service'}
           </div>
         </div>
 
@@ -113,8 +149,8 @@ export function ProviderCard({ provider }: ProviderCardProps) {
           )}
 
           {/* Price */}
-          <div className="pt-3 border-t border-gray-100">
-            {minPrice !== null ? (
+          <div className="pt-3 border-t border-gray-100 mb-3">
+            {minPrice !== null && firstService ? (
               <div className="flex items-baseline gap-1">
                 <span className="text-lg font-bold text-gray-900">
                   ${minPrice.toFixed(0)}
@@ -123,18 +159,18 @@ export function ProviderCard({ provider }: ProviderCardProps) {
                 <span className="text-xs text-gray-500 ml-1">• {firstService?.name}</span>
               </div>
             ) : (
-              <div className="text-sm text-gray-600">Contact for pricing</div>
+              <div className="text-sm text-gray-600 italic">Check availability below</div>
             )}
           </div>
 
-          {/* Quick Booking Slots */}
+          {/* Quick Booking Slots - Auto-loaded */}
           {firstService && (
             <div data-slot-container onClick={(e) => e.stopPropagation()}>
               <ProviderQuickSlots
                 providerId={provider.id}
                 serviceId={firstService.id}
                 serviceName={firstService.name}
-                autoLoad={false}
+                autoLoad={true}
               />
             </div>
           )}

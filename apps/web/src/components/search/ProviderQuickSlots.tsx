@@ -65,7 +65,8 @@ export function ProviderQuickSlots({
   const availableSlots = slots.filter((s) => s.available)
   const hasAvailableSlots = availableSlots.length > 0
 
-  if (!showSlots) {
+  // If autoLoad is false, show button first
+  if (!showSlots && !autoLoad) {
     return (
       <Button
         variant="outline"
@@ -101,16 +102,16 @@ export function ProviderQuickSlots({
 
   if (slots.length === 0) {
     return (
-      <div className="border-t border-gray-200 pt-3 mt-3">
+      <div className="border-t border-purple-100 pt-3 mt-3 bg-gray-50 -mx-5 px-5 pb-3 rounded-b-xl">
         <div className="text-center py-3">
-          <p className="text-sm text-gray-600 mb-2">No slots available in next 3 hours</p>
+          <p className="text-sm font-semibold text-gray-700 mb-2">⌚ No immediate availability</p>
           <Button
             variant="outline"
             size="sm"
             onClick={() => router.push(`/providers/${providerId}`)}
-            className="text-xs"
+            className="text-xs bg-white hover:bg-gray-50"
           >
-            View Full Schedule →
+            See Future Times →
           </Button>
         </div>
       </div>
@@ -129,12 +130,14 @@ export function ProviderQuickSlots({
             </span>
           )}
         </div>
-        <button
-          onClick={() => setShowSlots(false)}
-          className="text-xs text-gray-500 hover:text-gray-700"
-        >
-          Hide
-        </button>
+        {!autoLoad && (
+          <button
+            onClick={() => setShowSlots(false)}
+            className="text-xs text-gray-500 hover:text-gray-700"
+          >
+            Hide
+          </button>
+        )}
       </div>
 
       {/* Slots */}
