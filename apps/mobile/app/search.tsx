@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { providersApi, categoriesApi } from 'shared';
 import type { Provider, ServiceCategory } from 'shared';
 
@@ -63,29 +64,81 @@ export default function SearchScreen() {
     return filtered;
   };
 
-  const renderProvider = ({ item }: { item: Provider }) => (
-    <TouchableOpacity
-      style={styles.providerCard}
-      onPress={() => router.push(`/provider/${item.id}`)}
-    >
-      <View style={styles.providerHeader}>
-        <Text style={styles.providerName}>{item.business_name}</Text>
-        {item.rating_average && (
-          <View style={styles.rating}>
-            <Text style={styles.ratingText}>⭐ {item.rating_average.toFixed(1)}</Text>
+  const renderProvider = ({ item }: { item: Provider }) => {
+    // Get min price from services
+    const minPrice = item.services && item.services.length > 0
+      ? Math.min(...item.services.map((s: any) => s.price))
+      : null;
+
+    return (
+      <TouchableOpacity
+        style={styles.providerCard}
+        onPress={() => router.push(`/provider/${item.id}`)}
+      >
+        {/* Gradient Image Placeholder */}
+        <LinearGradient
+          colors={['#3b82f6', '#8b5cf6', '#ec4899']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.providerImage}
+        >
+          {item.verified && (
+            <View style={styles.verifiedBadge}>
+              <Text style={styles.verifiedText}>✓ Verified</Text>
+            </View>
+          )}
+        </LinearGradient>
+
+        {/* Content */}
+        <View style={styles.providerContent}>
+          <View style={styles.providerHeader}>
+            <Text style={styles.providerName}>{item.business_name}</Text>
           </View>
-        )}
-      </View>
-      <Text style={styles.providerDescription} numberOfLines={2}>
-        {item.description}
-      </Text>
-      {item.provider_locations && item.provider_locations.length > 0 && (
-        <Text style={styles.providerLocation}>
-          📍 {item.provider_locations[0].city}, {item.provider_locations[0].state_province}
-        </Text>
-      )}
-    </TouchableOpacity>
-  );
+
+          {item.provider_locations && item.provider_locations.length > 0 && (
+            <Text style={styles.providerLocation}>
+              📍 {item.provider_locations[0].city}, {item.provider_locations[0].state_province}
+            </Text>
+          )}
+
+          {/* Rating */}
+          <View style={styles.ratingContainer}>
+            <View style={styles.ratingBadge}>
+              <Text style={styles.ratingText}>
+                ★ {item.rating_average ? item.rating_average.toFixed(1) : 'New'}
+              </Text>
+            </View>
+            {item.rating_count > 0 && (
+              <Text style={styles.reviewCount}>
+                ({item.rating_count} {item.rating_count === 1 ? 'review' : 'reviews'})
+              </Text>
+            )}
+          </View>
+
+          {item.description && (
+            <Text style={styles.providerDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          )}
+
+          {/* Price and Book Button */}
+          <View style={styles.providerFooter}>
+            {minPrice !== null ? (
+              <View>
+                <Text style={styles.price}>${minPrice.toFixed(0)}</Text>
+                <Text style={styles.priceLabel}>and up</Text>
+              </View>
+            ) : (
+              <Text style={styles.contactText}>Contact for pricing</Text>
+            )}
+            <View style={styles.bookButton}>
+              <Text style={styles.bookButtonText}>Book Now</Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const renderCategory = ({ item }: { item: ServiceCategory }) => (
     <TouchableOpacity
@@ -224,46 +277,106 @@ const styles = StyleSheet.create({
   providerCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#e5e7eb',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  providerImage: {
+    height: 140,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    padding: 12,
+  },
+  verifiedBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  verifiedText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563eb',
+  },
+  providerContent: {
+    padding: 12,
   },
   providerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   providerName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1a1a1a',
-    flex: 1,
   },
-  rating: {
-    backgroundColor: '#fef3c7',
+  providerLocation: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 8,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 6,
+  },
+  ratingBadge: {
+    backgroundColor: '#2563eb',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 6,
   },
   ratingText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  reviewCount: {
+    fontSize: 13,
+    color: '#666',
   },
   providerDescription: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 8,
+    marginBottom: 12,
     lineHeight: 20,
   },
-  providerLocation: {
+  providerFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f3f4f6',
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+  },
+  priceLabel: {
+    fontSize: 12,
+    color: '#666',
+  },
+  contactText: {
+    fontSize: 13,
+    color: '#666',
+  },
+  bookButton: {
+    backgroundColor: '#dc2626',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  bookButtonText: {
     fontSize: 14,
-    color: '#2563eb',
+    fontWeight: '600',
+    color: '#fff',
   },
   emptyContainer: {
     padding: 40,
