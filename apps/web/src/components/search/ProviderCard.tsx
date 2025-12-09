@@ -1,12 +1,17 @@
-import Link from 'next/link'
+'use client'
+
+import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { ProviderQuickSlots } from './ProviderQuickSlots'
 
 interface ProviderCardProps {
   provider: any
 }
 
 export function ProviderCard({ provider }: ProviderCardProps) {
+  const router = useRouter()
+
   const primaryLocation = provider.provider_locations?.find((loc: any) => loc.is_primary) ||
     provider.provider_locations?.[0]
 
@@ -18,9 +23,27 @@ export function ProviderCard({ provider }: ProviderCardProps) {
   // Get category from first service
   const category = provider.services?.[0]?.categories?.name || 'Service'
 
+  // Get first service for quick booking
+  const firstService = provider.services?.[0]
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only navigate if not clicking on interactive elements
+    const target = e.target as HTMLElement
+    if (
+      target.tagName === 'BUTTON' ||
+      target.closest('button') ||
+      target.closest('[data-slot-container]')
+    ) {
+      return
+    }
+    router.push(`/providers/${provider.id}`)
+  }
+
   return (
-    <Link href={`/providers/${provider.id}`}>
-      <Card className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border-gray-200">
+    <Card
+      className="group hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border-gray-200"
+      onClick={handleCardClick}
+    >
         {/* Image Placeholder with Gradient */}
         <div className="relative h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 overflow-hidden">
           <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
@@ -89,28 +112,33 @@ export function ProviderCard({ provider }: ProviderCardProps) {
             </div>
           )}
 
-          {/* Price and Action */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+          {/* Price */}
+          <div className="pt-3 border-t border-gray-100">
             {minPrice !== null ? (
-              <div>
+              <div className="flex items-baseline gap-1">
                 <span className="text-lg font-bold text-gray-900">
                   ${minPrice.toFixed(0)}
                 </span>
-                <span className="text-sm text-gray-600 ml-1">and up</span>
+                <span className="text-sm text-gray-600">and up</span>
+                <span className="text-xs text-gray-500 ml-1">• {firstService?.name}</span>
               </div>
             ) : (
               <div className="text-sm text-gray-600">Contact for pricing</div>
             )}
-
-            <Button
-              size="sm"
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4"
-            >
-              Book Now
-            </Button>
           </div>
+
+          {/* Quick Booking Slots */}
+          {firstService && (
+            <div data-slot-container onClick={(e) => e.stopPropagation()}>
+              <ProviderQuickSlots
+                providerId={provider.id}
+                serviceId={firstService.id}
+                serviceName={firstService.name}
+                autoLoad={false}
+              />
+            </div>
+          )}
         </div>
       </Card>
-    </Link>
   )
 }
