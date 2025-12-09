@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "seed:providers": "ts-node seed-200-providers.ts"
+    "seed:providers": "tsx seed-200-providers.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3"
   },
   "devDependencies": {
     "@types/node": "^20.10.6",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }
 }
