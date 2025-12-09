@@ -141,7 +141,6 @@ async function createProviders() {
         .from('profiles')
         .insert({
           id: userId,
-          email,
           full_name: businessName,
           phone,
           user_type: 'provider'
