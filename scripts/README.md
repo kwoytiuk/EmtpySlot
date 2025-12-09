@@ -43,10 +43,15 @@ export SUPABASE_SERVICE_ROLE_KEY="your-service-role-key-here"
 ```bash
 # From scripts directory
 npm run seed:providers
-
-# Or directly with ts-node
-npx ts-node seed-200-providers.ts
 ```
+
+**What happens when you run the script:**
+1. 🧹 **Automatic Cleanup** - First, the script removes all existing seed test accounts (provider1-200@emptyslot.test) and their associated data
+2. 🚀 **Fresh Creation** - Then creates 200 new provider accounts with all their data
+
+**Duration:** Approximately 5-10 minutes to complete (includes cleanup + creation with rate limiting)
+
+**Note:** The script is safe to run multiple times - it always starts with a clean slate!
 
 ### Generated Credentials
 
@@ -147,36 +152,14 @@ Providers are distributed across 30 Calgary neighborhoods including:
 
 ### Cleanup
 
-To remove all test data, run this SQL in your Supabase SQL editor:
+**Good news!** The script automatically cleans up all previously seeded data before creating new accounts.
 
-```sql
--- Delete in order to respect foreign keys
-DELETE FROM employee_schedules
-WHERE employee_id IN (
-  SELECT e.id FROM employees e
-  JOIN providers p ON e.provider_id = p.id
-  WHERE p.email LIKE '%@emptyslot.test'
-);
+If you want to manually remove test data without running the script again, you can delete the auth users from the Supabase dashboard:
+1. Go to Authentication → Users in your Supabase dashboard
+2. Search for "@emptyslot.test"
+3. Delete the test users (this will cascade delete all related data)
 
-DELETE FROM employees
-WHERE provider_id IN (
-  SELECT id FROM providers WHERE email LIKE '%@emptyslot.test'
-);
-
-DELETE FROM services
-WHERE provider_id IN (
-  SELECT id FROM providers WHERE email LIKE '%@emptyslot.test'
-);
-
-DELETE FROM provider_locations
-WHERE provider_id IN (
-  SELECT id FROM providers WHERE email LIKE '%@emptyslot.test'
-);
-
-DELETE FROM providers WHERE email LIKE '%@emptyslot.test';
-
--- Note: Auth users need to be deleted through Supabase dashboard or auth API
-```
+Or use the Supabase Auth Admin API to delete users programmatically.
 
 ### Notes
 

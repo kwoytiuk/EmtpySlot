@@ -86,8 +86,68 @@ const generatePhone = (index: number) => {
 const firstNames = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jamie', 'Drew', 'Cameron', 'Sage', 'Dakota', 'Phoenix', 'River']
 const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson']
 
+/**
+ * Clean up all previously seeded data
+ */
+async function cleanupSeedData() {
+  console.log('🧹 Cleaning up existing seed data...\n')
+
+  try {
+    // Get all test users (provider1-200@emptyslot.test)
+    const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
+
+    if (listError) {
+      console.error('❌ Error listing users:', listError.message)
+      return
+    }
+
+    // Filter for seed test accounts
+    const testUsers = users.filter(u =>
+      u.email?.match(/^provider\d+@emptyslot\.test$/)
+    )
+
+    console.log(`Found ${testUsers.length} seed test accounts to remove`)
+
+    let deleteCount = 0
+    let errorCount = 0
+
+    // Delete each user (this will cascade to profiles, providers, and all related data)
+    for (const user of testUsers) {
+      try {
+        const { error } = await supabase.auth.admin.deleteUser(user.id)
+
+        if (error) {
+          console.error(`  ❌ Failed to delete ${user.email}:`, error.message)
+          errorCount++
+        } else {
+          deleteCount++
+          if (deleteCount % 10 === 0) {
+            console.log(`  Deleted ${deleteCount}/${testUsers.length}...`)
+          }
+        }
+
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 50))
+      } catch (err: any) {
+        console.error(`  ❌ Error deleting ${user.email}:`, err.message)
+        errorCount++
+      }
+    }
+
+    console.log(`\n✅ Cleanup complete!`)
+    console.log(`   Deleted: ${deleteCount}`)
+    console.log(`   Errors: ${errorCount}\n`)
+
+  } catch (error: any) {
+    console.error('❌ Cleanup error:', error.message)
+  }
+}
+
 async function createProviders() {
   console.log('🚀 Starting seed process for 200 providers...\n')
+
+  // Clean up existing data first
+  await cleanupSeedData()
 
   // Get category IDs
   const { data: categories, error: catError } = await supabase
@@ -117,7 +177,7 @@ async function createProviders() {
 
       console.log(`Creating ${i}/200: ${businessName}`)
 
-      // 1. Create auth user (or get existing)
+      // 1. Create auth user
       let userId: string
       const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email,
@@ -130,12 +190,6 @@ async function createProviders() {
       })
 
       if (authError) {
-        // Check if user already exists
-        if (authError.message.includes('already been registered')) {
-          console.log(`  ⚠️  User already exists, skipping: ${email}`)
-          successCount++
-          continue
-        }
         console.error(`  ❌ Auth error for ${businessName}:`, authError.message)
         failCount++
         continue
@@ -149,7 +203,7 @@ async function createProviders() {
 
       userId = authData.user.id
 
-      // 2. Create profile (skip if already exists)
+      // 2. Create profile
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
@@ -160,12 +214,6 @@ async function createProviders() {
         })
 
       if (profileError) {
-        // Skip if profile already exists
-        if (profileError.message.includes('duplicate key') || profileError.code === '23505') {
-          console.log(`  ⚠️  Profile already exists, skipping`)
-          successCount++
-          continue
-        }
         console.error(`  ❌ Profile error:`, profileError.message)
         failCount++
         continue
