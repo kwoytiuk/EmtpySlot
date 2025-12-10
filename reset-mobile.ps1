@@ -42,8 +42,10 @@ Set-Location ..\..
 # 6. Clear Metro bundler cache
 Write-Host "`n🧹 Clearing Metro bundler cache..." -ForegroundColor Cyan
 Set-Location apps\mobile
-npx react-native start --reset-cache --no-interactive &
+$job = Start-Job -ScriptBlock { npx react-native start --reset-cache }
 Start-Sleep -Seconds 5
+Stop-Job $job -ErrorAction SilentlyContinue
+Remove-Job $job -Force -ErrorAction SilentlyContinue
 Stop-Process -Name "node" -Force -ErrorAction SilentlyContinue
 Set-Location ..\..
 
@@ -51,4 +53,4 @@ Write-Host "`n✅ Reset complete!" -ForegroundColor Green
 Write-Host "`n📱 To start the mobile app:" -ForegroundColor Yellow
 Write-Host "   cd apps\mobile" -ForegroundColor White
 Write-Host "   npx expo start --clear" -ForegroundColor White
-Write-Host "`nThen press 'r' to reload in your app" -ForegroundColor Yellow
+Write-Host "`nThen press r to reload in your app" -ForegroundColor Yellow
