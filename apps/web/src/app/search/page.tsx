@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { providersApi, categoriesApi, type ServiceCategory } from 'shared'
 import { ProviderCard } from '@/components/search/ProviderCard'
 import { Input } from '@/components/ui/input'
@@ -16,14 +17,19 @@ import {
 import Link from 'next/link'
 
 export default function SearchPage() {
+  const searchParams = useSearchParams()
   const [providers, setProviders] = useState<any[]>([])
   const [categories, setCategories] = useState<ServiceCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [searchLoading, setSearchLoading] = useState(false)
 
-  // Search filters
+  // User location for distance calculation (default to Calgary)
+  const [userLat] = useState(51.0447)
+  const [userLng] = useState(-114.0719)
+
+  // Search filters - initialize from URL params
   const [location, setLocation] = useState('')
-  const [categoryId, setCategoryId] = useState('')
+  const [categoryId, setCategoryId] = useState(searchParams.get('category') || '')
   const [minRating, setMinRating] = useState(0)
   const [radiusKm, setRadiusKm] = useState(10)
 
@@ -35,7 +41,14 @@ export default function SearchPage() {
     try {
       const [categoriesData, providersData] = await Promise.all([
         categoriesApi.getCategories(),
-        providersApi.searchProviders({ verified: true, limit: 20 }),
+        providersApi.searchProviders({
+          categoryId: categoryId || undefined,
+          verified: true,
+          limit: 50,
+          latitude: userLat,
+          longitude: userLng,
+          radiusKm: radiusKm,
+        }),
       ])
 
       setCategories(categoriesData)
@@ -54,6 +67,8 @@ export default function SearchPage() {
         categoryId: categoryId || undefined,
         minRating: minRating || undefined,
         radiusKm: radiusKm || undefined,
+        latitude: userLat,
+        longitude: userLng,
         verified: true,
         limit: 50,
       })
@@ -65,6 +80,13 @@ export default function SearchPage() {
       setSearchLoading(false)
     }
   }
+
+  // Auto-search when distance changes
+  useEffect(() => {
+    if (!loading) {
+      handleSearch()
+    }
+  }, [radiusKm])
 
   if (loading) {
     return (
@@ -293,7 +315,12 @@ export default function SearchPage() {
             ) : (
               <div className="grid md:grid-cols-2 gap-6">
                 {providers.map((provider) => (
-                  <ProviderCard key={provider.id} provider={provider} />
+                  <ProviderCard
+                    key={provider.id}
+                    provider={provider}
+                    userLat={userLat}
+                    userLng={userLng}
+                  />
                 ))}
               </div>
             )}
