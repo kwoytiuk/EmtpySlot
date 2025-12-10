@@ -100,7 +100,34 @@ export default function BookingPage() {
         date,
         employeeId || undefined
       )
-      setTimeSlots(slots)
+
+      // Filter out past time slots if the selected date is today
+      const today = new Date().toISOString().split('T')[0]
+      const isToday = date === today
+
+      let filteredSlots = slots
+      if (isToday) {
+        const now = new Date()
+        const currentTimeMinutes = now.getHours() * 60 + now.getMinutes()
+
+        // If there's a prefilled time, use that as the minimum time
+        // Otherwise, use current time
+        let minimumTimeMinutes = currentTimeMinutes
+        if (prefilledTime) {
+          const [hours, minutes] = prefilledTime.split(':')
+          const prefilledTimeMinutes = parseInt(hours) * 60 + parseInt(minutes)
+          // Use the later of current time or prefilled time
+          minimumTimeMinutes = Math.max(currentTimeMinutes, prefilledTimeMinutes)
+        }
+
+        filteredSlots = slots.filter(slot => {
+          const [hours, minutes] = slot.start_time.split(':')
+          const slotTimeMinutes = parseInt(hours) * 60 + parseInt(minutes)
+          return slotTimeMinutes >= minimumTimeMinutes
+        })
+      }
+
+      setTimeSlots(filteredSlots)
     } catch (err: any) {
       setError(err.message || 'Failed to load time slots')
     } finally {
