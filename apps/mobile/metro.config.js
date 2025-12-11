@@ -17,7 +17,15 @@ config.resolver.nodeModulesPaths = [
 
 // 3. Force Metro to resolve shared package from source
 config.resolver.extraNodeModules = {
+  ...config.resolver.extraNodeModules,
   shared: path.resolve(workspaceRoot, 'packages/shared'),
+  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
 };
+
+// 4. Add additional resolver for React Native
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'mjs'];
+
+// 5. Add support for Hermes
+config.transformer.unstable_allowRequireContext = true;
 
 module.exports = config;
