@@ -10,6 +10,7 @@ interface ProviderQuickSlotsProps {
   serviceId: string
   serviceName: string
   autoLoad?: boolean
+  preloadedSlots?: TimeSlot[]
 }
 
 export function ProviderQuickSlots({
@@ -17,6 +18,7 @@ export function ProviderQuickSlots({
   serviceId,
   serviceName,
   autoLoad = false,
+  preloadedSlots,
 }: ProviderQuickSlotsProps) {
   const router = useRouter()
   const [slots, setSlots] = useState<TimeSlot[]>([])
@@ -24,11 +26,20 @@ export function ProviderQuickSlots({
   const [showSlots, setShowSlots] = useState(autoLoad)
   const [error, setError] = useState('')
 
+  // If preloaded slots are provided, use them immediately
   useEffect(() => {
-    if (showSlots && slots.length === 0) {
+    if (preloadedSlots && preloadedSlots.length > 0) {
+      setSlots(preloadedSlots.slice(0, 6))
+      setShowSlots(true)
+    }
+  }, [preloadedSlots])
+
+  useEffect(() => {
+    // Only load slots if not preloaded and showSlots is true
+    if (showSlots && slots.length === 0 && !preloadedSlots) {
       loadSlots()
     }
-  }, [showSlots])
+  }, [showSlots, preloadedSlots])
 
   const loadSlots = async () => {
     setLoading(true)

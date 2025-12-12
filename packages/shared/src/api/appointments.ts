@@ -456,3 +456,112 @@ export async function getQuickBookingSlots(
 
   return slots
 }
+
+/**
+ * Batch get quick booking slots for multiple providers
+ * Optimized to reduce API calls from 2*N to just 2-3 total queries
+ */
+export async function getBatchQuickBookingSlots(
+  providers: Array<{ id: string; serviceId: string }>
+): Promise<Record<string, TimeSlot[]>> {
+  if (providers.length === 0) return {}
+
+  const now = new Date()
+  const today = now.toISOString().split('T')[0]
+
+  // Get current time in minutes since midnight
+  const currentHour = now.getHours()
+  const currentMinute = now.getMinutes()
+  const currentTimeMinutes = currentHour * 60 + currentMinute
+
+  // Round up to next 30-minute interval
+  const roundedMinutes = Math.ceil(currentTimeMinutes / 30) * 30
+
+  // Calculate end time (3 hours from now)
+  const endTimeMinutes = roundedMinutes + (3 * 60)
+
+  // Batch fetch all services at once
+  const serviceIds = [...new Set(providers.map(p => p.serviceId))]
+  const { data: services, error: servicesError } = await supabase
+    .from('services')
+    .select('id, duration_minutes')
+    .in('id', serviceIds)
+
+  if (servicesError) throw servicesError
+
+  // Create a map of serviceId -> duration for quick lookup
+  const serviceDurations = new Map(
+    services?.map(s => [s.id, s.duration_minutes]) || []
+  )
+
+  // Batch fetch all appointments for all providers at once
+  const providerIds = providers.map(p => p.id)
+  const { data: appointments, error: appointmentsError } = await supabase
+    .from('appointments')
+    .select('provider_id, start_time, end_time, staff_id')
+    .in('provider_id', providerIds)
+    .eq('appointment_date', today)
+    .in('status', ['pending', 'confirmed'])
+
+  if (appointmentsError) throw appointmentsError
+
+  // Group appointments by provider_id
+  const appointmentsByProvider = new Map<string, any[]>()
+  appointments?.forEach(apt => {
+    if (!appointmentsByProvider.has(apt.provider_id)) {
+      appointmentsByProvider.set(apt.provider_id, [])
+    }
+    appointmentsByProvider.get(apt.provider_id)!.push(apt)
+  })
+
+  // Generate slots for each provider
+  const result: Record<string, TimeSlot[]> = {}
+
+  for (const provider of providers) {
+    const duration = serviceDurations.get(provider.serviceId)
+    if (!duration) continue
+
+    const providerAppointments = appointmentsByProvider.get(provider.id) || []
+    const slots: TimeSlot[] = []
+    let currentSlotMinutes = roundedMinutes
+
+    while (currentSlotMinutes < endTimeMinutes && currentSlotMinutes < 22 * 60) {
+      const hour = Math.floor(currentSlotMinutes / 60)
+      const minute = currentSlotMinutes % 60
+
+      const startTime = `${hour.toString().padStart(2, '0')}:${minute
+        .toString()
+        .padStart(2, '0')}:00`
+
+      // Calculate end time based on service duration
+      const slotEndMinutes = currentSlotMinutes + duration
+      const slotEndHour = Math.floor(slotEndMinutes / 60)
+      const slotEndMinute = slotEndMinutes % 60
+
+      const endTime = `${slotEndHour.toString().padStart(2, '0')}:${slotEndMinute
+        .toString()
+        .padStart(2, '0')}:00`
+
+      // Check if slot conflicts with existing appointments
+      const isAvailable = !providerAppointments.some((apt) => {
+        return (
+          (startTime >= apt.start_time && startTime < apt.end_time) ||
+          (endTime > apt.start_time && endTime <= apt.end_time) ||
+          (startTime <= apt.start_time && endTime >= apt.end_time)
+        )
+      })
+
+      slots.push({
+        start_time: startTime,
+        end_time: endTime,
+        available: isAvailable,
+      })
+
+      currentSlotMinutes += 30 // 30 minute intervals
+    }
+
+    result[provider.id] = slots
+  }
+
+  return result
+}

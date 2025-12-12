@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { providersApi, categoriesApi, type ServiceCategory } from 'shared'
+import { providersApi, categoriesApi, appointmentsApi, type ServiceCategory, type TimeSlot } from 'shared'
 import { ProviderCard } from '@/components/search/ProviderCard'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -22,6 +22,7 @@ export default function SearchPage() {
   const [categories, setCategories] = useState<ServiceCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [batchSlots, setBatchSlots] = useState<Record<string, TimeSlot[]>>({})
 
   // User location for distance calculation (default to Calgary)
   const [userLat] = useState(51.0447)
@@ -62,6 +63,23 @@ export default function SearchPage() {
       setCategories(categoriesData)
       setProviders(providersData as any[])
       console.log('[SEARCH] State updated successfully')
+
+      // Batch load quick booking slots for all providers
+      if (providersData && providersData.length > 0) {
+        console.log('[SEARCH] Batch loading quick booking slots...')
+        const providerServicePairs = providersData
+          .filter((p: any) => p.services && p.services.length > 0)
+          .map((p: any) => ({
+            id: p.id,
+            serviceId: p.services[0].id
+          }))
+
+        if (providerServicePairs.length > 0) {
+          const slotsData = await appointmentsApi.getBatchQuickBookingSlots(providerServicePairs)
+          console.log('[SEARCH] Batch slots loaded for', Object.keys(slotsData).length, 'providers')
+          setBatchSlots(slotsData)
+        }
+      }
     } catch (error) {
       console.error('[SEARCH] Error loading data:', error)
     } finally {
@@ -93,6 +111,23 @@ export default function SearchPage() {
       console.log('[SEARCH] Search results:', results?.length)
 
       setProviders(results as any[])
+
+      // Batch load quick booking slots for search results
+      if (results && results.length > 0) {
+        console.log('[SEARCH] Batch loading quick booking slots for search results...')
+        const providerServicePairs = results
+          .filter((p: any) => p.services && p.services.length > 0)
+          .map((p: any) => ({
+            id: p.id,
+            serviceId: p.services[0].id
+          }))
+
+        if (providerServicePairs.length > 0) {
+          const slotsData = await appointmentsApi.getBatchQuickBookingSlots(providerServicePairs)
+          console.log('[SEARCH] Batch slots loaded for', Object.keys(slotsData).length, 'providers')
+          setBatchSlots(slotsData)
+        }
+      }
     } catch (error) {
       console.error('[SEARCH] Error searching:', error)
     } finally {
@@ -341,6 +376,7 @@ export default function SearchPage() {
                     provider={provider}
                     userLat={userLat}
                     userLng={userLng}
+                    preloadedSlots={batchSlots[provider.id]}
                   />
                 ))}
               </div>

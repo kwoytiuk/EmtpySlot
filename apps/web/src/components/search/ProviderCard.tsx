@@ -4,14 +4,16 @@ import { useRouter } from 'next/navigation'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ProviderQuickSlots } from './ProviderQuickSlots'
+import type { TimeSlot } from 'shared'
 
 interface ProviderCardProps {
   provider: any
   userLat?: number
   userLng?: number
+  preloadedSlots?: TimeSlot[]
 }
 
-export function ProviderCard({ provider, userLat, userLng }: ProviderCardProps) {
+export function ProviderCard({ provider, userLat, userLng, preloadedSlots }: ProviderCardProps) {
   const router = useRouter()
 
   const primaryLocation = provider.provider_locations?.find((loc: any) => loc.is_primary) ||
@@ -201,14 +203,15 @@ export function ProviderCard({ provider, userLat, userLng }: ProviderCardProps) 
             )}
           </div>
 
-          {/* Quick Booking Slots - Load on demand */}
+          {/* Quick Booking Slots - Auto-loaded */}
           {firstService && (
             <div data-slot-container onClick={(e) => e.stopPropagation()}>
               <ProviderQuickSlots
                 providerId={provider.id}
                 serviceId={firstService.id}
                 serviceName={firstService.name}
-                autoLoad={false}
+                autoLoad={true}
+                preloadedSlots={preloadedSlots}
               />
             </div>
           )}
