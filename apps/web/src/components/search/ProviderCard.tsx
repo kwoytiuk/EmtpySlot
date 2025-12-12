@@ -201,14 +201,14 @@ export function ProviderCard({ provider, userLat, userLng }: ProviderCardProps) 
             )}
           </div>
 
-          {/* Quick Booking Slots - Auto-loaded */}
+          {/* Quick Booking Slots - Load on demand */}
           {firstService && (
             <div data-slot-container onClick={(e) => e.stopPropagation()}>
               <ProviderQuickSlots
                 providerId={provider.id}
                 serviceId={firstService.id}
                 serviceName={firstService.name}
-                autoLoad={true}
+                autoLoad={false}
               />
             </div>
           )}
