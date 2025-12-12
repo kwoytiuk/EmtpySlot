@@ -34,35 +34,53 @@ export default function SearchPage() {
   const [radiusKm, setRadiusKm] = useState(10)
 
   useEffect(() => {
+    console.log('[SEARCH] Component mounted, calling loadInitialData')
     loadInitialData()
   }, [])
 
   const loadInitialData = async () => {
-    try {
-      const [categoriesData, providersData] = await Promise.all([
-        categoriesApi.getCategories(),
-        providersApi.searchProviders({
-          categoryId: categoryId || undefined,
-          verified: true,
-          limit: 50,
-          latitude: userLat,
-          longitude: userLng,
-          radiusKm: radiusKm,
-        }),
-      ])
+    console.log('[SEARCH] loadInitialData started')
+    console.log('[SEARCH] Current state:', { categoryId, userLat, userLng, radiusKm })
 
+    try {
+      console.log('[SEARCH] Fetching categories...')
+      const categoriesData = await categoriesApi.getCategories()
+      console.log('[SEARCH] Categories loaded:', categoriesData?.length)
+
+      console.log('[SEARCH] Fetching providers...')
+      const providersData = await providersApi.searchProviders({
+        categoryId: categoryId || undefined,
+        verified: true,
+        limit: 50,
+        latitude: userLat,
+        longitude: userLng,
+        radiusKm: radiusKm,
+      })
+      console.log('[SEARCH] Providers loaded:', providersData?.length)
+
+      console.log('[SEARCH] Setting state...')
       setCategories(categoriesData)
       setProviders(providersData as any[])
+      console.log('[SEARCH] State updated successfully')
     } catch (error) {
-      console.error('Error loading data:', error)
+      console.error('[SEARCH] Error loading data:', error)
     } finally {
+      console.log('[SEARCH] Setting loading to false')
       setLoading(false)
     }
   }
 
   const handleSearch = async () => {
+    console.log('[SEARCH] handleSearch called')
     setSearchLoading(true)
     try {
+      console.log('[SEARCH] Searching providers with params:', {
+        categoryId: categoryId || undefined,
+        minRating: minRating || undefined,
+        radiusKm: radiusKm || undefined,
+        latitude: userLat,
+        longitude: userLng,
+      })
       const results = await providersApi.searchProviders({
         categoryId: categoryId || undefined,
         minRating: minRating || undefined,
@@ -72,10 +90,11 @@ export default function SearchPage() {
         verified: true,
         limit: 50,
       })
+      console.log('[SEARCH] Search results:', results?.length)
 
       setProviders(results as any[])
     } catch (error) {
-      console.error('Error searching:', error)
+      console.error('[SEARCH] Error searching:', error)
     } finally {
       setSearchLoading(false)
     }
@@ -83,7 +102,9 @@ export default function SearchPage() {
 
   // Auto-search when distance changes
   useEffect(() => {
+    console.log('[SEARCH] radiusKm useEffect triggered. radiusKm:', radiusKm, 'loading:', loading)
     if (!loading) {
+      console.log('[SEARCH] Calling handleSearch from radiusKm useEffect')
       handleSearch()
     }
   }, [radiusKm])
