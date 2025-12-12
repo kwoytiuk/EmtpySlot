@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="minimal-test" options={{ title: '🧪 Minimal Test' }} />
       <Stack.Screen name="index" options={{ title: 'EmptySlot' }} />
       <Stack.Screen name="search-test" options={{ title: 'Test Screen' }} />
       <Stack.Screen name="auth/login" options={{ title: 'Login' }} />
