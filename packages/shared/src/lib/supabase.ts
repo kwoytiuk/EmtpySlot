@@ -7,22 +7,22 @@ import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../types/database.types'
 import { env } from '../config/env'
 
-// Validate environment variables
+// Validate environment variables (warnings instead of throwing to prevent module load failures)
 if (!env.supabase.url || env.supabase.url === 'your-project-url-here' || !env.supabase.url.includes('supabase.co')) {
-  throw new Error(
-    '❌ SUPABASE URL NOT CONFIGURED!\n\n' +
-    'Please update your .env.local file with your actual Supabase credentials:\n' +
+  console.warn(
+    '⚠️  SUPABASE URL NOT CONFIGURED!\n\n' +
+    'Please update your .env or .env.local file with your actual Supabase credentials:\n' +
     '1. Go to https://app.supabase.com/project/_/settings/api\n' +
     '2. Copy your Project URL and anon/public key\n' +
-    '3. Update apps/web/.env.local\n\n' +
+    '3. Update .env or .env.local\n\n' +
     `Current value: "${env.supabase.url}"`
   )
 }
 
 if (!env.supabase.anonKey || env.supabase.anonKey === 'your-anon-key-here' || env.supabase.anonKey.length < 100) {
-  throw new Error(
-    '❌ SUPABASE ANON KEY NOT CONFIGURED!\n\n' +
-    'Please update your .env.local file with your actual Supabase anon key.\n' +
+  console.warn(
+    '⚠️  SUPABASE ANON KEY NOT CONFIGURED!\n\n' +
+    'Please update your .env or .env.local file with your actual Supabase anon key.\n' +
     `Current value length: ${env.supabase.anonKey.length} characters`
   )
 }
