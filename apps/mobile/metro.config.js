@@ -15,11 +15,15 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
-// 3. Force Metro to resolve shared package from source
+// 3. Force Metro to resolve shared package from source and all React/RN packages from mobile
 config.resolver.extraNodeModules = {
   ...config.resolver.extraNodeModules,
   shared: path.resolve(workspaceRoot, 'packages/shared'),
+  'react': path.resolve(projectRoot, 'node_modules/react'),
   'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
+  '@react-native': path.resolve(projectRoot, 'node_modules/@react-native'),
+  'expo': path.resolve(projectRoot, 'node_modules/expo'),
+  'expo-modules-core': path.resolve(projectRoot, 'node_modules/expo-modules-core'),
 };
 
 // 4. Add additional resolver for React Native
