@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "dgSpecHash": "Nz2tsQH362c=",
+  "success": true,
+  "projectFilePath": "C:\\projects\\EmtpySlot\\dotnet\\EmptySlot.Mobile\\EmptySlot.Mobile.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ken\\.nuget\\packages\\communitytoolkit.mvvm\\8.2.2\\communitytoolkit.mvvm.8.2.2.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\8.0.0\\microsoft.extensions.dependencyinjection.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.logging\\8.0.0\\microsoft.extensions.logging.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.logging.debug\\8.0.0\\microsoft.extensions.logging.debug.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.controls\\8.0.3\\microsoft.maui.controls.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.controls.build.tasks\\8.0.3\\microsoft.maui.controls.build.tasks.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.controls.compatibility\\8.0.3\\microsoft.maui.controls.compatibility.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.controls.core\\8.0.3\\microsoft.maui.controls.core.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.controls.xaml\\8.0.3\\microsoft.maui.controls.xaml.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.core\\8.0.3\\microsoft.maui.core.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.essentials\\8.0.3\\microsoft.maui.essentials.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.graphics\\8.0.3\\microsoft.maui.graphics.8.0.3.nupkg.sha512",
+    "C:\\Users\\ken\\.nuget\\packages\\microsoft.maui.resizetizer\\8.0.3\\microsoft.maui.resizetizer.8.0.3.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "EmptySlot.Mobile depends on Microsoft.Maui.Controls (>= 8.0.0) but Microsoft.Maui.Controls 8.0.0 was not found. Microsoft.Maui.Controls 8.0.3 was resolved instead.",
+      "projectPath": "C:\\projects\\EmtpySlot\\dotnet\\EmptySlot.Mobile\\EmptySlot.Mobile.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\projects\\EmtpySlot\\dotnet\\EmptySlot.Mobile\\EmptySlot.Mobile.csproj",
+      "libraryId": "Microsoft.Maui.Controls",
+      "targetGraphs": [
+        "net8.0-android21.0",
+        "net8.0-ios1.0"
+      ]
+    },
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "message": "EmptySlot.Mobile depends on Microsoft.Maui.Controls.Compatibility (>= 8.0.0) but Microsoft.Maui.Controls.Compatibility 8.0.0 was not found. Microsoft.Maui.Controls.Compatibility 8.0.3 was resolved instead.",
+      "projectPath": "C:\\projects\\EmtpySlot\\dotnet\\EmptySlot.Mobile\\EmptySlot.Mobile.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\projects\\EmtpySlot\\dotnet\\EmptySlot.Mobile\\EmptySlot.Mobile.csproj",
+      "libraryId": "Microsoft.Maui.Controls.Compatibility",
+      "targetGraphs": [
+        "net8.0-android21.0",
+        "net8.0-ios1.0"
+      ]
+    }
+  ]
+}
