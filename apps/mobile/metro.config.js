@@ -7,14 +7,13 @@ const sharedPackage = path.resolve(workspaceRoot, 'packages/shared');
 
 const config = getDefaultConfig(projectRoot);
 
-// Watch the shared package directory
-config.watchFolders = [sharedPackage];
+// Watch both the shared package and workspace root
+config.watchFolders = [workspaceRoot];
 
 // Tell Metro where to find packages (including workspace root for shared deps)
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
-  path.resolve(sharedPackage, 'node_modules'),
 ];
 
 // Tell Metro where to find the shared package
