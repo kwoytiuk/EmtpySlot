@@ -27,6 +27,8 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-get-random-values": "^1.11.0",
     "buffer": "^6.0.3",
+    "@supabase/supabase-js": "^2.39.3",
+    "zod": "^3.22.4",
     "shared": "file:../../packages/shared"
   },
   "devDependencies": {
