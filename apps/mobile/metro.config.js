@@ -6,13 +6,8 @@ const sharedPackage = path.resolve(projectRoot, '../../packages/shared');
 
 const config = getDefaultConfig(projectRoot);
 
-// Only watch the shared package directory (not workspace root to avoid conflicts)
+// Watch the shared package directory
 config.watchFolders = [sharedPackage];
-
-// Tell Metro where to resolve packages (mobile's node_modules first)
-config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, 'node_modules'),
-];
 
 // Tell Metro where to find the shared package
 config.resolver.extraNodeModules = {
