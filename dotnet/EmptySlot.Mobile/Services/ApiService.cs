@@ -72,9 +72,22 @@ public class ApiService : IApiService
 
     public async Task<List<ServiceCategory>> GetCategoriesAsync()
     {
-        var response = await _httpClient.GetAsync("/categories");
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await _httpClient.GetAsync("/categories");
+            response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<List<ServiceCategory>>() ?? new List<ServiceCategory>();
+            return await response.Content.ReadFromJsonAsync<List<ServiceCategory>>() ?? new List<ServiceCategory>();
+        }
+        catch (HttpRequestException ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"HTTP Error getting categories: {ex.Message}");
+            throw new Exception($"Network error: {ex.Message}", ex);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error getting categories: {ex.Message}");
+            throw;
+        }
     }
 }

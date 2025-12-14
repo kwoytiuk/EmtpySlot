@@ -34,7 +34,9 @@ public partial class SearchViewModel : BaseViewModel
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"Loading categories from API: {DateTime.Now}");
             var cats = await _apiService.GetCategoriesAsync();
+            System.Diagnostics.Debug.WriteLine($"Received {cats.Count} categories");
             Categories.Clear();
             foreach (var cat in cats)
             {
@@ -43,7 +45,10 @@ public partial class SearchViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            System.Diagnostics.Debug.WriteLine($"LoadCategories error: {ex}");
+            await Shell.Current.DisplayAlert("Connection Error",
+                $"Failed to load categories.\n\nError: {ex.Message}\n\nAPI: http://10.0.2.2:5000/api",
+                "OK");
         }
     }
 
