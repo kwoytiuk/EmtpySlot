@@ -6,7 +6,7 @@ namespace EmptySlot.Mobile.Services;
 public class AuthService : IAuthService
 {
     private readonly HttpClient _httpClient;
-    private const string BaseUrl = "http://10.0.2.2:5000/api"; // For Android emulator
+    private const string BaseUrl = "http://10.0.2.2:5000/api/"; // For Android emulator - trailing slash is important!
     private string? _token;
     private Profile? _currentUser;
 
