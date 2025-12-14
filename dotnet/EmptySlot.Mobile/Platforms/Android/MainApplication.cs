@@ -3,7 +3,7 @@ using Android.Runtime;
 
 namespace EmptySlot.Mobile;
 
-[Application]
+[Application(NetworkSecurityConfig = "@xml/network_security_config")]
 public class MainApplication : MauiApplication
 {
     public MainApplication(IntPtr handle, JniHandleOwnership ownership)
