@@ -8,7 +8,7 @@ public class ApiService : IApiService
 {
     private readonly HttpClient _httpClient;
     private readonly IAuthService _authService;
-    private const string BaseUrl = "https://localhost:7001/api"; // Change to your API URL
+    private const string BaseUrl = "http://10.0.2.2:5000/api"; // For Android emulator
 
     public ApiService(IAuthService authService)
     {
