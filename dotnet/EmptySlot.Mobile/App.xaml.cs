@@ -4,13 +4,13 @@ namespace EmptySlot.Mobile;
 
 public partial class App : Application
 {
-    private readonly IAuthService _authService;
-
-    public App(IAuthService authService)
+    public App()
     {
         InitializeComponent();
-        _authService = authService;
+    }
 
-        MainPage = new AppShell();
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new AppShell());
     }
 }
