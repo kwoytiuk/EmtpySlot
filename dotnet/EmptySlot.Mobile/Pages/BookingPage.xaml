@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             x:Class="EmptySlot.Mobile.Pages.BookingPage"
+             x:DataType="vm:BookingViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="{Binding Provider.BusinessName}"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <Label Text="Select Service"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <CollectionView ItemsSource="{Binding Provider.Services}"
+                           SelectionMode="Single"
+                           SelectedItem="{Binding SelectedService}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Service">
+                        <Frame Padding="10" Margin="0,5" CornerRadius="8">
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="{Binding Name}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding DurationMinutes, StringFormat='{0} minutes'}"
+                                       FontSize="14" />
+                                <Label Text="{Binding Price, StringFormat='${0:F2}'}"
+                                       FontSize="16"
+                                       TextColor="{StaticResource Primary}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Select Date"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <DatePicker Date="{Binding SelectedDate}"
+                       MinimumDate="{x:Static sys:DateTime.Today}" />
+
+            <Button Text="Book Appointment"
+                    Command="{Binding BookAppointmentCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,12 @@
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\bin\Debug\net8.0\EmptySlot.Shared.deps.json
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\bin\Debug\net8.0\EmptySlot.Shared.dll
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\bin\Debug\net8.0\EmptySlot.Shared.pdb
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.AssemblyInfoInputs.cache
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.AssemblyInfo.cs
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.csproj.CoreCompileInputs.cache
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.sourcelink.json
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.dll
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\refint\EmptySlot.Shared.dll
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\EmptySlot.Shared.pdb
+C:\projects\EmtpySlot\dotnet\EmptySlot.Shared\obj\Debug\net8.0\ref\EmptySlot.Shared.dll

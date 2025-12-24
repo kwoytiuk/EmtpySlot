@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             x:Class="EmptySlot.Mobile.Pages.SearchPage"
+             x:DataType="vm:SearchViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*" Padding="10">
+
+        <!-- Search Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,10">
+
+            <Picker Title="Select Category"
+                    ItemsSource="{Binding Categories}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedCategory}" />
+
+            <Button Text="Search"
+                    Command="{Binding SearchCommand}"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White" />
+        </VerticalStackLayout>
+
+        <!-- Results List -->
+        <CollectionView Grid.Row="1"
+                       ItemsSource="{Binding Providers}"
+                       SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Provider">
+                    <Frame Padding="10" Margin="0,5" CornerRadius="8">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                 CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="{Binding BusinessName}"
+                                   FontSize="18"
+                                   FontAttributes="Bold" />
+                            <Label Text="{Binding Description}"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Gray600}"
+                                   LineBreakMode="TailTruncation" />
+                            <HorizontalStackLayout Spacing="5">
+                                <Label Text="★"
+                                       TextColor="#FFC107"
+                                       FontSize="16" />
+                                <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                       FontSize="14" />
+                                <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
+                                       FontSize="14"
+                                       TextColor="{StaticResource Gray600}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator Grid.Row="1"
+                          IsRunning="{Binding IsBusy}"
+                          IsVisible="{Binding IsBusy}"
+                          VerticalOptions="Center"
+                          Color="{StaticResource Primary}" />
+    </Grid>
+
+</ContentPage>
