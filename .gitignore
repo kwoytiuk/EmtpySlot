@@ -85,3 +85,6 @@ yarn-error.log*
 /dotnet/EmptySlot.Shared/obj/project.assets.json
 /dotnet/EmptySlot.Shared/obj/project.nuget.cache
 /dotnet/EmptySlot.slnLaunch.user
+/dotnet/EmptySlot.Mobile/obj/Debug/net8.0-android/EmptySlot.Mobile.assets.cache
+/dotnet/EmptySlot.Mobile/obj/Debug/net8.0-android/EmptySlot.Mobile.GeneratedMSBuildEditorConfig.editorconfig
+/dotnet/EmptySlot.Mobile/obj/Debug/net8.0-android/EmptySlot.Mobile.GlobalUsings.g.cs
