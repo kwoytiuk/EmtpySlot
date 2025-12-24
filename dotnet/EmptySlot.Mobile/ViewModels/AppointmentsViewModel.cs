@@ -13,6 +13,7 @@ public partial class AppointmentsViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<Appointment> appointments = new();
 
+
     public AppointmentsViewModel(IApiService apiService)
     {
         _apiService = apiService;

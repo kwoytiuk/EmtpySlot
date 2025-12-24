@@ -10,8 +10,8 @@ Set-Location "$PSScriptRoot\dotnet"
 dotnet build EmptySlot.Mobile -f net9.0-android -t:Run
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "`nApp deployed successfully! ✓" -ForegroundColor Green
+    Write-Host "`nApp deployed successfully! " -ForegroundColor Green
     Write-Host "Check your Android emulator to see the app." -ForegroundColor Yellow
 } else {
-    Write-Host "`nDeployment failed! ✗" -ForegroundColor Red
+    Write-Host "`nDeployment failed! " -ForegroundColor Red
 }

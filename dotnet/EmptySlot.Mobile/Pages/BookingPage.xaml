@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
              x:Class="EmptySlot.Mobile.Pages.BookingPage"
              x:DataType="vm:BookingViewModel"
              Title="{Binding Title}">
@@ -22,7 +23,7 @@
                            SelectionMode="Single"
                            SelectedItem="{Binding SelectedService}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:Service">
                         <Frame Padding="10" Margin="0,5" CornerRadius="8">
                             <VerticalStackLayout Spacing="5">
                                 <Label Text="{Binding Name}"

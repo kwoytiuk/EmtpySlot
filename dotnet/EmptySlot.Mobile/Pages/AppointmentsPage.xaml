@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
              x:Class="EmptySlot.Mobile.Pages.AppointmentsPage"
              x:DataType="vm:AppointmentsViewModel"
              Title="{Binding Title}">
@@ -10,7 +11,7 @@
                  IsRefreshing="{Binding IsBusy}">
         <CollectionView ItemsSource="{Binding Appointments}">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate x:DataType="models:Appointment">
                     <Frame Padding="15" Margin="10,5" CornerRadius="8">
                         <VerticalStackLayout Spacing="8">
                             <Label Text="{Binding Provider.BusinessName}"
