@@ -37,3 +37,11 @@ yarn-error.log*
 
 # TypeScript
 *.tsbuildinfo
+/dotnet/EmptySlot.API/obj/Debug/net8.0/EmptySlot.API.assets.cache
+/dotnet/EmptySlot.API/obj/Debug/net8.0/EmptySlot.API.GeneratedMSBuildEditorConfig.editorconfig
+/dotnet/EmptySlot.API/obj/Debug/net8.0/EmptySlot.API.GlobalUsings.g.cs
+/dotnet/EmptySlot.Mobile/obj/EmptySlot.Mobile.csproj.nuget.g.props
+/dotnet/EmptySlot.Mobile/obj/EmptySlot.Mobile.csproj.nuget.g.targets
+/dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.assets.cache
+/dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.GeneratedMSBuildEditorConfig.editorconfig
+/dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.GlobalUsings.g.cs
