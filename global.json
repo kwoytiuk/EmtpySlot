@@ -1,10 +1,7 @@
 {
   "sdk": {
-    "version": "8.0.0",
+    "version": "9.0.0",
     "rollForward": "latestMinor",
     "allowPrerelease": false
-  },
-  "msbuild-sdks": {
-    "Microsoft.NET.Sdk.Maui": "8.0.90"
   }
 }
