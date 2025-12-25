@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Maui/9.0.120">
+﻿<Project Sdk="Microsoft.NET.Sdk.Maui">
 
   <PropertyGroup>
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
