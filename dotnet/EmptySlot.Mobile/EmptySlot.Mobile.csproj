@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Maui">
+﻿<Project Sdk="Microsoft.NET.Sdk.Maui/9.0.120">
 
   <PropertyGroup>
     <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
@@ -8,6 +8,7 @@
     <RootNamespace>EmptySlot.Mobile</RootNamespace>
 
     <UseMaui>true</UseMaui>
+    <EnableDefaultMauiItems>true</EnableDefaultMauiItems>
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
