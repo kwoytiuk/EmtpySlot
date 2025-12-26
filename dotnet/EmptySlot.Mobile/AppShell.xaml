@@ -4,13 +4,24 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:EmptySlot.Mobile.Pages"
-    Shell.FlyoutBehavior="Disabled">
+    Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="{StaticResource White}"
+    Shell.TabBarForegroundColor="{StaticResource Primary}"
+    Shell.TabBarUnselectedColor="{StaticResource Gray600}"
+    Shell.TabBarTitleColor="{StaticResource Primary}">
 
     <TabBar>
-        <Tab Title="Search" Icon="search.png">
+        <Tab Title="Search">
+            <Tab.Icon>
+                <FontImageSource Glyph="🔍" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
+            </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate pages:SearchPage}" />
         </Tab>
-        <Tab Title="Appointments" Icon="calendar.png">
+
+        <Tab Title="Appointments">
+            <Tab.Icon>
+                <FontImageSource Glyph="📅" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
+            </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate pages:AppointmentsPage}" />
         </Tab>
     </TabBar>
