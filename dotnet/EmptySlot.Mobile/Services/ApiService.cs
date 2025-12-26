@@ -37,7 +37,7 @@ public class ApiService : IApiService
         if (request.Verified.HasValue) queryParams.Add($"verified={request.Verified}");
 
         var query = string.Join("&", queryParams);
-        var response = await _httpClient.GetAsync($"/providers/search?{query}");
+        var response = await _httpClient.GetAsync($"providers/search?{query}");
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<List<Provider>>() ?? new List<Provider>();
@@ -45,7 +45,7 @@ public class ApiService : IApiService
 
     public async Task<Provider?> GetProviderAsync(Guid id)
     {
-        var response = await _httpClient.GetAsync($"/providers/{id}");
+        var response = await _httpClient.GetAsync($"providers/{id}");
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<Provider>();
@@ -54,7 +54,7 @@ public class ApiService : IApiService
     public async Task<List<Appointment>> GetMyAppointmentsAsync()
     {
         await AddAuthHeaderAsync();
-        var response = await _httpClient.GetAsync("/appointments");
+        var response = await _httpClient.GetAsync("appointments");
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<List<Appointment>>() ?? new List<Appointment>();
@@ -63,7 +63,7 @@ public class ApiService : IApiService
     public async Task<Appointment> CreateAppointmentAsync(CreateAppointmentDto dto)
     {
         await AddAuthHeaderAsync();
-        var response = await _httpClient.PostAsJsonAsync("/appointments", dto);
+        var response = await _httpClient.PostAsJsonAsync("appointments", dto);
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<Appointment>()
@@ -74,7 +74,7 @@ public class ApiService : IApiService
     {
         try
         {
-            var response = await _httpClient.GetAsync("/categories");
+            var response = await _httpClient.GetAsync("categories");
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<List<ServiceCategory>>() ?? new List<ServiceCategory>();
