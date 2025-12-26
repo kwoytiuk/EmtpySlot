@@ -4,73 +4,202 @@
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
              x:Class="EmptySlot.Mobile.Pages.RegisterPage"
              x:DataType="vm:RegisterViewModel"
-             Title="{Binding Title}">
+             Title=""
+             BackgroundColor="{StaticResource Gray50}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
+        <VerticalStackLayout Spacing="0">
 
-            <Label Text="Create Account"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource Primary}" />
+            <!-- Header Section -->
+            <Grid RowDefinitions="Auto" Padding="32,60,32,50" BackgroundColor="{StaticResource Primary}">
+                <VerticalStackLayout Spacing="16">
+                    <!-- Logo Icon -->
+                    <Border WidthRequest="80"
+                            HeightRequest="80"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="White"
+                            HorizontalOptions="Center"
+                            Shadow="{Shadow Brush=Black, Radius=20, Opacity=0.2, Offset='0,6'}">
+                        <Label Text="✨"
+                               FontSize="42"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+                    </Border>
 
-            <Label Text="Join EmptySlot to book appointments"
-                   FontSize="16"
-                   HorizontalOptions="Center"
-                   TextColor="{StaticResource Gray600}"
-                   Margin="0,0,0,30" />
+                    <Label Text="Join EmptySlot"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="White"
+                           Margin="0,12,0,0" />
 
-            <Entry Placeholder="Full Name"
-                   Text="{Binding FullName}"
-                   BackgroundColor="{StaticResource Gray100}"
-                   TextColor="{StaticResource Gray900}" />
+                    <Label Text="Create an account to start booking"
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           TextColor="#E0E7FF"
+                           Opacity="0.92" />
+                </VerticalStackLayout>
+            </Grid>
 
-            <Entry Placeholder="Email"
-                   Text="{Binding Email}"
-                   Keyboard="Email"
-                   BackgroundColor="{StaticResource Gray100}"
-                   TextColor="{StaticResource Gray900}" />
+            <!-- Register Form Card -->
+            <VerticalStackLayout Padding="24,0,24,40">
+                <Border Margin="0,-40,0,0"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 24"
+                        BackgroundColor="White"
+                        Shadow="{Shadow Brush=Black, Radius=24, Opacity=0.1, Offset='0,8'}">
+                    <VerticalStackLayout Padding="28,32" Spacing="20">
 
-            <Entry Placeholder="Password"
-                   Text="{Binding Password}"
-                   IsPassword="True"
-                   BackgroundColor="{StaticResource Gray100}"
-                   TextColor="{StaticResource Gray900}" />
+                        <!-- Full Name Input -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Full Name"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="2"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Entry Placeholder="John Doe"
+                                       Text="{Binding FullName}"
+                                       FontSize="16"
+                                       TextColor="{StaticResource Gray900}"
+                                       PlaceholderColor="{StaticResource Gray400}"
+                                       Margin="16,4" />
+                            </Border>
+                        </VerticalStackLayout>
 
-            <Entry Placeholder="Confirm Password"
-                   Text="{Binding ConfirmPassword}"
-                   IsPassword="True"
-                   BackgroundColor="{StaticResource Gray100}"
-                   TextColor="{StaticResource Gray900}" />
+                        <!-- Email Input -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Email"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="2"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Entry Placeholder="your@email.com"
+                                       Text="{Binding Email}"
+                                       Keyboard="Email"
+                                       FontSize="16"
+                                       TextColor="{StaticResource Gray900}"
+                                       PlaceholderColor="{StaticResource Gray400}"
+                                       Margin="16,4" />
+                            </Border>
+                        </VerticalStackLayout>
 
-            <Label Text="{Binding ErrorMessage}"
-                   TextColor="Red"
-                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                        <!-- Password Input -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Password"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="2"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Entry Placeholder="At least 6 characters"
+                                       Text="{Binding Password}"
+                                       IsPassword="True"
+                                       FontSize="16"
+                                       TextColor="{StaticResource Gray900}"
+                                       PlaceholderColor="{StaticResource Gray400}"
+                                       Margin="16,4" />
+                            </Border>
+                        </VerticalStackLayout>
 
-            <Button Text="Register"
-                    Command="{Binding RegisterCommand}"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
-                    HeightRequest="50"
-                    CornerRadius="8"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                        <!-- Confirm Password Input -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Confirm Password"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="2"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Entry Placeholder="Re-enter your password"
+                                       Text="{Binding ConfirmPassword}"
+                                       IsPassword="True"
+                                       FontSize="16"
+                                       TextColor="{StaticResource Gray900}"
+                                       PlaceholderColor="{StaticResource Gray400}"
+                                       Margin="16,4" />
+                            </Border>
+                        </VerticalStackLayout>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                              IsVisible="{Binding IsBusy}"
-                              Color="{StaticResource Primary}" />
+                        <!-- Error Message -->
+                        <Border IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="#FEF2F2"
+                                Padding="16,12">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="⚠️"
+                                       FontSize="16"
+                                       VerticalOptions="Center" />
+                                <Label Text="{Binding ErrorMessage}"
+                                       TextColor="{StaticResource Error}"
+                                       FontSize="14"
+                                       LineBreakMode="WordWrap"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="FillAndExpand" />
+                            </HorizontalStackLayout>
+                        </Border>
 
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,20,0,0">
-                <Label Text="Already have an account?"
-                       TextColor="{StaticResource Gray600}" />
-                <Label Text="Login"
-                       TextColor="{StaticResource Primary}"
-                       FontAttributes="Bold">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
-            </HorizontalStackLayout>
+                        <!-- Register Button -->
+                        <Button Text="Create Account"
+                                Command="{Binding RegisterCommand}"
+                                BackgroundColor="{StaticResource Accent}"
+                                TextColor="White"
+                                HeightRequest="54"
+                                CornerRadius="12"
+                                FontSize="17"
+                                FontAttributes="Bold"
+                                Margin="0,8,0,0"
+                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                Shadow="{Shadow Brush={StaticResource Accent}, Radius=12, Opacity=0.35, Offset='0,4'}" />
+
+                        <!-- Loading Indicator -->
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                          IsVisible="{Binding IsBusy}"
+                                          Color="{StaticResource Primary}"
+                                          WidthRequest="40"
+                                          HeightRequest="40"
+                                          HorizontalOptions="Center" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Sign In Link -->
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                      Spacing="6"
+                                      Margin="0,32,0,0">
+                    <Label Text="Already have an account?"
+                           TextColor="{StaticResource Gray600}"
+                           FontSize="15" />
+                    <Label Text="Sign In"
+                           TextColor="{StaticResource Primary}"
+                           FontSize="15"
+                           FontAttributes="Bold"
+                           TextDecorations="Underline">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+                <!-- Branding Footer -->
+                <Label Text="EmptySlot"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Gray400}"
+                       HorizontalOptions="Center"
+                       Margin="0,40,0,0" />
+
+            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>

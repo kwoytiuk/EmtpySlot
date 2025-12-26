@@ -5,192 +5,414 @@
              xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
              x:Class="EmptySlot.Mobile.Pages.SearchPage"
              x:DataType="vm:SearchViewModel"
-             Title="{Binding Title}">
+             Title=""
+             BackgroundColor="{StaticResource Gray50}">
 
-    <Grid RowDefinitions="Auto,*" Padding="10">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
 
-        <!-- Search Header -->
-        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,10">
+            <!-- Hero Section with Search -->
+            <Grid RowDefinitions="Auto,Auto" Padding="24,40,24,28" BackgroundColor="{StaticResource Primary}">
 
-            <Label Text="Search for Services"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   Margin="0,0,0,10" />
-
-            <!-- Location Search -->
-            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Location" FontSize="14" FontAttributes="Bold" />
-                    <Entry Placeholder="City (e.g., Calgary, Edmonton)"
-                           Text="{Binding SearchCity}"
-                           ReturnCommand="{Binding SearchCommand}" />
-                    <Button Text="📍 Use My Location"
-                            Command="{Binding DetectLocationCommand}"
-                            BackgroundColor="{StaticResource Gray100}"
-                            TextColor="{StaticResource Gray900}"
-                            HeightRequest="40"
-                            CornerRadius="6"
-                            FontSize="14"
-                            IsEnabled="{Binding IsDetectingLocation, Converter={StaticResource InvertedBoolConverter}}" />
-                    <HorizontalStackLayout Spacing="10">
-                        <Label Text="Radius:" VerticalOptions="Center" />
-                        <Picker Title="Select Radius"
-                                ItemsSource="{Binding RadiusOptions}"
-                                SelectedItem="{Binding SelectedRadius}"
-                                HorizontalOptions="FillAndExpand" />
-                    </HorizontalStackLayout>
+                <!-- Title Section -->
+                <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,24">
+                    <Label Text="Find Your Perfect Appointment"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           LineHeight="1.15" />
+                    <Label Text="Discover top-rated service providers near you"
+                           FontSize="16"
+                           TextColor="#E0E7FF"
+                           Opacity="0.92" />
                 </VerticalStackLayout>
-            </Frame>
 
-            <!-- Category Filter -->
-            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Category" FontSize="14" FontAttributes="Bold" />
-                    <Picker Title="All Categories"
-                            ItemsSource="{Binding Categories}"
-                            ItemDisplayBinding="{Binding Name}"
-                            SelectedItem="{Binding SelectedCategory}" />
-                </VerticalStackLayout>
-            </Frame>
+                <!-- Search Card -->
+                <Border Grid.Row="1"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        BackgroundColor="White"
+                        Shadow="{Shadow Brush=Black, Radius=20, Opacity=0.15, Offset='0,6'}">
+                    <VerticalStackLayout Padding="20" Spacing="16">
 
-            <!-- Additional Filters -->
-            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Filters" FontSize="14" FontAttributes="Bold" />
-                    <HorizontalStackLayout Spacing="10">
-                        <CheckBox IsChecked="{Binding VerifiedOnly}" />
-                        <Label Text="Verified providers only" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                    <HorizontalStackLayout Spacing="10">
-                        <CheckBox IsChecked="{Binding FeaturedOnly}" />
-                        <Label Text="Featured providers only" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Frame>
-
-            <Button Text="Search"
-                    Command="{Binding SearchCommand}"
-                    BackgroundColor="{StaticResource Primary}"
-                    TextColor="White"
-                    HeightRequest="50"
-                    CornerRadius="8"
-                    FontSize="16"
-                    FontAttributes="Bold" />
-        </VerticalStackLayout>
-
-        <!-- Results List with Pull-to-Refresh -->
-        <RefreshView Grid.Row="1"
-                    Command="{Binding SearchCommand}"
-                    IsRefreshing="{Binding IsBusy}"
-                    RefreshColor="{StaticResource Primary}">
-            <CollectionView ItemsSource="{Binding Providers}"
-                           SelectionMode="None"
-                           Margin="0,10,0,0">
-                <CollectionView.EmptyView>
-                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="20">
-                    <Label Text="No providers found"
-                           FontSize="18"
-                           HorizontalOptions="Center"
-                           TextColor="{StaticResource Gray600}" />
-                    <Label Text="Try adjusting your search filters"
-                           FontSize="14"
-                           HorizontalOptions="Center"
-                           TextColor="{StaticResource Gray400}"
-                           Margin="0,10,0,0" />
-                </VerticalStackLayout>
-            </CollectionView.EmptyView>
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Provider">
-                    <Frame Padding="15" Margin="0,5" CornerRadius="12" HasShadow="True">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
-                                                 CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
-
+                        <!-- Location Input -->
                         <VerticalStackLayout Spacing="8">
-                            <!-- Header with badges -->
-                            <HorizontalStackLayout Spacing="10">
-                                <Label Text="{Binding BusinessName}"
-                                       FontSize="18"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="StartAndExpand"
-                                       VerticalOptions="Center" />
-                                <Frame IsVisible="{Binding IsVerified}"
-                                       Padding="5,2"
-                                       BackgroundColor="#4CAF50"
-                                       CornerRadius="4"
-                                       HasShadow="False">
-                                    <Label Text="✓ Verified"
-                                           TextColor="White"
-                                           FontSize="11" />
-                                </Frame>
-                                <Frame IsVisible="{Binding IsFeatured}"
-                                       Padding="5,2"
-                                       BackgroundColor="#FF9800"
-                                       CornerRadius="4"
-                                       HasShadow="False">
-                                    <Label Text="★ Featured"
-                                           TextColor="White"
-                                           FontSize="11" />
-                                </Frame>
-                            </HorizontalStackLayout>
-
-                            <!-- Description -->
-                            <Label Text="{Binding Description}"
-                                   FontSize="14"
-                                   TextColor="{StaticResource Gray600}"
-                                   LineBreakMode="WordWrap"
-                                   MaxLines="2" />
-
-                            <!-- Location -->
-                            <HorizontalStackLayout Spacing="5" IsVisible="{Binding Locations.Count}">
-                                <Label Text="📍"
-                                       FontSize="14" />
-                                <Label Text="{Binding Locations[0].City}"
-                                       FontSize="14"
-                                       TextColor="{StaticResource Gray600}" />
-                                <Label Text=", "
-                                       FontSize="14"
-                                       TextColor="{StaticResource Gray600}" />
-                                <Label Text="{Binding Locations[0].StateProvince}"
-                                       FontSize="14"
-                                       TextColor="{StaticResource Gray600}" />
-                            </HorizontalStackLayout>
-
-                            <!-- Rating -->
-                            <HorizontalStackLayout Spacing="5">
-                                <Label Text="★"
-                                       TextColor="#FFC107"
-                                       FontSize="18" />
-                                <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
-                                       FontSize="16"
-                                       FontAttributes="Bold" />
-                                <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
-                                       FontSize="14"
-                                       TextColor="{StaticResource Gray600}"
-                                       VerticalOptions="Center" />
-                            </HorizontalStackLayout>
-
-                            <!-- Service count -->
-                            <Label Text="{Binding Services.Count, StringFormat='{0} services available'}"
+                            <Label Text="Location"
                                    FontSize="13"
-                                   TextColor="{StaticResource Primary}"
-                                   FontAttributes="Italic" />
-                        </VerticalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="1.5"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <HorizontalStackLayout Spacing="10" Padding="14,0">
+                                    <Label Text="📍"
+                                           FontSize="18"
+                                           VerticalOptions="Center" />
+                                    <Entry Placeholder="Calgary, Edmonton..."
+                                           Text="{Binding SearchCity}"
+                                           ReturnCommand="{Binding SearchCommand}"
+                                           FontSize="16"
+                                           TextColor="{StaticResource Gray900}"
+                                           PlaceholderColor="{StaticResource Gray400}"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="FillAndExpand"
+                                           Margin="0" />
+                                </HorizontalStackLayout>
+                            </Border>
 
-        <ActivityIndicator Grid.Row="1"
-                          IsRunning="{Binding IsBusy}"
-                          IsVisible="{Binding IsBusy}"
-                          VerticalOptions="Center"
-                          Color="{StaticResource Primary}"
-                          WidthRequest="50"
-                          HeightRequest="50" />
-    </Grid>
+                            <Label Text="Use My Location"
+                                   TextColor="{StaticResource Primary}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   Margin="4,4,0,0">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding DetectLocationCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+
+                        <!-- Category Picker -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Service Category"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="1.5"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Picker Title="All Categories"
+                                        ItemsSource="{Binding Categories}"
+                                        ItemDisplayBinding="{Binding Name}"
+                                        SelectedItem="{Binding SelectedCategory}"
+                                        FontSize="16"
+                                        TextColor="{StaticResource Gray900}"
+                                        TitleColor="{StaticResource Gray400}"
+                                        Margin="10,0" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Filters Row -->
+                        <HorizontalStackLayout Spacing="12">
+                            <!-- Verified Filter -->
+                            <Border StrokeThickness="1.5"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 10"
+                                    BackgroundColor="White"
+                                    Padding="12,8"
+                                    HorizontalOptions="Start">
+                                <HorizontalStackLayout Spacing="8">
+                                    <CheckBox IsChecked="{Binding VerifiedOnly}"
+                                              Color="{StaticResource Accent}" />
+                                    <Label Text="Verified"
+                                           FontSize="14"
+                                           TextColor="{StaticResource Gray700}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+
+                            <!-- Featured Filter -->
+                            <Border StrokeThickness="1.5"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 10"
+                                    BackgroundColor="White"
+                                    Padding="12,8"
+                                    HorizontalOptions="Start">
+                                <HorizontalStackLayout Spacing="8">
+                                    <CheckBox IsChecked="{Binding FeaturedOnly}"
+                                              Color="{StaticResource Warning}" />
+                                    <Label Text="Featured"
+                                           FontSize="14"
+                                           TextColor="{StaticResource Gray700}"
+                                           VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+
+                        <!-- Radius Selector -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Search Radius"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource Gray700}" />
+                            <Border StrokeThickness="1.5"
+                                    Stroke="{StaticResource Gray300}"
+                                    StrokeShape="RoundRectangle 12"
+                                    BackgroundColor="White">
+                                <Picker ItemsSource="{Binding RadiusOptions}"
+                                        SelectedItem="{Binding SelectedRadius}"
+                                        FontSize="16"
+                                        TextColor="{StaticResource Gray900}"
+                                        Margin="10,0" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Search Button -->
+                        <Button Text="Search Providers"
+                                Command="{Binding SearchCommand}"
+                                BackgroundColor="{StaticResource Accent}"
+                                TextColor="White"
+                                HeightRequest="54"
+                                CornerRadius="12"
+                                FontSize="17"
+                                FontAttributes="Bold"
+                                Margin="0,8,0,0"
+                                Shadow="{Shadow Brush={StaticResource Accent}, Radius=12, Opacity=0.35, Offset='0,4'}" />
+
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Results Section -->
+            <VerticalStackLayout Padding="20,24,20,24" Spacing="20">
+
+                <!-- Results Header -->
+                <HorizontalStackLayout Spacing="8" Margin="4,0,0,0" IsVisible="{Binding Providers.Count}">
+                    <Label Text="{Binding Providers.Count}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource Gray900}"
+                           VerticalOptions="Center" />
+                    <Label Text="providers found"
+                           FontSize="20"
+                           TextColor="{StaticResource Gray600}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!-- Provider Cards -->
+                <RefreshView Command="{Binding SearchCommand}"
+                            IsRefreshing="{Binding IsBusy}"
+                            RefreshColor="{StaticResource Primary}">
+                    <CollectionView ItemsSource="{Binding Providers}"
+                                   SelectionMode="None"
+                                   VerticalOptions="Start">
+
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center" Padding="60,40" Spacing="16">
+                                <Label Text="🔍"
+                                       FontSize="56"
+                                       HorizontalOptions="Center"
+                                       Opacity="0.5" />
+                                <Label Text="No Providers Found"
+                                       FontSize="22"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       TextColor="{StaticResource Gray800}" />
+                                <Label Text="Try adjusting your filters or expanding your search radius"
+                                       FontSize="15"
+                                       HorizontalOptions="Center"
+                                       TextColor="{StaticResource Gray500}"
+                                       HorizontalTextAlignment="Center"
+                                       LineHeight="1.4" />
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Provider">
+                                <!-- Modern Provider Card -->
+                                <Border Margin="0,0,0,20"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 20"
+                                        BackgroundColor="White"
+                                        Shadow="{Shadow Brush=Black, Radius=16, Opacity=0.08, Offset='0,4'}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                             CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+
+                                    <Grid RowDefinitions="200,Auto">
+
+                                        <!-- Image Section with Gradient -->
+                                        <Grid Grid.Row="0">
+                                            <!-- Placeholder Background -->
+                                            <BoxView BackgroundColor="{StaticResource Gray200}"
+                                                     CornerRadius="20,20,0,0" />
+
+                                            <!-- Gradient Pattern (simulating image) -->
+                                            <BoxView CornerRadius="20,20,0,0">
+                                                <BoxView.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                        <GradientStop Color="#3B82F6" Offset="0.0" />
+                                                        <GradientStop Color="#2563EB" Offset="0.5" />
+                                                        <GradientStop Color="#1D4ED8" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </BoxView.Background>
+                                            </BoxView>
+
+                                            <!-- Dark Gradient Overlay -->
+                                            <BoxView VerticalOptions="Fill"
+                                                     CornerRadius="20,20,0,0"
+                                                     Opacity="0.25">
+                                                <BoxView.Background>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="Transparent" Offset="0.0" />
+                                                        <GradientStop Color="Black" Offset="1.0" />
+                                                    </LinearGradientBrush>
+                                                </BoxView.Background>
+                                            </BoxView>
+
+                                            <!-- Badges Overlay -->
+                                            <HorizontalStackLayout Spacing="8"
+                                                                  Margin="16"
+                                                                  VerticalOptions="Start"
+                                                                  HorizontalOptions="End">
+                                                <Border IsVisible="{Binding IsVerified}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 8"
+                                                        BackgroundColor="{StaticResource Success}"
+                                                        Padding="10,6"
+                                                        Shadow="{Shadow Brush=Black, Radius=8, Opacity=0.2, Offset='0,2'}">
+                                                    <Label Text="✓ Verified"
+                                                           TextColor="White"
+                                                           FontSize="12"
+                                                           FontAttributes="Bold" />
+                                                </Border>
+
+                                                <Border IsVisible="{Binding IsFeatured}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 8"
+                                                        BackgroundColor="{StaticResource Warning}"
+                                                        Padding="10,6"
+                                                        Shadow="{Shadow Brush=Black, Radius=8, Opacity=0.2, Offset='0,2'}">
+                                                    <Label Text="⭐ Featured"
+                                                           TextColor="White"
+                                                           FontSize="12"
+                                                           FontAttributes="Bold" />
+                                                </Border>
+                                            </HorizontalStackLayout>
+
+                                            <!-- Business Initial Icon -->
+                                            <Border WidthRequest="60"
+                                                    HeightRequest="60"
+                                                    StrokeThickness="3"
+                                                    Stroke="White"
+                                                    StrokeShape="RoundRectangle 30"
+                                                    BackgroundColor="{StaticResource PrimaryDark}"
+                                                    VerticalOptions="End"
+                                                    HorizontalOptions="Start"
+                                                    Margin="20,-30,0,0"
+                                                    Shadow="{Shadow Brush=Black, Radius=12, Opacity=0.15, Offset='0,4'}">
+                                                <Label Text="{Binding BusinessName, StringFormat='{0:C}'}"
+                                                       FontSize="24"
+                                                       FontAttributes="Bold"
+                                                       TextColor="White"
+                                                       HorizontalOptions="Center"
+                                                       VerticalOptions="Center" />
+                                            </Border>
+                                        </Grid>
+
+                                        <!-- Card Content -->
+                                        <VerticalStackLayout Grid.Row="1"
+                                                            Padding="20,36,20,20"
+                                                            Spacing="12">
+
+                                            <!-- Business Name -->
+                                            <Label Text="{Binding BusinessName}"
+                                                   FontSize="22"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{StaticResource Gray900}"
+                                                   LineBreakMode="TailTruncation"
+                                                   MaxLines="1" />
+
+                                            <!-- Rating Row -->
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="⭐"
+                                                       FontSize="18" />
+                                                <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                                       FontSize="18"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{StaticResource Gray900}"
+                                                       VerticalOptions="Center" />
+                                                <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
+                                                       FontSize="15"
+                                                       TextColor="{StaticResource Gray500}"
+                                                       VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+
+                                            <!-- Location -->
+                                            <HorizontalStackLayout Spacing="8" IsVisible="{Binding Locations.Count}">
+                                                <Label Text="📍"
+                                                       FontSize="16"
+                                                       VerticalOptions="Center" />
+                                                <Label FontSize="15"
+                                                       TextColor="{StaticResource Gray600}"
+                                                       VerticalOptions="Center">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="{Binding Locations[0].City}" FontAttributes="Bold" />
+                                                            <Span Text=", " />
+                                                            <Span Text="{Binding Locations[0].StateProvince}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                            </HorizontalStackLayout>
+
+                                            <!-- Description -->
+                                            <Label Text="{Binding Description}"
+                                                   FontSize="15"
+                                                   TextColor="{StaticResource Gray600}"
+                                                   LineBreakMode="WordWrap"
+                                                   MaxLines="2"
+                                                   LineHeight="1.5"
+                                                   Margin="0,4,0,0" />
+
+                                            <!-- Divider -->
+                                            <BoxView HeightRequest="1"
+                                                     BackgroundColor="{StaticResource Gray200}"
+                                                     Margin="0,8,0,8" />
+
+                                            <!-- Services Count -->
+                                            <HorizontalStackLayout Spacing="8">
+                                                <Label Text="💼"
+                                                       FontSize="16"
+                                                       VerticalOptions="Center" />
+                                                <Label Text="{Binding Services.Count, StringFormat='{0} services available'}"
+                                                       FontSize="14"
+                                                       TextColor="{StaticResource Primary}"
+                                                       FontAttributes="Bold"
+                                                       VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
+
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
+            </VerticalStackLayout>
+
+            <!-- Loading Overlay -->
+            <Grid IsVisible="{Binding IsBusy}"
+                  BackgroundColor="#F0FFFFFF"
+                  Padding="40"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Center"
+                  Margin="20">
+                <Border StrokeThickness="0"
+                        StrokeShape="RoundRectangle 20"
+                        BackgroundColor="White"
+                        Padding="40,30"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Shadow="{Shadow Brush=Black, Radius=20, Opacity=0.1, Offset='0,4'}">
+                    <VerticalStackLayout Spacing="20">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                          Color="{StaticResource Primary}"
+                                          WidthRequest="50"
+                                          HeightRequest="50"
+                                          HorizontalOptions="Center" />
+                        <Label Text="Finding providers..."
+                               TextColor="{StaticResource Gray700}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

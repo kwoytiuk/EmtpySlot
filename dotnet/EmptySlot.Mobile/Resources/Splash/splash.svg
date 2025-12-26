@@ -1,4 +1,48 @@
-<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
-  <rect width="128" height="128" fill="#512BD4" />
-  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial" font-size="20">Logo</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
+  <!-- Professional splash screen with branding -->
+  <defs>
+    <linearGradient id="splashBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:0.9" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="456" height="456" fill="url(#splashBg)"/>
+
+  <!-- Calendar icon (smaller for splash) -->
+  <g transform="translate(108, 80)">
+    <!-- Calendar body -->
+    <rect x="20" y="50" width="200" height="180" rx="18" fill="url(#iconGlow)" opacity="0.95"/>
+
+    <!-- Calendar header -->
+    <rect x="20" y="50" width="200" height="50" rx="18" fill="#FFFFFF" opacity="0.3"/>
+
+    <!-- Binding rings -->
+    <circle cx="70" cy="42" r="10" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="120" cy="42" r="10" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="170" cy="42" r="10" fill="#FFFFFF" opacity="0.9"/>
+
+    <!-- Empty slot highlight -->
+    <rect x="45" y="125" width="50" height="42" rx="8" fill="#34D399" opacity="0.95"/>
+
+    <!-- Other slots -->
+    <rect x="110" y="125" width="50" height="42" rx="8" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="175" y="125" width="25" height="42" rx="8" fill="#FFFFFF" opacity="0.4"/>
+
+    <rect x="45" y="180" width="50" height="42" rx="8" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="110" y="180" width="50" height="42" rx="8" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="175" y="180" width="25" height="42" rx="8" fill="#FFFFFF" opacity="0.4"/>
+  </g>
+
+  <!-- App name -->
+  <text x="228" y="320" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="0">EmptySlot</text>
+
+  <!-- Tagline -->
+  <text x="228" y="360" text-anchor="middle" fill="#E0E7FF" font-family="Arial, sans-serif" font-size="18" font-weight="400" letter-spacing="1">Find Your Perfect Appointment</text>
 </svg>

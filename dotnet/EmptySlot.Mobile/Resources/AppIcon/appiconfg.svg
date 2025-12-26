@@ -1,1 +1,35 @@
-<svg width="1" height="1" xmlns="http://www.w3.org/2000/svg"></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="432" height="432" viewBox="0 0 432 432" xmlns="http://www.w3.org/2000/svg">
+  <!-- Foreground only version (no background) for adaptive icons -->
+  <defs>
+    <linearGradient id="fgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Calendar icon -->
+  <g transform="translate(70, 70)">
+    <!-- Calendar body -->
+    <rect x="20" y="50" width="240" height="210" rx="20" fill="url(#fgGradient)" opacity="0.95"/>
+
+    <!-- Calendar header -->
+    <rect x="20" y="50" width="240" height="60" rx="20" fill="#FFFFFF" opacity="0.3"/>
+
+    <!-- Binding rings -->
+    <circle cx="80" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="140" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
+    <circle cx="200" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
+
+    <!-- Empty slot highlight (centered) -->
+    <rect x="50" y="140" width="60" height="50" rx="10" fill="#34D399" opacity="0.9"/>
+
+    <!-- Other calendar slots (subtle) -->
+    <rect x="130" y="140" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="210" y="140" width="30" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
+
+    <rect x="50" y="205" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="130" y="205" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
+    <rect x="210" y="205" width="30" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
+  </g>
+</svg>
