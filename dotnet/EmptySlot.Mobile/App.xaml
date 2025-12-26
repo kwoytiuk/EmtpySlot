@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <!-- Converters -->
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
             <!-- Colors -->
             <Color x:Key="Primary">#2563EB</Color>

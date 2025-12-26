@@ -24,13 +24,13 @@ public partial class SearchViewModel : BaseViewModel
     private string searchQuery = string.Empty;
 
     [ObservableProperty]
-    private string searchCity = "Seattle";
+    private string searchCity = "Calgary";
 
     [ObservableProperty]
     private ObservableCollection<string> radiusOptions = new() { "5 km", "10 km", "25 km", "50 km", "100 km" };
 
     [ObservableProperty]
-    private string selectedRadius = "25 km";
+    private string selectedRadius = "50 km";
 
     [ObservableProperty]
     private bool verifiedOnly = true;
@@ -38,10 +38,103 @@ public partial class SearchViewModel : BaseViewModel
     [ObservableProperty]
     private bool featuredOnly = false;
 
+    [ObservableProperty]
+    private bool isDetectingLocation = false;
+
+    [ObservableProperty]
+    private double? currentLatitude;
+
+    [ObservableProperty]
+    private double? currentLongitude;
+
     public SearchViewModel(IApiService apiService)
     {
         _apiService = apiService;
         Title = "Find Services";
+    }
+
+    [RelayCommand]
+    async Task DetectLocation()
+    {
+        try
+        {
+            IsDetectingLocation = true;
+
+            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            }
+
+            if (status == PermissionStatus.Granted)
+            {
+                var location = await Geolocation.GetLastKnownLocationAsync();
+
+                if (location == null)
+                {
+                    var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
+                    location = await Geolocation.GetLocationAsync(request);
+                }
+
+                if (location != null)
+                {
+                    CurrentLatitude = location.Latitude;
+                    CurrentLongitude = location.Longitude;
+
+                    // Try to get city name from coordinates
+                    SearchCity = await GetCityFromCoordinates(location.Latitude, location.Longitude);
+
+                    await Shell.Current.DisplayAlert("Location Detected",
+                        $"Searching near {SearchCity}",
+                        "OK");
+                }
+                else
+                {
+                    await Shell.Current.DisplayAlert("Location Not Available",
+                        "Could not detect your current location. Using default location.",
+                        "OK");
+                }
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Permission Denied",
+                    "Location permission is required to detect your location. You can still search by entering a city name.",
+                    "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error detecting location: {ex.Message}");
+            await Shell.Current.DisplayAlert("Error",
+                "Unable to detect location. Please enter a city manually.",
+                "OK");
+        }
+        finally
+        {
+            IsDetectingLocation = false;
+        }
+    }
+
+    private async Task<string> GetCityFromCoordinates(double latitude, double longitude)
+    {
+        try
+        {
+            var placemarks = await Geocoding.GetPlacemarksAsync(latitude, longitude);
+            var placemark = placemarks?.FirstOrDefault();
+
+            if (placemark != null && !string.IsNullOrEmpty(placemark.Locality))
+            {
+                return placemark.Locality;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Geocoding error: {ex.Message}");
+        }
+
+        // Default to Calgary if geocoding fails
+        return "Calgary";
     }
 
     [RelayCommand]
@@ -81,8 +174,8 @@ public partial class SearchViewModel : BaseViewModel
 
             var request = new SearchProvidersRequest(
                 CategoryId: SelectedCategory?.Id,
-                Latitude: null, // TODO: Add geocoding for city search or use device location
-                Longitude: null,
+                Latitude: CurrentLatitude,
+                Longitude: CurrentLongitude,
                 RadiusKm: radiusKm,
                 MinRating: null,
                 Verified: VerifiedOnly ? true : null
