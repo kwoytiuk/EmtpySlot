@@ -68,6 +68,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.RatingAverage).HasPrecision(3, 2);
 
+            // Indexes for performance
+            entity.HasIndex(e => e.Verified);
+            entity.HasIndex(e => e.IsFeatured);
+            entity.HasIndex(e => e.RatingAverage);
+            entity.HasIndex(e => new { e.Verified, e.IsFeatured });
+
             entity.HasMany(e => e.Locations)
                 .WithOne(e => e.Provider)
                 .HasForeignKey(e => e.ProviderId)
@@ -94,6 +100,10 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.StateProvince).IsRequired().HasMaxLength(100);
             entity.Property(e => e.PostalCode).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Country).IsRequired().HasMaxLength(100);
+
+            // Indexes for location-based searches
+            entity.HasIndex(e => e.City);
+            entity.HasIndex(e => new { e.City, e.StateProvince });
         });
 
         // Service configuration
@@ -133,6 +143,12 @@ public class ApplicationDbContext : DbContext
                 .HasMaxLength(20);
             entity.Property(e => e.Price).HasPrecision(10, 2);
             entity.Property(e => e.DepositPaid).HasPrecision(10, 2);
+
+            // Indexes for appointment queries
+            entity.HasIndex(e => e.StartDateTime);
+            entity.HasIndex(e => new { e.ProviderId, e.StartDateTime });
+            entity.HasIndex(e => new { e.CustomerId, e.StartDateTime });
+            entity.HasIndex(e => e.Status);
 
             entity.HasOne(e => e.Customer)
                 .WithMany(e => e.CustomerAppointments)

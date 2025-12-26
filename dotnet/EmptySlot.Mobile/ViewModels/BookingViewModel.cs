@@ -83,16 +83,29 @@ public partial class BookingViewModel : BaseViewModel
     {
         AvailableTimeSlots.Clear();
 
-        // Generate time slots from 9 AM to 6 PM in 30-minute intervals
-        var startHour = 9;
-        var endHour = 18;
+        // Generate time slots starting from current time, rounded to next 30-min interval
+        var now = DateTime.Now;
+        var currentMinute = now.Minute < 30 ? 30 : 0;
+        var startHour = currentMinute == 0 ? now.Hour + 1 : now.Hour;
 
+        // If it's past 6 PM, start from 9 AM tomorrow
+        if (startHour >= 18)
+        {
+            startHour = 9;
+        }
+
+        var endHour = 21; // Extended to 9 PM for dinner reservations
+
+        // Generate slots for today starting from current time
         for (int hour = startHour; hour < endHour; hour++)
         {
-            for (int minute = 0; minute < 60; minute += 30)
+            int startMinute = (hour == startHour && currentMinute > 0) ? currentMinute : 0;
+
+            for (int minute = startMinute; minute < 60; minute += 30)
             {
                 var time = new TimeSpan(hour, minute, 0);
-                AvailableTimeSlots.Add($"{hour:D2}:{minute:D2}");
+                var displayTime = DateTime.Today.Add(time).ToString("h:mm tt");
+                AvailableTimeSlots.Add(displayTime);
             }
         }
 
@@ -122,9 +135,14 @@ public partial class BookingViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            // Parse the selected time slot
-            var timeParts = SelectedTimeSlot.Split(':');
-            var startTime = new TimeSpan(int.Parse(timeParts[0]), int.Parse(timeParts[1]), 0);
+            // Parse the selected time slot (format: "h:mm tt")
+            if (!DateTime.TryParse(SelectedTimeSlot, out var parsedTime))
+            {
+                await Shell.Current.DisplayAlert("Error", "Invalid time slot format", "OK");
+                return;
+            }
+
+            var startTime = parsedTime.TimeOfDay;
             var endTime = startTime.Add(TimeSpan.FromMinutes(SelectedService.DurationMinutes));
 
             var dto = new CreateAppointmentDto(

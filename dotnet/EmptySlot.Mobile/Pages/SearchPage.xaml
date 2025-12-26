@@ -29,18 +29,37 @@
                             TextColor="#333" />
                 </Border>
 
-                <!-- Location Entry -->
+                <!-- Location Entry with GPS -->
                 <Border Grid.Column="1"
                         StrokeThickness="1"
                         Stroke="#E0E0E0"
                         StrokeShape="RoundRectangle 6"
                         BackgroundColor="White">
-                    <Entry Placeholder="Calgary, AB"
-                           Text="{Binding SearchCity}"
-                           FontSize="14"
-                           TextColor="#333"
-                           PlaceholderColor="#999"
-                           HorizontalTextAlignment="Center" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Entry Grid.Column="0"
+                               Placeholder="Calgary, AB"
+                               Text="{Binding SearchCity}"
+                               FontSize="14"
+                               TextColor="#333"
+                               PlaceholderColor="#999"
+                               HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="1"
+                               Text="📍"
+                               FontSize="18"
+                               VerticalOptions="Center"
+                               Padding="0,0,8,0">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DetectLocationCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                        <ActivityIndicator Grid.Column="1"
+                                          IsRunning="{Binding IsDetectingLocation}"
+                                          IsVisible="{Binding IsDetectingLocation}"
+                                          Color="#DA3743"
+                                          WidthRequest="20"
+                                          HeightRequest="20"
+                                          Margin="0,0,8,0" />
+                    </Grid>
                 </Border>
             </Grid>
 
@@ -67,7 +86,11 @@
                         <Label Text="🗺️ Map"
                                FontSize="13"
                                TextColor="#DA3743"
-                               FontAttributes="Bold" />
+                               FontAttributes="Bold">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShowMapCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Border>
 
                     <!-- Filters Button -->
@@ -79,7 +102,11 @@
                         <Label Text="⚙️ Filters"
                                FontSize="13"
                                TextColor="#666"
-                               FontAttributes="Bold" />
+                               FontAttributes="Bold">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ShowFiltersCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
                     </Border>
 
                     <!-- Distance -->
@@ -234,6 +261,10 @@
                                                     StrokeShape="RoundRectangle 3"
                                                     BackgroundColor="White"
                                                     Padding="12,5">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                                         CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
                                                 <Label Text="5:45 PM"
                                                        FontSize="10"
                                                        FontAttributes="Bold"
@@ -245,6 +276,10 @@
                                                     StrokeShape="RoundRectangle 3"
                                                     BackgroundColor="White"
                                                     Padding="12,5">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                                         CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
                                                 <Label Text="7:00 PM"
                                                        FontSize="10"
                                                        FontAttributes="Bold"
@@ -256,6 +291,10 @@
                                                     StrokeShape="RoundRectangle 3"
                                                     BackgroundColor="White"
                                                     Padding="12,5">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                                         CommandParameter="{Binding .}" />
+                                                </Border.GestureRecognizers>
                                                 <Label Text="7:15 PM"
                                                        FontSize="10"
                                                        FontAttributes="Bold"

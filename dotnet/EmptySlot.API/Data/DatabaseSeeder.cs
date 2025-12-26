@@ -223,6 +223,7 @@ public static class DatabaseSeeder
                         DurationMinutes = 120,
                         Price = priceLevel * 25.00m,
                         DepositRequired = priceLevel * 10.00m,
+                        ImageUrl = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400",
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
                     },
@@ -235,6 +236,7 @@ public static class DatabaseSeeder
                         DurationMinutes = 90,
                         Price = priceLevel * 18.00m,
                         DepositRequired = 0m,
+                        ImageUrl = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
                         IsActive = true,
                         CreatedAt = DateTime.UtcNow
                     }
@@ -295,10 +297,10 @@ public static class DatabaseSeeder
                 },
                 Services = new List<Service>
                 {
-                    new Service { Id = Guid.NewGuid(), Name = "Women's Cut & Style", CategoryId = category.Id, DurationMinutes = 60, Price = 85.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Men's Cut", CategoryId = category.Id, DurationMinutes = 30, Price = 45.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Color Treatment", CategoryId = category.Id, DurationMinutes = 120, Price = 150.00m, DepositRequired = 50.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Balayage/Highlights", CategoryId = category.Id, DurationMinutes = 180, Price = 250.00m, DepositRequired = 75.00m, IsActive = true }
+                    new Service { Id = Guid.NewGuid(), Name = "Women's Cut & Style", CategoryId = category.Id, DurationMinutes = 60, Price = 85.00m, ImageUrl = "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Men's Cut", CategoryId = category.Id, DurationMinutes = 30, Price = 45.00m, ImageUrl = "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Color Treatment", CategoryId = category.Id, DurationMinutes = 120, Price = 150.00m, DepositRequired = 50.00m, ImageUrl = "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Balayage/Highlights", CategoryId = category.Id, DurationMinutes = 180, Price = 250.00m, DepositRequired = 75.00m, ImageUrl = "https://images.unsplash.com/photo-1522337660859-02fbefca4702?w=400", IsActive = true }
                 }
             };
 
@@ -354,10 +356,10 @@ public static class DatabaseSeeder
                 },
                 Services = new List<Service>
                 {
-                    new Service { Id = Guid.NewGuid(), Name = "Swedish Massage (60min)", CategoryId = category.Id, DurationMinutes = 60, Price = 120.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Deep Tissue Massage (90min)", CategoryId = category.Id, DurationMinutes = 90, Price = 165.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Facial Treatment", CategoryId = category.Id, DurationMinutes = 75, Price = 140.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Body Scrub & Wrap", CategoryId = category.Id, DurationMinutes = 90, Price = 180.00m, DepositRequired = 60.00m, IsActive = true }
+                    new Service { Id = Guid.NewGuid(), Name = "Swedish Massage (60min)", CategoryId = category.Id, DurationMinutes = 60, Price = 120.00m, ImageUrl = "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Deep Tissue Massage (90min)", CategoryId = category.Id, DurationMinutes = 90, Price = 165.00m, ImageUrl = "https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Facial Treatment", CategoryId = category.Id, DurationMinutes = 75, Price = 140.00m, ImageUrl = "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Body Scrub & Wrap", CategoryId = category.Id, DurationMinutes = 90, Price = 180.00m, DepositRequired = 60.00m, ImageUrl = "https://images.unsplash.com/photo-1582719366362-f49c26d52536?w=400", IsActive = true }
                 }
             };
 
@@ -406,9 +408,9 @@ public static class DatabaseSeeder
                 },
                 Services = new List<Service>
                 {
-                    new Service { Id = Guid.NewGuid(), Name = "Gel Manicure", CategoryId = category.Id, DurationMinutes = 45, Price = 55.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Spa Pedicure", CategoryId = category.Id, DurationMinutes = 60, Price = 70.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Acrylic Full Set", CategoryId = category.Id, DurationMinutes = 90, Price = 85.00m, IsActive = true }
+                    new Service { Id = Guid.NewGuid(), Name = "Gel Manicure", CategoryId = category.Id, DurationMinutes = 45, Price = 55.00m, ImageUrl = "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Spa Pedicure", CategoryId = category.Id, DurationMinutes = 60, Price = 70.00m, ImageUrl = "https://images.unsplash.com/photo-1519014816548-bf5fe059798b?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Acrylic Full Set", CategoryId = category.Id, DurationMinutes = 90, Price = 85.00m, ImageUrl = "https://images.unsplash.com/photo-1610992015732-2449b76344bc?w=400", IsActive = true }
                 }
             });
         }
@@ -455,9 +457,9 @@ public static class DatabaseSeeder
                 },
                 Services = new List<Service>
                 {
-                    new Service { Id = Guid.NewGuid(), Name = "Personal Training Session", CategoryId = category.Id, DurationMinutes = 60, Price = 95.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Group Fitness Class", CategoryId = category.Id, DurationMinutes = 45, Price = 25.00m, IsActive = true },
-                    new Service { Id = Guid.NewGuid(), Name = "Fitness Assessment", CategoryId = category.Id, DurationMinutes = 30, Price = 50.00m, IsActive = true }
+                    new Service { Id = Guid.NewGuid(), Name = "Personal Training Session", CategoryId = category.Id, DurationMinutes = 60, Price = 95.00m, ImageUrl = "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Group Fitness Class", CategoryId = category.Id, DurationMinutes = 45, Price = 25.00m, ImageUrl = "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400", IsActive = true },
+                    new Service { Id = Guid.NewGuid(), Name = "Fitness Assessment", CategoryId = category.Id, DurationMinutes = 30, Price = 50.00m, ImageUrl = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400", IsActive = true }
                 }
             });
         }

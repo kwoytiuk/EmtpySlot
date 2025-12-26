@@ -217,4 +217,35 @@ public partial class SearchViewModel : BaseViewModel
 
         await Shell.Current.GoToAsync($"{nameof(BookingPage)}?ProviderId={provider.Id}");
     }
+
+    [RelayCommand]
+    async Task ShowMap()
+    {
+        await Shell.Current.DisplayAlert("Map View", "Map view will show provider locations on an interactive map.", "OK");
+        // TODO: Navigate to map page when implemented
+    }
+
+    [RelayCommand]
+    async Task ShowFilters()
+    {
+        // Toggle filters visibility or show dialog
+        var action = await Shell.Current.DisplayActionSheet(
+            "Filter Options",
+            "Cancel",
+            null,
+            VerifiedOnly ? "Hide Verified Only" : "Show Verified Only",
+            FeaturedOnly ? "Hide Featured Only" : "Show Featured Only"
+        );
+
+        if (action == "Show Verified Only" || action == "Hide Verified Only")
+        {
+            VerifiedOnly = !VerifiedOnly;
+            await Search();
+        }
+        else if (action == "Show Featured Only" || action == "Hide Featured Only")
+        {
+            FeaturedOnly = !FeaturedOnly;
+            await Search();
+        }
+    }
 }
