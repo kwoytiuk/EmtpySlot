@@ -12,6 +12,7 @@ public class Appointment
     public Guid ServiceId { get; set; }
     public Guid? StaffId { get; set; }
     public DateTime AppointmentDate { get; set; }
+    public DateTime StartDateTime { get; set; }
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
     public AppointmentStatus Status { get; set; } = AppointmentStatus.Pending;
