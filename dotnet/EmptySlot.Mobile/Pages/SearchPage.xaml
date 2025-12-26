@@ -262,7 +262,7 @@
                                                     BackgroundColor="White"
                                                     Padding="12,5">
                                                 <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
                                                                          CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
                                                 <Label Text="5:45 PM"
@@ -277,7 +277,7 @@
                                                     BackgroundColor="White"
                                                     Padding="12,5">
                                                 <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
                                                                          CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
                                                 <Label Text="7:00 PM"
@@ -292,7 +292,7 @@
                                                     BackgroundColor="White"
                                                     Padding="12,5">
                                                 <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
                                                                          CommandParameter="{Binding .}" />
                                                 </Border.GestureRecognizers>
                                                 <Label Text="7:15 PM"

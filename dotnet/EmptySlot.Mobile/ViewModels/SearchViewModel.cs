@@ -219,9 +219,42 @@ public partial class SearchViewModel : BaseViewModel
     }
 
     [RelayCommand]
+    async Task QuickBook(Provider provider)
+    {
+        if (provider == null) return;
+
+        // Show quick booking dialog with service selection
+        var services = provider.Services.Take(3).Select(s => s.Name).ToArray();
+        if (services.Length == 0)
+        {
+            await Shell.Current.DisplayAlert("No Services", "This provider doesn't have any services available.", "OK");
+            return;
+        }
+
+        var selectedService = await Shell.Current.DisplayActionSheet(
+            $"Book at {provider.BusinessName}",
+            "Cancel",
+            null,
+            services
+        );
+
+        if (selectedService != null && selectedService != "Cancel")
+        {
+            // Navigate to booking page with pre-selected service
+            await Shell.Current.GoToAsync($"{nameof(BookingPage)}?ProviderId={provider.Id}");
+        }
+    }
+
+    [RelayCommand]
     async Task ShowMap()
     {
-        await Shell.Current.DisplayAlert("Map View", "Map view will show provider locations on an interactive map.", "OK");
+        // Show simple map placeholder with provider count
+        var providerCount = Providers.Count;
+        var message = providerCount > 0
+            ? $"Showing {providerCount} providers in {SearchCity}.\n\nMap view with interactive pins coming soon!"
+            : "No providers to display on map.\n\nTry searching for providers first.";
+
+        await Shell.Current.DisplayAlert("Map View", message, "OK");
         // TODO: Navigate to map page when implemented
     }
 

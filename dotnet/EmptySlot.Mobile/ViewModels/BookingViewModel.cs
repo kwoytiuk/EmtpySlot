@@ -85,27 +85,36 @@ public partial class BookingViewModel : BaseViewModel
 
         // Generate time slots starting from current time, rounded to next 30-min interval
         var now = DateTime.Now;
-        var currentMinute = now.Minute < 30 ? 30 : 0;
-        var startHour = currentMinute == 0 ? now.Hour + 1 : now.Hour;
 
-        // If it's past 6 PM, start from 9 AM tomorrow
-        if (startHour >= 18)
+        // Round up to next 30-minute interval
+        int startMinute = now.Minute < 30 ? 30 : 0;
+        int startHour = now.Minute < 30 ? now.Hour : now.Hour + 1;
+
+        // If it's past 8 PM, start from 5:45 PM (next day context)
+        if (startHour >= 20)
         {
-            startHour = 9;
+            startHour = 17;
+            startMinute = 45;
         }
 
         var endHour = 21; // Extended to 9 PM for dinner reservations
 
-        // Generate slots for today starting from current time
-        for (int hour = startHour; hour < endHour; hour++)
-        {
-            int startMinute = (hour == startHour && currentMinute > 0) ? currentMinute : 0;
+        // Generate slots starting from the rounded time
+        var currentHour = startHour;
+        var currentMin = startMinute;
 
-            for (int minute = startMinute; minute < 60; minute += 30)
+        while (currentHour < endHour)
+        {
+            var time = new TimeSpan(currentHour, currentMin, 0);
+            var displayTime = DateTime.Today.Add(time).ToString("h:mm tt");
+            AvailableTimeSlots.Add(displayTime);
+
+            // Increment by 30 minutes
+            currentMin += 30;
+            if (currentMin >= 60)
             {
-                var time = new TimeSpan(hour, minute, 0);
-                var displayTime = DateTime.Today.Add(time).ToString("h:mm tt");
-                AvailableTimeSlots.Add(displayTime);
+                currentMin = 0;
+                currentHour++;
             }
         }
 
