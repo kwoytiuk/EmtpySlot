@@ -33,7 +33,7 @@ public partial class SearchViewModel : BaseViewModel
     private string selectedRadius = "50 km";
 
     [ObservableProperty]
-    private bool verifiedOnly = true;
+    private bool verifiedOnly = false;
 
     [ObservableProperty]
     private bool featuredOnly = false;
