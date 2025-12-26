@@ -12,6 +12,8 @@ public class Provider
     public string? LogoUrl { get; set; }
     public string? CoverImageUrl { get; set; }
     public bool Verified { get; set; } = false;
+    public bool IsVerified => Verified; // Alias for UI binding compatibility
+    public bool IsFeatured { get; set; } = false;
     public decimal RatingAverage { get; set; } = 0;
     public int RatingCount { get; set; } = 0;
     public string? CancellationPolicy { get; set; }

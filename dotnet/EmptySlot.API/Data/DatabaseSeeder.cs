@@ -22,7 +22,6 @@ public static class DatabaseSeeder
             Slug = "hair-salons",
             Icon = "✂️",
             DisplayOrder = 1,
-            IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -33,7 +32,6 @@ public static class DatabaseSeeder
             Slug = "spa-massage",
             Icon = "💆",
             DisplayOrder = 2,
-            IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -44,7 +42,6 @@ public static class DatabaseSeeder
             Slug = "nail-salons",
             Icon = "💅",
             DisplayOrder = 3,
-            IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -55,7 +52,6 @@ public static class DatabaseSeeder
             Slug = "fitness-gym",
             Icon = "💪",
             DisplayOrder = 4,
-            IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -67,15 +63,15 @@ public static class DatabaseSeeder
             new Provider
             {
                 Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(), // Temporary user ID
                 BusinessName = "Luxury Hair Studio",
                 Description = "Premier hair salon with expert stylists specializing in cuts, color, and treatments.",
                 Email = "info@luxuryhair.com",
                 Phone = "+1-555-0101",
                 RatingAverage = 4.8m,
                 RatingCount = 156,
-                IsVerified = true,
+                Verified = true,
                 IsFeatured = true,
-                IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 Locations = new List<ProviderLocation>
                 {
@@ -89,8 +85,7 @@ public static class DatabaseSeeder
                         PostalCode = "98101",
                         Country = "USA",
                         Latitude = 47.6062,
-                        Longitude = -122.3321,
-                        IsActive = true
+                        Longitude = -122.3321
                     }
                 },
                 Services = new List<Service>
@@ -123,8 +118,7 @@ public static class DatabaseSeeder
                     {
                         Id = Guid.NewGuid(),
                         Name = "Sarah Johnson",
-                        Title = "Senior Stylist",
-                        Bio = "10+ years experience in hair styling",
+                        Bio = "Senior Stylist with 10+ years experience in hair styling",
                         IsActive = true
                     }
                 }
@@ -132,15 +126,15 @@ public static class DatabaseSeeder
             new Provider
             {
                 Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(), // Temporary user ID
                 BusinessName = "Serenity Spa & Wellness",
                 Description = "Full-service spa offering massages, facials, and relaxation treatments.",
                 Email = "contact@serenityspa.com",
                 Phone = "+1-555-0102",
                 RatingAverage = 4.9m,
                 RatingCount = 203,
-                IsVerified = true,
+                Verified = true,
                 IsFeatured = true,
-                IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 Locations = new List<ProviderLocation>
                 {
@@ -154,8 +148,7 @@ public static class DatabaseSeeder
                         PostalCode = "98102",
                         Country = "USA",
                         Latitude = 47.6205,
-                        Longitude = -122.3493,
-                        IsActive = true
+                        Longitude = -122.3493
                     }
                 },
                 Services = new List<Service>
@@ -187,8 +180,7 @@ public static class DatabaseSeeder
                     {
                         Id = Guid.NewGuid(),
                         Name = "Michael Chen",
-                        Title = "Licensed Massage Therapist",
-                        Bio = "Certified in Swedish and deep tissue techniques",
+                        Bio = "Licensed Massage Therapist certified in Swedish and deep tissue techniques",
                         IsActive = true
                     }
                 }
@@ -196,15 +188,15 @@ public static class DatabaseSeeder
             new Provider
             {
                 Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(), // Temporary user ID
                 BusinessName = "Glamour Nails & Beauty",
                 Description = "Professional nail salon offering manicures, pedicures, and nail art.",
                 Email = "hello@glamournails.com",
                 Phone = "+1-555-0103",
                 RatingAverage = 4.7m,
                 RatingCount = 89,
-                IsVerified = true,
+                Verified = true,
                 IsFeatured = false,
-                IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 Locations = new List<ProviderLocation>
                 {
@@ -218,8 +210,7 @@ public static class DatabaseSeeder
                         PostalCode = "98122",
                         Country = "USA",
                         Latitude = 47.6247,
-                        Longitude = -122.3200,
-                        IsActive = true
+                        Longitude = -122.3200
                     }
                 },
                 Services = new List<Service>
@@ -249,15 +240,15 @@ public static class DatabaseSeeder
             new Provider
             {
                 Id = Guid.NewGuid(),
+                UserId = Guid.NewGuid(), // Temporary user ID
                 BusinessName = "PowerFit Gym",
                 Description = "Modern fitness center with personal training and group classes.",
                 Email = "info@powerfit.com",
                 Phone = "+1-555-0104",
                 RatingAverage = 4.6m,
                 RatingCount = 124,
-                IsVerified = true,
+                Verified = true,
                 IsFeatured = false,
-                IsActive = true,
                 CreatedAt = DateTime.UtcNow,
                 Locations = new List<ProviderLocation>
                 {
@@ -271,8 +262,7 @@ public static class DatabaseSeeder
                         PostalCode = "98103",
                         Country = "USA",
                         Latitude = 47.6501,
-                        Longitude = -122.3509,
-                        IsActive = true
+                        Longitude = -122.3509
                     }
                 },
                 Services = new List<Service>
