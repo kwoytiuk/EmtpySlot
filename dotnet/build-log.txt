@@ -1,0 +1,120 @@
+C:\Program Files\dotnet\sdk\9.0.308\MSBuild.dll -nologo -consoleloggerparameters:Summary -distributedlogger:Microsoft.DotNet.Tools.MSBuild.MSBuildLogger,C:\Program Files\dotnet\sdk\9.0.308\dotnet.dll*Microsoft.DotNet.Tools.MSBuild.MSBuildForwardingLogger,C:\Program Files\dotnet\sdk\9.0.308\dotnet.dll -maxcpucount -restore -tlp:default=auto -verbosity:m -verbosity:diag EmptySlot.Mobile\EmptySlot.Mobile.csproj
+Build started 12/25/2025 12:26:46 PM.
+Environment at start of build:
+DOTNET_CLI_TELEMETRY_SESSIONID = be16c5a4-03be-45c8-a431-ad49ce15e460
+MSBuildSDKsPath = C:\Program Files\dotnet\sdk\9.0.308\Sdks
+MSBUILDUSESERVER = 0
+DOTNET_HOST_PATH = C:\Program Files\dotnet\dotnet.exe
+MSBUILDFAILONDRIVEENUMERATINGWILDCARD = 1
+MSBuildExtensionsPath = C:\Program Files\dotnet\sdk\9.0.308\
+MSBuildLoadMicrosoftTargetsReadOnly = true
+
+12:26:46.606     0>Terminal Logger was not used because the output is being redirected to a file.
+                   Process = "C:\Program Files\dotnet\dotnet.exe"
+                   MSBuild executable path = "C:\Program Files\dotnet\sdk\9.0.308\MSBuild.dll"
+                   Command line arguments = "C:\Program Files\dotnet\sdk\9.0.308\MSBuild.dll -maxcpucount -verbosity:m -tlp:default=auto -nologo -restore -consoleloggerparameters:Summary -verbosity:diag EmptySlot.Mobile\EmptySlot.Mobile.csproj -distributedlogger:Microsoft.DotNet.Tools.MSBuild.MSBuildLogger,C:\Program Files\dotnet\sdk\9.0.308\dotnet.dll*Microsoft.DotNet.Tools.MSBuild.MSBuildForwardingLogger,C:\Program Files\dotnet\sdk\9.0.308\dotnet.dll"
+                   Current directory = "C:\projects\EmtpySlot\dotnet"
+                   MSBuild version = "17.14.28+09c1be848"
+                   Based on the Windows registry key LongPathsEnabled, the LongPaths feature is enabled.
+                   Based on the Windows registry key VerifiedAndReputablePolicyState, SAC state = 0: turned off.
+                   The "DefaultSdkResolver" resolver attempted to resolve the SDK "Microsoft.NET.Sdk.Maui".
+                   Warnings: null
+                   Errors: MSB4276: The default SDK resolver failed to resolve SDK "Microsoft.NET.Sdk.Maui" because directory "C:\Program Files\dotnet\sdk\9.0.308\Sdks\Microsoft.NET.Sdk.Maui\Sdk" did not exist.
+                   Assembly loaded during Evaluation: Microsoft.Build.NuGetSdkResolver, Version=6.14.0.116, Culture=neutral, PublicKeyToken=31bf3856ad364e35 (location: C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Build.NuGetSdkResolver.dll, MVID: ee5cca45-a90e-417e-aaf7-f0e96f222226, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Build.NuGetSdkResolver.dll)
+                   Assembly loaded during Evaluation: NuGet.Common, Version=6.14.0.116, Culture=neutral, PublicKeyToken=31bf3856ad364e35 (location: C:\Program Files\dotnet\sdk\9.0.308\NuGet.Common.dll, MVID: 0fbb79ae-e358-4591-bc91-e34371a3d05b, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Build.NuGetSdkResolver.dll)
+                   Assembly loaded during Evaluation: Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver, Version=9.0.308.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35 (location: C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll, MVID: de80750d-b56e-4389-a05e-16dd6c5dec69, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll)
+                   Assembly loaded during Evaluation: Microsoft.DotNet.Cli.Utils, Version=9.0.308.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 (location: C:\Program Files\dotnet\sdk\9.0.308\Microsoft.DotNet.Cli.Utils.dll, MVID: 2ebb2876-03cb-448a-8a26-71bfcb1cdd62, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll)
+                   Assembly loaded during Evaluation: Microsoft.NET.Sdk.WorkloadManifestReader, Version=9.0.308.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 (location: C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadManifestReader.dll, MVID: 116b6b15-b12d-443f-88a9-4a46c36ffe56, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll)
+                   Assembly loaded during Evaluation: Microsoft.Deployment.DotNet.Releases, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35 (location: C:\Program Files\dotnet\sdk\9.0.308\Microsoft.Deployment.DotNet.Releases.dll, MVID: 400d16c0-099c-46d2-bc0e-802a0637399b, AssemblyLoadContext: MSBuild plugin C:\Program Files\dotnet\sdk\9.0.308\Microsoft.NET.Sdk.WorkloadMSBuildSdkResolver.dll)
+                   Assembly loaded during Evaluation: NuGet.Versioning, Version=6.14.0.116, Culture=neutral, PublicKeyToken=31bf3856ad364e35 (location: C:\Program Files\dotnet\sdk\9.0.308\NuGet.Versioning.dll, MVID: ecae64d3-0ef8-4164-9110-1e65ba08bca4, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed (location: C:\Program Files\dotnet\sdk\9.0.308\Newtonsoft.Json.dll, MVID: 7e62198b-eab2-4380-bbac-29171862d1d8, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: System.Linq.Expressions, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.Linq.Expressions.dll, MVID: 758e2a4c-b121-48e1-83c6-b0c8e20af9d1, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: System.ComponentModel.TypeConverter, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.ComponentModel.TypeConverter.dll, MVID: 001ddd6a-4243-4715-a7fc-0bc2a6f57af1, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: System.ObjectModel, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.ObjectModel.dll, MVID: 2f45a37e-c7de-4d46-8e58-654e68b5d2ac, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: System.Runtime.Numerics, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.Runtime.Numerics.dll, MVID: 53e67dc6-e704-4799-91e7-339281599fca, AssemblyLoadContext: Default)
+                   Assembly loaded during Evaluation: System.Runtime.Serialization.Primitives, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.Runtime.Serialization.Primitives.dll, MVID: 47d327cb-b731-4c1c-be07-b226702ef148, AssemblyLoadContext: Default)
+                   The "Microsoft.DotNet.MSBuildWorkloadSdkResolver" resolver attempted to resolve the SDK "Microsoft.NET.Sdk.Maui".
+                   Warnings: null
+                   Errors: SDK resolver "Microsoft.DotNet.MSBuildWorkloadSdkResolver" returned null.
+                   Assembly loaded during Evaluation: System.Runtime.Serialization.Formatters, Version=8.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a (location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\9.0.11\System.Runtime.Serialization.Formatters.dll, MVID: bebf2261-1953-46fe-a0e6-4130c1fdba93, AssemblyLoadContext: Default)
+                   The "NuGetSdkResolver" resolver attempted to resolve the SDK "Microsoft.NET.Sdk.Maui".
+                   Warnings: null
+                   Errors: The NuGetSdkResolver did not resolve this SDK because there was no version specified in the project or global.json.
+12:26:46.690     0>C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error : Could not resolve SDK "Microsoft.NET.Sdk.Maui". Exactly one of the probing messages below indicates why we could not resolve the SDK. Investigate and resolve that message to correctly specify the SDK.
+C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error :   SDK resolver "Microsoft.DotNet.MSBuildWorkloadSdkResolver" returned null.
+C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error :   The NuGetSdkResolver did not resolve this SDK because there was no version specified in the project or global.json.
+12:26:46.691     0>Initial Properties:
+                   DOTNET_CLI_TELEMETRY_SESSIONID = be16c5a4-03be-45c8-a431-ad49ce15e460
+                   DOTNET_HOST_PATH = C:\Program Files\dotnet\dotnet.exe
+                   MSBuildAssemblyVersion = 17.0
+                   MSBuildBinPath = C:\Program Files\dotnet\sdk\9.0.308
+                   MSBuildDisableFeaturesFromVersion = 999.999
+                   MSBuildExtensionsPath = C:\Program Files\dotnet\sdk\9.0.308\
+                   MSBuildExtensionsPath32 = C:\Program Files\dotnet\sdk\9.0.308
+                   MSBuildExtensionsPath64 = C:\Program Files\dotnet\sdk\9.0.308
+                   MSBUILDFAILONDRIVEENUMERATINGWILDCARD = 1
+                   MSBuildFileVersion = 17.14.28.46601
+                   MSBuildIsRestoring = True
+                   MSBuildLoadMicrosoftTargetsReadOnly = true
+                   MSBuildNodeCount = 20
+                   MSBuildProgramFiles32 = C:\Program Files (x86)
+                   MSBuildProjectDirectory = C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile
+                   MSBuildProjectDirectoryNoRoot = projects\EmtpySlot\dotnet\EmptySlot.Mobile
+                   MSBuildProjectExtension = .csproj
+                   MSBuildProjectFile = EmptySlot.Mobile.csproj
+                   MSBuildProjectFullPath = C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj
+                   MSBuildProjectName = EmptySlot.Mobile
+                   MSBuildRestoreSessionId = 0b54e884-e453-4021-b682-721a745053e5
+                   MSBuildRuntimeType = Core
+                   MSBuildSDKsPath = C:\Program Files\dotnet\sdk\9.0.308\Sdks
+                   MSBuildSemanticVersion = 17.14.28+09c1be848
+                   MSBuildStartupDirectory = C:\projects\EmtpySlot\dotnet
+                   MSBuildToolsPath = C:\Program Files\dotnet\sdk\9.0.308
+                   MSBuildToolsVersion = Current
+                   MSBuildUserExtensionsPath = C:\Users\ken\AppData\Local\Microsoft\MSBuild
+                   MSBUILDUSESERVER = 0
+                   MSBuildVersion = 17.14.28
+                   RoslynTargetsPath = C:\Program Files\dotnet\sdk\9.0.308\Roslyn
+
+12:26:46.691     1>Project "C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj" on node 1 (Restore target(s)).
+12:26:46.691     1>C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error MSB4236: The SDK 'Microsoft.NET.Sdk.Maui' specified could not be found.
+12:26:46.691     1>Done Building Project "C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj" (Restore target(s)) -- FAILED.
+Deferred Messages
+12:26:46.693     0>
+Detailed Build Summary
+======================
+     (TaskId:0)
+                     
+                     ============================== Build Hierarchy (IDs represent configurations) =====================================================
+                     Id                  : Exclusive Time   Total Time   Path (Targets)
+                     ----------------------------------------------------------------------------------------------------------------------------------- (TaskId:0)
+                     0                   : 0.076s           0.076s       C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj (Restore)  (TaskId:0)
+                     
+                     ============================== Node Utilization (IDs represent configurations) ====================================================
+                     Timestamp:            1        Duration   Cumulative
+                     ----------------------------------------------------------------------------------------------------------------------------------- (TaskId:0)
+                     639022876066161773:   0        0.077s     0.077s . (TaskId:0)
+                     -----------------------------------------------------------------------------------------------------------------------------------
+                     Utilization:          100.0    Average Utilization: 100.0 (TaskId:0)
+
+Project Evaluation Performance Summary:
+       60 ms  C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj   1 calls
+
+Project Performance Summary:
+        0 ms  C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj   1 calls
+                  0 ms  Restore                                    1 calls
+
+Build FAILED.
+
+                     C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error : Could not resolve SDK "Microsoft.NET.Sdk.Maui". Exactly one of the probing messages below indicates why we could not resolve the SDK. Investigate and resolve that message to correctly specify the SDK.
+                   C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error :   SDK resolver "Microsoft.DotNet.MSBuildWorkloadSdkResolver" returned null.
+                   C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error :   The NuGetSdkResolver did not resolve this SDK because there was no version specified in the project or global.json.
+
+
+                   "C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj" (Restore target) (1) ->
+                     C:\projects\EmtpySlot\dotnet\EmptySlot.Mobile\EmptySlot.Mobile.csproj : error MSB4236: The SDK 'Microsoft.NET.Sdk.Maui' specified could not be found.
+
+    0 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:00.10
