@@ -8,6 +8,7 @@
             <!-- Converters -->
             <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
 
             <!-- Colors -->
             <Color x:Key="Primary">#2563EB</Color>

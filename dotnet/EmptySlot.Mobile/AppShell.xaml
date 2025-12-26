@@ -10,15 +10,25 @@
     Shell.TabBarUnselectedColor="{StaticResource Gray600}"
     Shell.TabBarTitleColor="{StaticResource Primary}">
 
+    <!-- Auth Pages (no tab bar) -->
+    <ShellContent Route="LoginPage"
+                  ContentTemplate="{DataTemplate pages:LoginPage}"
+                  Shell.TabBarIsVisible="False" />
+
+    <ShellContent Route="RegisterPage"
+                  ContentTemplate="{DataTemplate pages:RegisterPage}"
+                  Shell.TabBarIsVisible="False" />
+
+    <!-- Main App (with tab bar) -->
     <TabBar>
-        <Tab Title="Search">
+        <Tab Title="Search" Route="SearchPage">
             <Tab.Icon>
                 <FontImageSource Glyph="🔍" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
             </Tab.Icon>
             <ShellContent ContentTemplate="{DataTemplate pages:SearchPage}" />
         </Tab>
 
-        <Tab Title="Appointments">
+        <Tab Title="Appointments" Route="AppointmentsPage">
             <Tab.Icon>
                 <FontImageSource Glyph="📅" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
             </Tab.Icon>

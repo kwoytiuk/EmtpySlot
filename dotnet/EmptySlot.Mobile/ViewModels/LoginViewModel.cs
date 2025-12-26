@@ -59,4 +59,10 @@ public partial class LoginViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    [RelayCommand]
+    async Task GoToRegister()
+    {
+        await Shell.Current.GoToAsync("//RegisterPage");
+    }
 }

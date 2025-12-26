@@ -2,24 +2,29 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
-             x:Class="EmptySlot.Mobile.Pages.LoginPage"
-             x:DataType="vm:LoginViewModel"
+             x:Class="EmptySlot.Mobile.Pages.RegisterPage"
+             x:DataType="vm:RegisterViewModel"
              Title="{Binding Title}">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20" VerticalOptions="Center">
 
-            <Label Text="EmptySlot"
+            <Label Text="Create Account"
                    FontSize="32"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    TextColor="{StaticResource Primary}" />
 
-            <Label Text="Find and book appointments"
+            <Label Text="Join EmptySlot to book appointments"
                    FontSize="16"
                    HorizontalOptions="Center"
                    TextColor="{StaticResource Gray600}"
                    Margin="0,0,0,30" />
+
+            <Entry Placeholder="Full Name"
+                   Text="{Binding FullName}"
+                   BackgroundColor="{StaticResource Gray100}"
+                   TextColor="{StaticResource Gray900}" />
 
             <Entry Placeholder="Email"
                    Text="{Binding Email}"
@@ -33,12 +38,18 @@
                    BackgroundColor="{StaticResource Gray100}"
                    TextColor="{StaticResource Gray900}" />
 
+            <Entry Placeholder="Confirm Password"
+                   Text="{Binding ConfirmPassword}"
+                   IsPassword="True"
+                   BackgroundColor="{StaticResource Gray100}"
+                   TextColor="{StaticResource Gray900}" />
+
             <Label Text="{Binding ErrorMessage}"
                    TextColor="Red"
                    IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
 
-            <Button Text="Login"
-                    Command="{Binding LoginCommand}"
+            <Button Text="Register"
+                    Command="{Binding RegisterCommand}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
                     HeightRequest="50"
@@ -50,13 +61,13 @@
                               Color="{StaticResource Primary}" />
 
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="5" Margin="0,20,0,0">
-                <Label Text="Don't have an account?"
+                <Label Text="Already have an account?"
                        TextColor="{StaticResource Gray600}" />
-                <Label Text="Register"
+                <Label Text="Login"
                        TextColor="{StaticResource Primary}"
                        FontAttributes="Bold">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
                     </Label.GestureRecognizers>
                 </Label>
             </HorizontalStackLayout>

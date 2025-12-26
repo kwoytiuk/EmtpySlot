@@ -22,7 +22,7 @@ public class AuthService : IAuthService
         try
         {
             var request = new { Email = email, Password = password };
-            var response = await _httpClient.PostAsJsonAsync("/auth/login", request);
+            var response = await _httpClient.PostAsJsonAsync("auth/login", request);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -51,7 +51,7 @@ public class AuthService : IAuthService
         try
         {
             var request = new { Email = email, Password = password, FullName = fullName };
-            var response = await _httpClient.PostAsJsonAsync("/auth/register", request);
+            var response = await _httpClient.PostAsJsonAsync("auth/register", request);
 
             if (!response.IsSuccessStatusCode)
             {
