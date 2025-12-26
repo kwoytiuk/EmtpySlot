@@ -16,5 +16,11 @@ public partial class SearchPage : ContentPage
     {
         base.OnAppearing();
         await _viewModel.LoadCategoriesCommand.ExecuteAsync(null);
+
+        // Auto-search on first load to show providers immediately
+        if (_viewModel.Providers.Count == 0)
+        {
+            await _viewModel.SearchCommand.ExecuteAsync(null);
+        }
     }
 }

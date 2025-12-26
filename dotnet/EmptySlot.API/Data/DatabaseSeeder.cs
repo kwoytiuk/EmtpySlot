@@ -184,7 +184,7 @@ public static class DatabaseSeeder
             var provider = new Provider
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                UserId = null, // Seeded providers don't have user accounts
                 BusinessName = name,
                 Description = $"Experience {cuisine} cuisine at its finest. {name} offers an unforgettable dining experience with fresh, locally-sourced ingredients and exceptional service.",
                 Email = $"info@{name.ToLower().Replace(" ", "").Replace("&", "and")}.ca",
@@ -267,7 +267,7 @@ public static class DatabaseSeeder
             var provider = new Provider
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                UserId = null, // Seeded providers don't have user accounts
                 BusinessName = name,
                 Description = "Award-winning salon specializing in precision cuts, color treatments, and luxury styling. Our expert stylists stay current with the latest trends.",
                 Email = $"book@{name.ToLower().Replace(" ", "")}.ca",
@@ -326,7 +326,7 @@ public static class DatabaseSeeder
             var provider = new Provider
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                UserId = null, // Seeded providers don't have user accounts
                 BusinessName = name,
                 Description = "Escape to tranquility with our premium spa treatments. From massage to facials, we offer the ultimate relaxation experience.",
                 Email = $"info@{name.ToLower().Replace(" ", "")}.ca",
@@ -378,7 +378,7 @@ public static class DatabaseSeeder
             providers.Add(new Provider
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                UserId = null, // Seeded providers don't have user accounts
                 BusinessName = name,
                 Description = "Professional nail care and artistry. From classic manicures to intricate nail art designs.",
                 Email = $"hello@{name.ToLower().Replace(" ", "")}.ca",
@@ -427,7 +427,7 @@ public static class DatabaseSeeder
             providers.Add(new Provider
             {
                 Id = Guid.NewGuid(),
-                UserId = Guid.NewGuid(),
+                UserId = null, // Seeded providers don't have user accounts
                 BusinessName = name,
                 Description = "State-of-the-art fitness facility with personal training, group classes, and premium equipment.",
                 Email = $"join@{name.ToLower().Replace(" ", "")}.ca",

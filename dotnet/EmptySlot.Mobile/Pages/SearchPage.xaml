@@ -5,323 +5,298 @@
              xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
              x:Class="EmptySlot.Mobile.Pages.SearchPage"
              x:DataType="vm:SearchViewModel"
-             Title=""
-             BackgroundColor="White">
+             Title="Search"
+             BackgroundColor="#F5F5F5">
 
     <Grid RowDefinitions="Auto,*">
 
-        <!-- Search Header - Compact -->
-        <VerticalStackLayout Grid.Row="0" Padding="16,12" Spacing="12" BackgroundColor="{StaticResource Gray50}">
+        <!-- Search Header -->
+        <VerticalStackLayout Grid.Row="0" Padding="12" Spacing="10" BackgroundColor="White">
 
-            <!-- Category & Location Filters -->
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+            <!-- Search Filters Row -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <!-- Category Picker -->
                 <Border Grid.Column="0"
                         StrokeThickness="1"
-                        Stroke="{StaticResource Gray300}"
-                        StrokeShape="RoundRectangle 8"
-                        BackgroundColor="White"
-                        Padding="2">
+                        Stroke="#E0E0E0"
+                        StrokeShape="RoundRectangle 6"
+                        BackgroundColor="White">
                     <Picker ItemsSource="{Binding Categories}"
                             ItemDisplayBinding="{Binding Name}"
                             SelectedItem="{Binding SelectedCategory}"
-                            Title="All categories"
+                            Title="All restaurants"
                             FontSize="14"
-                            TextColor="{StaticResource Gray800}" />
+                            TextColor="#333" />
                 </Border>
 
+                <!-- Location Entry -->
                 <Border Grid.Column="1"
                         StrokeThickness="1"
-                        Stroke="{StaticResource Gray300}"
-                        StrokeShape="RoundRectangle 8"
-                        BackgroundColor="White"
-                        Padding="2">
+                        Stroke="#E0E0E0"
+                        StrokeShape="RoundRectangle 6"
+                        BackgroundColor="White">
                     <Entry Placeholder="Calgary, AB"
                            Text="{Binding SearchCity}"
                            FontSize="14"
-                           TextColor="{StaticResource Gray800}"
-                           HorizontalTextAlignment="Center"
-                           VerticalOptions="Center" />
+                           TextColor="#333"
+                           PlaceholderColor="#999"
+                           HorizontalTextAlignment="Center" />
                 </Border>
             </Grid>
 
-            <!-- Quick Action Buttons -->
-            <HorizontalStackLayout Spacing="8">
-                <Border StrokeThickness="1"
-                        Stroke="{StaticResource Primary}"
-                        StrokeShape="RoundRectangle 20"
-                        BackgroundColor="White"
-                        Padding="12,6">
-                    <Label Text="🗺️ Map View"
-                           FontSize="13"
-                           TextColor="{StaticResource Primary}"
-                           FontAttributes="Bold" />
-                </Border>
+            <!-- Search Button -->
+            <Button Text="Search"
+                    Command="{Binding SearchCommand}"
+                    BackgroundColor="#DA3743"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HeightRequest="44"
+                    CornerRadius="6"
+                    Margin="0,4,0,0" />
 
-                <Border StrokeThickness="1"
-                        Stroke="{StaticResource Gray300}"
-                        StrokeShape="RoundRectangle 20"
-                        BackgroundColor="White"
-                        Padding="12,6">
-                    <HorizontalStackLayout Spacing="4">
-                        <Label Text="⚙️"
+            <!-- Filter Options Bar -->
+            <ScrollView Orientation="Horizontal" HeightRequest="40">
+                <HorizontalStackLayout Spacing="8">
+                    <!-- Map Button -->
+                    <Border StrokeThickness="1"
+                            Stroke="#DA3743"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="White"
+                            Padding="12,6">
+                        <Label Text="🗺️ Map"
                                FontSize="13"
-                               VerticalOptions="Center" />
-                        <Label Text="Filters"
-                               FontSize="13"
-                               TextColor="{StaticResource Gray700}"
-                               FontAttributes="Bold"
-                               VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </Border>
+                               TextColor="#DA3743"
+                               FontAttributes="Bold" />
+                    </Border>
 
-                <Border StrokeThickness="1"
-                        Stroke="{StaticResource Gray300}"
-                        StrokeShape="RoundRectangle 20"
-                        BackgroundColor="White"
-                        Padding="12,6">
-                    <Picker ItemsSource="{Binding RadiusOptions}"
-                            SelectedItem="{Binding SelectedRadius}"
-                            FontSize="13"
-                            TextColor="{StaticResource Gray700}"
-                            WidthRequest="80" />
-                </Border>
-            </HorizontalStackLayout>
+                    <!-- Filters Button -->
+                    <Border StrokeThickness="1"
+                            Stroke="#CCC"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="White"
+                            Padding="12,6">
+                        <Label Text="⚙️ Filters"
+                               FontSize="13"
+                               TextColor="#666"
+                               FontAttributes="Bold" />
+                    </Border>
+
+                    <!-- Distance -->
+                    <Border StrokeThickness="1"
+                            Stroke="#CCC"
+                            StrokeShape="RoundRectangle 20"
+                            BackgroundColor="White"
+                            Padding="2,0">
+                        <Picker ItemsSource="{Binding RadiusOptions}"
+                                SelectedItem="{Binding SelectedRadius}"
+                                FontSize="13"
+                                TextColor="#666"
+                                WidthRequest="90" />
+                    </Border>
+                </HorizontalStackLayout>
+            </ScrollView>
 
         </VerticalStackLayout>
 
-        <!-- Provider List - Horizontal Layout -->
+        <!-- Provider List -->
         <RefreshView Grid.Row="1"
                     Command="{Binding SearchCommand}"
                     IsRefreshing="{Binding IsBusy}"
-                    RefreshColor="{StaticResource Primary}">
+                    RefreshColor="#DA3743">
             <CollectionView ItemsSource="{Binding Providers}"
                            SelectionMode="None"
-                           BackgroundColor="White">
+                           BackgroundColor="#F5F5F5">
 
                 <CollectionView.EmptyView>
                     <VerticalStackLayout Padding="40" Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
                         <Label Text="🔍"
                                FontSize="48"
-                               HorizontalOptions="Center"
-                               Opacity="0.5" />
+                               HorizontalOptions="Center" />
                         <Label Text="No providers found"
                                FontSize="18"
                                FontAttributes="Bold"
                                HorizontalOptions="Center"
-                               TextColor="{StaticResource Gray700}" />
-                        <Label Text="Try adjusting your filters"
+                               TextColor="#666" />
+                        <Label Text="Tap Search to find providers"
                                FontSize="14"
                                HorizontalOptions="Center"
-                               TextColor="{StaticResource Gray500}" />
+                               TextColor="#999" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Provider">
-                        <!-- Horizontal Card Layout (OpenTable Style) -->
-                        <Border Margin="0,0,0,1"
+                        <!-- OpenTable-Style Horizontal Card -->
+                        <Border Margin="0,0,0,8"
                                 StrokeThickness="0"
                                 BackgroundColor="White"
-                                Padding="16,12">
+                                Padding="12">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
                                                      CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
 
-                            <Grid ColumnDefinitions="100,*" ColumnSpacing="12">
+                            <Grid ColumnDefinitions="90,*" ColumnSpacing="12" RowSpacing="0">
 
-                                <!-- Provider Image/Thumbnail -->
+                                <!-- Restaurant Image -->
                                 <Border Grid.Column="0"
+                                        Grid.RowSpan="2"
                                         StrokeThickness="0"
-                                        StrokeShape="RoundRectangle 8"
-                                        HeightRequest="100"
-                                        WidthRequest="100"
+                                        StrokeShape="RoundRectangle 4"
+                                        HeightRequest="90"
+                                        WidthRequest="90"
                                         VerticalOptions="Start">
                                     <Grid>
-                                        <!-- Gradient Background -->
-                                        <BoxView CornerRadius="8">
+                                        <!-- Colored Background -->
+                                        <BoxView CornerRadius="4">
                                             <BoxView.Background>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                                    <GradientStop Color="#3B82F6" Offset="0.0" />
-                                                    <GradientStop Color="#1D4ED8" Offset="1.0" />
+                                                    <GradientStop Color="#E63946" Offset="0.0" />
+                                                    <GradientStop Color="#D62828" Offset="1.0" />
                                                 </LinearGradientBrush>
                                             </BoxView.Background>
                                         </BoxView>
 
                                         <!-- Business Initial -->
                                         <Label Text="{Binding BusinessName, StringFormat='{0:C}'}"
-                                               FontSize="32"
+                                               FontSize="28"
                                                FontAttributes="Bold"
                                                TextColor="White"
                                                HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               Opacity="0.7" />
-
-                                        <!-- Verified Badge (if applicable) -->
-                                        <Border IsVisible="{Binding IsVerified}"
-                                                WidthRequest="20"
-                                                HeightRequest="20"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 10"
-                                                BackgroundColor="{StaticResource Success}"
-                                                Margin="4"
-                                                VerticalOptions="Start"
-                                                HorizontalOptions="End">
-                                            <Label Text="✓"
-                                                   FontSize="12"
-                                                   FontAttributes="Bold"
-                                                   TextColor="White"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center" />
-                                        </Border>
+                                               VerticalOptions="Center" />
                                     </Grid>
                                 </Border>
 
-                                <!-- Provider Info -->
-                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <!-- Restaurant Info -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="3">
 
                                     <!-- Name -->
                                     <Label Text="{Binding BusinessName}"
-                                           FontSize="16"
+                                           FontSize="15"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource Gray900}"
-                                           LineBreakMode="TailTruncation"
-                                           MaxLines="1" />
+                                           TextColor="#1A1A1A"
+                                           LineBreakMode="TailTruncation" />
 
-                                    <!-- Rating, Reviews, Price -->
-                                    <HorizontalStackLayout Spacing="6">
+                                    <!-- Stars & Reviews & Price -->
+                                    <HorizontalStackLayout Spacing="4">
                                         <Label Text="★★★★☆"
-                                               FontSize="12"
-                                               TextColor="{StaticResource Warning}"
+                                               FontSize="11"
+                                               TextColor="#FF6B35"
                                                VerticalOptions="Center" />
                                         <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
-                                               FontSize="12"
+                                               FontSize="11"
                                                FontAttributes="Bold"
-                                               TextColor="{StaticResource Gray800}"
+                                               TextColor="#2A2A2A"
                                                VerticalOptions="Center" />
                                         <Label Text="{Binding RatingCount, StringFormat='({0})'}"
-                                               FontSize="12"
-                                               TextColor="{StaticResource Gray500}"
+                                               FontSize="11"
+                                               TextColor="#757575"
                                                VerticalOptions="Center" />
-                                        <Label Text="•"
-                                               FontSize="12"
-                                               TextColor="{StaticResource Gray400}"
+                                        <Label Text="·"
+                                               FontSize="11"
+                                               TextColor="#CCC"
                                                VerticalOptions="Center" />
                                         <Label Text="$$"
-                                               FontSize="12"
-                                               TextColor="{StaticResource Gray600}"
+                                               FontSize="11"
+                                               FontAttributes="Bold"
+                                               TextColor="#2A2A2A"
                                                VerticalOptions="Center" />
                                     </HorizontalStackLayout>
 
-                                    <!-- Description/Cuisine -->
+                                    <!-- Cuisine/Description -->
                                     <Label Text="{Binding Description}"
-                                           FontSize="13"
-                                           TextColor="{StaticResource Gray600}"
+                                           FontSize="12"
+                                           TextColor="#757575"
                                            LineBreakMode="TailTruncation"
-                                           MaxLines="1"
-                                           Margin="0,2,0,0" />
+                                           MaxLines="1" />
 
-                                    <!-- Location & Distance -->
-                                    <HorizontalStackLayout Spacing="4" IsVisible="{Binding Locations.Count}">
+                                    <!-- Location -->
+                                    <HorizontalStackLayout Spacing="3" IsVisible="{Binding Locations.Count}">
                                         <Label Text="📍"
-                                               FontSize="12" />
-                                        <Label FontSize="12"
-                                               TextColor="{StaticResource Gray600}">
+                                               FontSize="11" />
+                                        <Label FontSize="11"
+                                               TextColor="#757575">
                                             <Label.FormattedText>
                                                 <FormattedString>
                                                     <Span Text="{Binding Locations[0].City}" />
-                                                    <Span Text=" • " />
-                                                    <Span Text="2.8 mi" />
+                                                    <Span Text=" · 0.8 mi" />
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
                                     </HorizontalStackLayout>
 
-                                    <!-- Available Time Slots (OpenTable Style) -->
+                                    <!-- Time Slots -->
                                     <ScrollView Orientation="Horizontal" Margin="0,6,0,0">
                                         <HorizontalStackLayout Spacing="6">
                                             <Border StrokeThickness="1"
-                                                    Stroke="{StaticResource Primary}"
-                                                    StrokeShape="RoundRectangle 4"
+                                                    Stroke="#DA3743"
+                                                    StrokeShape="RoundRectangle 3"
                                                     BackgroundColor="White"
-                                                    Padding="10,6">
-                                                <Label Text="5:30 PM"
-                                                       FontSize="11"
+                                                    Padding="12,5">
+                                                <Label Text="5:45 PM"
+                                                       FontSize="10"
                                                        FontAttributes="Bold"
-                                                       TextColor="{StaticResource Primary}" />
+                                                       TextColor="#DA3743" />
                                             </Border>
 
                                             <Border StrokeThickness="1"
-                                                    Stroke="{StaticResource Primary}"
-                                                    StrokeShape="RoundRectangle 4"
+                                                    Stroke="#DA3743"
+                                                    StrokeShape="RoundRectangle 3"
                                                     BackgroundColor="White"
-                                                    Padding="10,6">
-                                                <Label Text="6:00 PM"
-                                                       FontSize="11"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{StaticResource Primary}" />
-                                            </Border>
-
-                                            <Border StrokeThickness="1"
-                                                    Stroke="{StaticResource Primary}"
-                                                    StrokeShape="RoundRectangle 4"
-                                                    BackgroundColor="White"
-                                                    Padding="10,6">
-                                                <Label Text="6:30 PM"
-                                                       FontSize="11"
-                                                       FontAttributes="Bold"
-                                                       TextColor="{StaticResource Primary}" />
-                                            </Border>
-
-                                            <Border StrokeThickness="1"
-                                                    Stroke="{StaticResource Primary}"
-                                                    StrokeShape="RoundRectangle 4"
-                                                    BackgroundColor="White"
-                                                    Padding="10,6">
+                                                    Padding="12,5">
                                                 <Label Text="7:00 PM"
-                                                       FontSize="11"
+                                                       FontSize="10"
                                                        FontAttributes="Bold"
-                                                       TextColor="{StaticResource Primary}" />
+                                                       TextColor="#DA3743" />
+                                            </Border>
+
+                                            <Border StrokeThickness="1"
+                                                    Stroke="#DA3743"
+                                                    StrokeShape="RoundRectangle 3"
+                                                    BackgroundColor="White"
+                                                    Padding="12,5">
+                                                <Label Text="7:15 PM"
+                                                       FontSize="10"
+                                                       FontAttributes="Bold"
+                                                       TextColor="#DA3743" />
                                             </Border>
                                         </HorizontalStackLayout>
                                     </ScrollView>
 
-                                    <!-- Booked Times Indicator -->
-                                    <HorizontalStackLayout Spacing="4" Margin="0,4,0,0">
+                                    <!-- Booked Indicator -->
+                                    <HorizontalStackLayout Spacing="3" Margin="0,4,0,0">
                                         <Label Text="🔥"
-                                               FontSize="11"
-                                               VerticalOptions="Center" />
+                                               FontSize="10" />
                                         <Label Text="Booked 47 times today"
-                                               FontSize="11"
-                                               TextColor="{StaticResource Error}"
-                                               FontAttributes="Bold"
-                                               VerticalOptions="Center" />
+                                               FontSize="10"
+                                               TextColor="#DA3743"
+                                               FontAttributes="Bold" />
                                     </HorizontalStackLayout>
 
                                 </VerticalStackLayout>
-                            </Grid>
 
-                            <!-- Separator Line -->
-                            <BoxView HeightRequest="1"
-                                     BackgroundColor="{StaticResource Gray200}"
-                                     VerticalOptions="End"
-                                     Margin="-16,0" />
+                            </Grid>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
 
-        <!-- Loading Indicator -->
+        <!-- Loading Overlay -->
         <Grid Grid.Row="1"
               IsVisible="{Binding IsBusy}"
-              BackgroundColor="#E0FFFFFF">
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                              Color="{StaticResource Primary}"
-                              WidthRequest="40"
-                              HeightRequest="40"
-                              HorizontalOptions="Center"
-                              VerticalOptions="Center" />
+              BackgroundColor="#80FFFFFF">
+            <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                  Color="#DA3743"
+                                  WidthRequest="40"
+                                  HeightRequest="40" />
+                <Label Text="Searching..."
+                       FontSize="14"
+                       TextColor="#666"
+                       FontAttributes="Bold" />
+            </VerticalStackLayout>
         </Grid>
 
     </Grid>

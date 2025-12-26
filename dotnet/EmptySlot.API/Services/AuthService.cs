@@ -24,17 +24,22 @@ public class AuthService
     public async Task<(bool Success, string? Token, Profile? Profile, string? Error)> RegisterAsync(
         string email, string password, string fullName)
     {
-        // Check if user exists
-        var existingProfile = await _context.Profiles.FirstOrDefaultAsync(p => p.Id.ToString() == email);
+        // Check if user exists by email
+        var existingProfile = await _context.Profiles.FirstOrDefaultAsync(p => p.Email == email);
         if (existingProfile != null)
         {
             return (false, null, null, "User already exists");
         }
 
+        // Hash password with BCrypt
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+
         // Create new profile
         var profile = new Profile
         {
             Id = Guid.NewGuid(),
+            Email = email,
+            PasswordHash = passwordHash,
             FullName = fullName,
             UserType = UserType.Customer,
             CreatedAt = DateTime.UtcNow,
@@ -53,9 +58,15 @@ public class AuthService
     public async Task<(bool Success, string? Token, Profile? Profile, string? Error)> LoginAsync(
         string email, string password)
     {
-        // For now, simplified auth - in production, you'd store password hashes
-        var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.Id.ToString() == email);
+        // Find user by email
+        var profile = await _context.Profiles.FirstOrDefaultAsync(p => p.Email == email);
         if (profile == null)
+        {
+            return (false, null, null, "Invalid credentials");
+        }
+
+        // Verify password with BCrypt
+        if (!BCrypt.Net.BCrypt.Verify(password, profile.PasswordHash))
         {
             return (false, null, null, "Invalid credentials");
         }

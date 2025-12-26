@@ -29,6 +29,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Profile>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
+            entity.HasIndex(e => e.Email).IsUnique();
+            entity.Property(e => e.PasswordHash).IsRequired().HasMaxLength(255);
             entity.Property(e => e.UserType)
                 .HasConversion<string>()
                 .HasMaxLength(20);
@@ -38,6 +41,7 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Provider)
                 .WithOne(e => e.User)
                 .HasForeignKey<Provider>(e => e.UserId)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
