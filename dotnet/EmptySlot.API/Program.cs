@@ -72,8 +72,17 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
 
-        // Apply migrations
-        await context.Database.MigrateAsync();
+        // In development, recreate database to ensure clean schema
+        if (app.Environment.IsDevelopment())
+        {
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            // In production, use migrations
+            await context.Database.MigrateAsync();
+        }
 
         // Seed data
         await DatabaseSeeder.SeedAsync(context);
