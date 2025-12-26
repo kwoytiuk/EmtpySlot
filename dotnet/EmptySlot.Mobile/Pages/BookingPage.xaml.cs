@@ -17,4 +17,9 @@ public partial class BookingPage : ContentPage
         base.OnAppearing();
         await _viewModel.LoadProviderCommand.ExecuteAsync(null);
     }
+
+    private void OnDateSelected(object sender, DateChangedEventArgs e)
+    {
+        _viewModel.OnDateChanged();
+    }
 }

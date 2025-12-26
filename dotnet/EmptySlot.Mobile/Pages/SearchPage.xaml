@@ -12,47 +12,160 @@
         <!-- Search Header -->
         <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,10">
 
-            <Picker Title="Select Category"
-                    ItemsSource="{Binding Categories}"
-                    ItemDisplayBinding="{Binding Name}"
-                    SelectedItem="{Binding SelectedCategory}" />
+            <Label Text="Search for Services"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   Margin="0,0,0,10" />
+
+            <!-- Location Search -->
+            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Location" FontSize="14" FontAttributes="Bold" />
+                    <Entry Placeholder="City (e.g., Seattle)"
+                           Text="{Binding SearchCity}"
+                           ReturnCommand="{Binding SearchCommand}" />
+                    <HorizontalStackLayout Spacing="10">
+                        <Label Text="Radius:" VerticalOptions="Center" />
+                        <Picker Title="Select Radius"
+                                ItemsSource="{Binding RadiusOptions}"
+                                SelectedItem="{Binding SelectedRadius}"
+                                HorizontalOptions="FillAndExpand" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Category Filter -->
+            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Category" FontSize="14" FontAttributes="Bold" />
+                    <Picker Title="All Categories"
+                            ItemsSource="{Binding Categories}"
+                            ItemDisplayBinding="{Binding Name}"
+                            SelectedItem="{Binding SelectedCategory}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Additional Filters -->
+            <Frame Padding="10" CornerRadius="8" HasShadow="False" BorderColor="{StaticResource Gray200}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Filters" FontSize="14" FontAttributes="Bold" />
+                    <HorizontalStackLayout Spacing="10">
+                        <CheckBox IsChecked="{Binding VerifiedOnly}" />
+                        <Label Text="Verified providers only" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="10">
+                        <CheckBox IsChecked="{Binding FeaturedOnly}" />
+                        <Label Text="Featured providers only" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
 
             <Button Text="Search"
                     Command="{Binding SearchCommand}"
                     BackgroundColor="{StaticResource Primary}"
-                    TextColor="White" />
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    FontSize="16"
+                    FontAttributes="Bold" />
         </VerticalStackLayout>
 
         <!-- Results List -->
         <CollectionView Grid.Row="1"
                        ItemsSource="{Binding Providers}"
-                       SelectionMode="None">
+                       SelectionMode="None"
+                       Margin="0,10,0,0">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Padding="20">
+                    <Label Text="No providers found"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource Gray600}" />
+                    <Label Text="Try adjusting your search filters"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="{StaticResource Gray400}"
+                           Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Provider">
-                    <Frame Padding="10" Margin="0,5" CornerRadius="8">
+                    <Frame Padding="15" Margin="0,5" CornerRadius="12" HasShadow="True">
                         <Frame.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectProviderCommand}"
                                                  CommandParameter="{Binding .}" />
                         </Frame.GestureRecognizers>
 
-                        <VerticalStackLayout Spacing="5">
-                            <Label Text="{Binding BusinessName}"
-                                   FontSize="18"
-                                   FontAttributes="Bold" />
+                        <VerticalStackLayout Spacing="8">
+                            <!-- Header with badges -->
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="{Binding BusinessName}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="StartAndExpand"
+                                       VerticalOptions="Center" />
+                                <Frame IsVisible="{Binding IsVerified}"
+                                       Padding="5,2"
+                                       BackgroundColor="#4CAF50"
+                                       CornerRadius="4"
+                                       HasShadow="False">
+                                    <Label Text="✓ Verified"
+                                           TextColor="White"
+                                           FontSize="11" />
+                                </Frame>
+                                <Frame IsVisible="{Binding IsFeatured}"
+                                       Padding="5,2"
+                                       BackgroundColor="#FF9800"
+                                       CornerRadius="4"
+                                       HasShadow="False">
+                                    <Label Text="★ Featured"
+                                           TextColor="White"
+                                           FontSize="11" />
+                                </Frame>
+                            </HorizontalStackLayout>
+
+                            <!-- Description -->
                             <Label Text="{Binding Description}"
                                    FontSize="14"
                                    TextColor="{StaticResource Gray600}"
-                                   LineBreakMode="TailTruncation" />
-                            <HorizontalStackLayout Spacing="5">
-                                <Label Text="★"
-                                       TextColor="#FFC107"
-                                       FontSize="16" />
-                                <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                   LineBreakMode="WordWrap"
+                                   MaxLines="2" />
+
+                            <!-- Location -->
+                            <HorizontalStackLayout Spacing="5" IsVisible="{Binding Locations.Count}">
+                                <Label Text="📍"
                                        FontSize="14" />
-                                <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
+                                <Label Text="{Binding Locations[0].City}"
+                                       FontSize="14"
+                                       TextColor="{StaticResource Gray600}" />
+                                <Label Text=", "
+                                       FontSize="14"
+                                       TextColor="{StaticResource Gray600}" />
+                                <Label Text="{Binding Locations[0].StateProvince}"
                                        FontSize="14"
                                        TextColor="{StaticResource Gray600}" />
                             </HorizontalStackLayout>
+
+                            <!-- Rating -->
+                            <HorizontalStackLayout Spacing="5">
+                                <Label Text="★"
+                                       TextColor="#FFC107"
+                                       FontSize="18" />
+                                <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                       FontSize="16"
+                                       FontAttributes="Bold" />
+                                <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
+                                       FontSize="14"
+                                       TextColor="{StaticResource Gray600}"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+
+                            <!-- Service count -->
+                            <Label Text="{Binding Services.Count, StringFormat='{0} services available'}"
+                                   FontSize="13"
+                                   TextColor="{StaticResource Primary}"
+                                   FontAttributes="Italic" />
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
@@ -63,7 +176,9 @@
                           IsRunning="{Binding IsBusy}"
                           IsVisible="{Binding IsBusy}"
                           VerticalOptions="Center"
-                          Color="{StaticResource Primary}" />
+                          Color="{StaticResource Primary}"
+                          WidthRequest="50"
+                          HeightRequest="50" />
     </Grid>
 
 </ContentPage>

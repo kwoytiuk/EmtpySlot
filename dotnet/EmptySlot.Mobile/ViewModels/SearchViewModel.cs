@@ -23,6 +23,21 @@ public partial class SearchViewModel : BaseViewModel
     [ObservableProperty]
     private string searchQuery = string.Empty;
 
+    [ObservableProperty]
+    private string searchCity = "Seattle";
+
+    [ObservableProperty]
+    private ObservableCollection<string> radiusOptions = new() { "5 km", "10 km", "25 km", "50 km", "100 km" };
+
+    [ObservableProperty]
+    private string selectedRadius = "25 km";
+
+    [ObservableProperty]
+    private bool verifiedOnly = true;
+
+    [ObservableProperty]
+    private bool featuredOnly = false;
+
     public SearchViewModel(IApiService apiService)
     {
         _apiService = apiService;
@@ -61,21 +76,40 @@ public partial class SearchViewModel : BaseViewModel
         {
             IsBusy = true;
 
+            // Parse radius from selected option (e.g., "25 km" -> 25)
+            var radiusKm = double.TryParse(SelectedRadius.Split(' ')[0], out var radius) ? (double?)radius : null;
+
             var request = new SearchProvidersRequest(
                 CategoryId: SelectedCategory?.Id,
-                Verified: true
+                Latitude: null, // TODO: Add geocoding for city search or use device location
+                Longitude: null,
+                RadiusKm: radiusKm,
+                MinRating: null,
+                Verified: VerifiedOnly ? true : null
             );
 
             var results = await _apiService.SearchProvidersAsync(request);
+
+            // Apply featured filter locally since it's not in the API
+            if (FeaturedOnly)
+            {
+                results = results.Where(p => p.IsFeatured).ToList();
+            }
+
             Providers.Clear();
             foreach (var provider in results)
             {
                 Providers.Add(provider);
             }
+
+            if (Providers.Count == 0)
+            {
+                System.Diagnostics.Debug.WriteLine("No providers found with current filters");
+            }
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Error", $"Search failed: {ex.Message}", "OK");
         }
         finally
         {

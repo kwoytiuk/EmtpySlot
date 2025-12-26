@@ -11,48 +11,201 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
 
-            <Label Text="{Binding Provider.BusinessName}"
-                   FontSize="24"
-                   FontAttributes="Bold" />
+            <!-- Provider Header -->
+            <Frame Padding="15" CornerRadius="12" HasShadow="True" BackgroundColor="{StaticResource Primary}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding Provider.BusinessName}"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="White" />
 
-            <Label Text="Select Service"
-                   FontSize="18"
-                   FontAttributes="Bold" />
+                    <HorizontalStackLayout Spacing="5">
+                        <Label Text="★"
+                               TextColor="#FFC107"
+                               FontSize="16" />
+                        <Label Text="{Binding Provider.RatingAverage, StringFormat='{0:F1}'}"
+                               FontSize="14"
+                               TextColor="White" />
+                        <Label Text="{Binding Provider.RatingCount, StringFormat='({0} reviews)'}"
+                               FontSize="14"
+                               TextColor="White"
+                               Opacity="0.8" />
+                    </HorizontalStackLayout>
 
-            <CollectionView ItemsSource="{Binding Provider.Services}"
-                           SelectionMode="Single"
-                           SelectedItem="{Binding SelectedService}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Service">
-                        <Frame Padding="10" Margin="0,5" CornerRadius="8">
-                            <VerticalStackLayout Spacing="5">
-                                <Label Text="{Binding Name}"
-                                       FontSize="16"
-                                       FontAttributes="Bold" />
-                                <Label Text="{Binding DurationMinutes, StringFormat='{0} minutes'}"
-                                       FontSize="14" />
-                                <Label Text="{Binding Price, StringFormat='${0:F2}'}"
-                                       FontSize="16"
-                                       TextColor="{StaticResource Primary}" />
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    <!-- Location info -->
+                    <HorizontalStackLayout Spacing="5" IsVisible="{Binding Provider.Locations.Count}">
+                        <Label Text="📍"
+                               FontSize="14" />
+                        <Label FontSize="14"
+                               TextColor="White">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Provider.Locations[0].AddressLine1}" />
+                                    <Span Text=", " />
+                                    <Span Text="{Binding Provider.Locations[0].City}" />
+                                    <Span Text=", " />
+                                    <Span Text="{Binding Provider.Locations[0].StateProvince}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
 
-            <Label Text="Select Date"
-                   FontSize="18"
-                   FontAttributes="Bold" />
+            <!-- Service Selection -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Select Service"
+                       FontSize="18"
+                       FontAttributes="Bold" />
 
-            <DatePicker Date="{Binding SelectedDate}"
-                       MinimumDate="{x:Static sys:DateTime.Today}" />
+                <CollectionView ItemsSource="{Binding Provider.Services}"
+                               SelectionMode="Single"
+                               SelectedItem="{Binding SelectedService}"
+                               SelectionChangedCommand="{Binding ServiceSelectedCommand}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Service">
+                            <Frame Padding="15" Margin="0,5" CornerRadius="10"
+                                   HasShadow="True"
+                                   BorderColor="{StaticResource Primary}">
+                                <VerticalStackLayout Spacing="8">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Label Text="{Binding Name}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               HorizontalOptions="StartAndExpand"
+                                               VerticalOptions="Center" />
+                                        <Label Text="{Binding Price, StringFormat='${0:F2}'}"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
 
+                                    <Label Text="{Binding Description}"
+                                           FontSize="14"
+                                           TextColor="{StaticResource Gray600}"
+                                           LineBreakMode="WordWrap"
+                                           IsVisible="{Binding Description, Converter={StaticResource IsNotNullConverter}}" />
+
+                                    <HorizontalStackLayout Spacing="15">
+                                        <HorizontalStackLayout Spacing="5">
+                                            <Label Text="⏱"
+                                                   FontSize="14" />
+                                            <Label Text="{Binding DurationMinutes, StringFormat='{0} min'}"
+                                                   FontSize="14"
+                                                   TextColor="{StaticResource Gray600}" />
+                                        </HorizontalStackLayout>
+
+                                        <Label Text="{Binding DepositRequired, StringFormat='Deposit: ${0:F2}'}"
+                                               FontSize="13"
+                                               TextColor="#FF9800"
+                                               FontAttributes="Italic"
+                                               IsVisible="{Binding DepositRequired, Converter={StaticResource IsNotNullConverter}}" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+
+            <!-- Staff Selection -->
+            <VerticalStackLayout Spacing="10" IsVisible="{Binding Provider.StaffMembers.Count}">
+                <Label Text="Select Staff Member (Optional)"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <Picker Title="Any available staff"
+                        ItemsSource="{Binding Provider.StaffMembers}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding SelectedStaff}" />
+
+                <Label Text="{Binding SelectedStaff.Bio}"
+                       FontSize="14"
+                       TextColor="{StaticResource Gray600}"
+                       IsVisible="{Binding SelectedStaff, Converter={StaticResource IsNotNullConverter}}"
+                       Margin="10,0,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Date Selection -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Select Date"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <DatePicker Date="{Binding SelectedDate}"
+                           MinimumDate="{x:Static sys:DateTime.Today}"
+                           DateSelected="OnDateSelected"
+                           BackgroundColor="{StaticResource Gray100}"
+                           FontSize="16" />
+            </VerticalStackLayout>
+
+            <!-- Time Slot Selection -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Select Time"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <FlexLayout BindableLayout.ItemsSource="{Binding AvailableTimeSlots}"
+                           Wrap="Wrap"
+                           JustifyContent="Start"
+                           AlignItems="Start">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Frame Padding="10,8"
+                                   Margin="5"
+                                   CornerRadius="8"
+                                   HasShadow="False"
+                                   BackgroundColor="{StaticResource Gray100}">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookingViewModel}}, Path=SelectTimeSlotCommand}"
+                                                         CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+                                <Label Text="{Binding .}"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Gray900}" />
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Label Text="{Binding SelectedTimeSlot, StringFormat='Selected: {0}'}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}"
+                       IsVisible="{Binding SelectedTimeSlot, Converter={StaticResource IsNotNullConverter}}"
+                       Margin="5,10,0,0" />
+            </VerticalStackLayout>
+
+            <!-- Notes -->
+            <VerticalStackLayout Spacing="10">
+                <Label Text="Additional Notes (Optional)"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <Editor Placeholder="Any special requests or notes..."
+                       Text="{Binding CustomerNotes}"
+                       HeightRequest="100"
+                       BackgroundColor="{StaticResource Gray100}" />
+            </VerticalStackLayout>
+
+            <!-- Book Button -->
             <Button Text="Book Appointment"
                     Command="{Binding BookAppointmentCommand}"
                     BackgroundColor="{StaticResource Primary}"
                     TextColor="White"
                     HeightRequest="50"
-                    CornerRadius="8" />
+                    CornerRadius="8"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    Margin="0,10,0,20" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                              IsVisible="{Binding IsBusy}"
+                              Color="{StaticResource Primary}"
+                              WidthRequest="50"
+                              HeightRequest="50" />
 
         </VerticalStackLayout>
     </ScrollView>
