@@ -19,6 +19,7 @@ public static class MauiProgram
             });
 
         // Register services
+        builder.Services.AddSingleton<ICacheService, CacheService>();
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
 
