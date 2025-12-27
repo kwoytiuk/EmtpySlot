@@ -17,6 +17,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ProviderLocation> ProviderLocations { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<StaffMember> StaffMembers { get; set; }
+    public DbSet<StaffSchedule> StaffSchedules { get; set; }
+    public DbSet<TimeSlot> TimeSlots { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
@@ -127,6 +129,44 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
             entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.Phone).HasMaxLength(50);
+
+            entity.HasMany(e => e.Schedules)
+                .WithOne(e => e.Staff)
+                .HasForeignKey(e => e.StaffMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(e => e.TimeSlots)
+                .WithOne(e => e.Staff)
+                .HasForeignKey(e => e.StaffMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // StaffSchedule configuration
+        modelBuilder.Entity<StaffSchedule>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DayOfWeek)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            // Index for efficient schedule queries
+            entity.HasIndex(e => new { e.StaffMemberId, e.DayOfWeek, e.IsActive });
+        });
+
+        // TimeSlot configuration
+        modelBuilder.Entity<TimeSlot>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+
+            // Indexes for efficient time slot queries
+            entity.HasIndex(e => new { e.StaffMemberId, e.Date, e.IsAvailable });
+            entity.HasIndex(e => new { e.Date, e.IsAvailable });
+            entity.HasIndex(e => e.AppointmentId);
+
+            entity.HasOne(e => e.Appointment)
+                .WithOne()
+                .HasForeignKey<TimeSlot>(e => e.AppointmentId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Appointment configuration

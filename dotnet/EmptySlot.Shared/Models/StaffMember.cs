@@ -16,4 +16,6 @@ public class StaffMember
     // Navigation properties
     public Provider Provider { get; set; } = null!;
     public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public ICollection<StaffSchedule> Schedules { get; set; } = new List<StaffSchedule>();
+    public ICollection<TimeSlot> TimeSlots { get; set; } = new List<TimeSlot>();
 }
