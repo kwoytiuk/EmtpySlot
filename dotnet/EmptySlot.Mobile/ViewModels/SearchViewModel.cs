@@ -248,8 +248,19 @@ public partial class SearchViewModel : BaseViewModel
     [RelayCommand]
     async Task ShowMap()
     {
-        // Navigate to interactive map page
-        await Shell.Current.GoToAsync(nameof(MapPage));
+        // Navigate to interactive map page with current search parameters
+        var queryParams = new Dictionary<string, object>
+        {
+            ["CategoryId"] = SelectedCategory?.Id.ToString() ?? "",
+            ["City"] = SearchCity,
+            ["Latitude"] = CurrentLatitude?.ToString() ?? "",
+            ["Longitude"] = CurrentLongitude?.ToString() ?? "",
+            ["Radius"] = SelectedRadius.Replace(" km", ""),
+            ["VerifiedOnly"] = VerifiedOnly.ToString(),
+            ["FeaturedOnly"] = FeaturedOnly.ToString()
+        };
+
+        await Shell.Current.GoToAsync(nameof(MapPage), queryParams);
     }
 
     [RelayCommand]

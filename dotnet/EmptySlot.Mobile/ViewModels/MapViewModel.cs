@@ -7,6 +7,13 @@ using EmptySlot.Shared.Models;
 
 namespace EmptySlot.Mobile.ViewModels;
 
+[QueryProperty(nameof(CategoryId), "CategoryId")]
+[QueryProperty(nameof(City), "City")]
+[QueryProperty(nameof(Latitude), "Latitude")]
+[QueryProperty(nameof(Longitude), "Longitude")]
+[QueryProperty(nameof(Radius), "Radius")]
+[QueryProperty(nameof(VerifiedOnly), "VerifiedOnly")]
+[QueryProperty(nameof(FeaturedOnly), "FeaturedOnly")]
 public partial class MapViewModel : BaseViewModel
 {
     private readonly IApiService _apiService;
@@ -17,10 +24,37 @@ public partial class MapViewModel : BaseViewModel
     [ObservableProperty]
     private string searchCity = "Calgary";
 
+    // Query parameters from search
+    [ObservableProperty]
+    private string categoryId = "";
+
+    [ObservableProperty]
+    private string city = "Calgary";
+
+    [ObservableProperty]
+    private string latitude = "";
+
+    [ObservableProperty]
+    private string longitude = "";
+
+    [ObservableProperty]
+    private string radius = "50";
+
+    [ObservableProperty]
+    private string verifiedOnly = "false";
+
+    [ObservableProperty]
+    private string featuredOnly = "false";
+
     public MapViewModel(IApiService apiService)
     {
         _apiService = apiService;
         Title = "Map View";
+    }
+
+    partial void OnCityChanged(string value)
+    {
+        SearchCity = value;
     }
 
     [RelayCommand]
@@ -32,14 +66,21 @@ public partial class MapViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            // Search for providers in the current city
+            // Parse query parameters
+            int? catId = string.IsNullOrEmpty(CategoryId) ? null : int.Parse(CategoryId);
+            double? lat = string.IsNullOrEmpty(Latitude) ? null : double.Parse(Latitude);
+            double? lon = string.IsNullOrEmpty(Longitude) ? null : double.Parse(Longitude);
+            int radiusKm = string.IsNullOrEmpty(Radius) ? 50 : int.Parse(Radius);
+            bool? verified = VerifiedOnly == "true" ? true : null;
+
+            // Search for providers using the same filters from search page
             var request = new SearchProvidersRequest(
-                CategoryId: null,
-                Latitude: null,
-                Longitude: null,
-                RadiusKm: 50,
+                CategoryId: catId,
+                Latitude: lat,
+                Longitude: lon,
+                RadiusKm: radiusKm,
                 MinRating: null,
-                Verified: null
+                Verified: verified
             );
 
             var results = await _apiService.SearchProvidersAsync(request);
