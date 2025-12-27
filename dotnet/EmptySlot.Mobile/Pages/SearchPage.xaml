@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
              xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             xmlns:helpers="clr-namespace:EmptySlot.Mobile.Helpers"
              x:Class="EmptySlot.Mobile.Pages.SearchPage"
              x:DataType="vm:SearchViewModel"
              Title="Find Services"
@@ -306,48 +307,25 @@
 
                                     <!-- Time Slots - Dynamic based on current time -->
                                     <ScrollView Orientation="Horizontal">
-                                        <HorizontalStackLayout Spacing="8">
-                                            <Border StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 10"
-                                                    Padding="16,8"
-                                                    BackgroundColor="#D1FAE5">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
-                                                                         CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                <Label Text="12:00 PM"
-                                                       FontSize="12"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#059669" />
-                                            </Border>
-
-                                            <Border StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 10"
-                                                    Padding="16,8"
-                                                    BackgroundColor="#D1FAE5">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
-                                                                         CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                <Label Text="2:30 PM"
-                                                       FontSize="12"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#059669" />
-                                            </Border>
-
-                                            <Border StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 10"
-                                                    Padding="16,8"
-                                                    BackgroundColor="#D1FAE5">
-                                                <Border.GestureRecognizers>
-                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
-                                                                         CommandParameter="{Binding .}" />
-                                                </Border.GestureRecognizers>
-                                                <Label Text="4:00 PM"
-                                                       FontSize="12"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#059669" />
-                                            </Border>
+                                        <HorizontalStackLayout Spacing="8"
+                                                             BindableLayout.ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=AvailableTimeSlots}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="x:String">
+                                                    <Border StrokeThickness="0"
+                                                            StrokeShape="RoundRectangle 10"
+                                                            Padding="16,8"
+                                                            BackgroundColor="#D1FAE5">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=QuickBookCommand}"
+                                                                                 CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type models:Provider}}}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="{Binding .}"
+                                                               FontSize="12"
+                                                               FontAttributes="Bold"
+                                                               TextColor="#059669" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
                                         </HorizontalStackLayout>
                                     </ScrollView>
 

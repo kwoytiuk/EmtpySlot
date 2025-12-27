@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmptySlot.Mobile.Services;
 using EmptySlot.Mobile.Pages;
+using EmptySlot.Mobile.Helpers;
 using EmptySlot.Shared.Models;
 
 namespace EmptySlot.Mobile.ViewModels;
@@ -46,6 +47,9 @@ public partial class SearchViewModel : BaseViewModel
 
     [ObservableProperty]
     private double? currentLongitude;
+
+    // Dynamic time slots based on current time
+    public List<string> AvailableTimeSlots => TimeSlotHelper.GetNext3TimeSlots();
 
     public SearchViewModel(IApiService apiService)
     {
