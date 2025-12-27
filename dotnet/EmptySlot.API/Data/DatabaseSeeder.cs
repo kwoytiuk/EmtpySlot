@@ -24,6 +24,19 @@ public static class DatabaseSeeder
         context.Providers.AddRange(providers);
         await context.SaveChangesAsync();
 
+        // Create staff members and schedules for providers
+        var (staffMembers, schedules) = CreateStaffAndSchedules(providers);
+        context.StaffMembers.AddRange(staffMembers);
+        await context.SaveChangesAsync();
+
+        context.StaffSchedules.AddRange(schedules);
+        await context.SaveChangesAsync();
+
+        // Generate time slots for the next 14 days
+        var timeSlots = GenerateTimeSlots(staffMembers, schedules);
+        context.TimeSlots.AddRange(timeSlots);
+        await context.SaveChangesAsync();
+
         var profiles = CreateProfiles();
         context.Profiles.AddRange(profiles);
         await context.SaveChangesAsync();
@@ -396,5 +409,118 @@ public static class DatabaseSeeder
     {
         var letters = "ABCDEFGHJKLMNPRSTVWXYZ";
         return $"T{random.Next(1, 4)}{letters[random.Next(letters.Length)]} {random.Next(1, 10)}{letters[random.Next(letters.Length)]}{random.Next(0, 10)}";
+    }
+
+    private static (List<StaffMember>, List<StaffSchedule>) CreateStaffAndSchedules(List<Provider> providers)
+    {
+        var staffMembers = new List<StaffMember>();
+        var schedules = new List<StaffSchedule>();
+        var random = new Random(42);
+
+        var firstNames = new[] { "Sarah", "Michael", "Jessica", "David", "Emily", "James", "Ashley", "Daniel", "Amanda", "Ryan", "Jennifer", "Matthew", "Nicole", "Christopher", "Melissa" };
+        var lastNames = new[] { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Lee", "Wilson", "Anderson", "Taylor", "Thomas" };
+
+        foreach (var provider in providers)
+        {
+            // Create 2-4 staff members per provider
+            int staffCount = random.Next(2, 5);
+
+            for (int i = 0; i < staffCount; i++)
+            {
+                var firstName = firstNames[random.Next(firstNames.Length)];
+                var lastName = lastNames[random.Next(lastNames.Length)];
+                var fullName = $"{firstName} {lastName}";
+
+                var staff = new StaffMember
+                {
+                    Id = Guid.NewGuid(),
+                    ProviderId = provider.Id,
+                    Name = fullName,
+                    Email = $"{firstName.ToLower()}.{lastName.ToLower()}@{provider.BusinessName.ToLower().Replace(" ", "")}.ca",
+                    Phone = provider.Phone,
+                    Bio = $"Experienced professional with {random.Next(3, 15)} years in the industry.",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                staffMembers.Add(staff);
+
+                // Create weekly schedule for this staff member
+                // Most staff work Mon-Fri, some also work weekends
+                var workDays = new List<DayOfWeek> { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+
+                // 30% chance to also work Saturday
+                if (random.NextDouble() < 0.3)
+                    workDays.Add(DayOfWeek.Saturday);
+
+                foreach (var day in workDays)
+                {
+                    // Work hours: usually 9 AM to 5 PM or 10 AM to 6 PM
+                    var startHour = random.Next(8, 11); // 8-10 AM
+                    var endHour = random.Next(17, 19);  // 5-6 PM
+
+                    var schedule = new StaffSchedule
+                    {
+                        Id = Guid.NewGuid(),
+                        StaffMemberId = staff.Id,
+                        DayOfWeek = day,
+                        StartTime = new TimeOnly(startHour, 0),
+                        EndTime = new TimeOnly(endHour, 0),
+                        IsActive = true,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+
+                    schedules.Add(schedule);
+                }
+            }
+        }
+
+        return (staffMembers, schedules);
+    }
+
+    private static List<TimeSlot> GenerateTimeSlots(List<StaffMember> staffMembers, List<StaffSchedule> schedules)
+    {
+        var timeSlots = new List<TimeSlot>();
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var endDate = today.AddDays(14); // Generate slots for next 2 weeks
+
+        foreach (var staff in staffMembers)
+        {
+            var staffSchedules = schedules.Where(s => s.StaffMemberId == staff.Id).ToList();
+
+            for (var date = today; date <= endDate; date = date.AddDays(1))
+            {
+                var dayOfWeek = date.DayOfWeek;
+                var daySchedules = staffSchedules.Where(s => s.DayOfWeek == dayOfWeek && s.IsActive).ToList();
+
+                foreach (var schedule in daySchedules)
+                {
+                    var currentTime = schedule.StartTime;
+                    var slotDuration = 30; // 30-minute slots
+
+                    while (currentTime.AddMinutes(slotDuration) <= schedule.EndTime)
+                    {
+                        var slot = new TimeSlot
+                        {
+                            Id = Guid.NewGuid(),
+                            StaffMemberId = staff.Id,
+                            Date = date,
+                            StartTime = currentTime,
+                            EndTime = currentTime.AddMinutes(slotDuration),
+                            IsAvailable = true,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow
+                        };
+
+                        timeSlots.Add(slot);
+                        currentTime = currentTime.AddMinutes(slotDuration);
+                    }
+                }
+            }
+        }
+
+        return timeSlots;
     }
 }
