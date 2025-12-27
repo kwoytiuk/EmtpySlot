@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using EmptySlot.Mobile.Services;
 using EmptySlot.Mobile.Pages;
 using EmptySlot.Shared.Models;
-using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Maps;
 
 namespace EmptySlot.Mobile.ViewModels;
 
@@ -19,18 +17,10 @@ public partial class MapViewModel : BaseViewModel
     [ObservableProperty]
     private string searchCity = "Calgary";
 
-    [ObservableProperty]
-    private MapSpan? mapRegion;
-
     public MapViewModel(IApiService apiService)
     {
         _apiService = apiService;
         Title = "Map View";
-
-        // Default to Calgary
-        MapRegion = MapSpan.FromCenterAndRadius(
-            new Location(51.0447, -114.0719), // Calgary coordinates
-            Distance.FromKilometers(20));
     }
 
     [RelayCommand]
@@ -65,19 +55,6 @@ public partial class MapViewModel : BaseViewModel
                     {
                         Providers.Add(provider);
                     }
-                }
-            }
-
-            // Center map on providers if we have any
-            if (Providers.Any())
-            {
-                var firstProvider = Providers.First();
-                var firstLocation = firstProvider.Locations.First();
-                if (firstLocation.Latitude.HasValue && firstLocation.Longitude.HasValue)
-                {
-                    MapRegion = MapSpan.FromCenterAndRadius(
-                        new Location(firstLocation.Latitude.Value, firstLocation.Longitude.Value),
-                        Distance.FromKilometers(10));
                 }
             }
         }

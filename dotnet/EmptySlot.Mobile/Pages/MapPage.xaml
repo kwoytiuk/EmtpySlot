@@ -2,17 +2,20 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
-             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
              xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
              x:Class="EmptySlot.Mobile.Pages.MapPage"
              x:DataType="vm:MapViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             BackgroundColor="#F5F5F5">
 
     <Grid RowDefinitions="Auto,*">
 
         <!-- Header with search info -->
         <VerticalStackLayout Grid.Row="0" Padding="12" Spacing="8" BackgroundColor="White">
             <HorizontalStackLayout Spacing="8">
+                <Label Text="📍"
+                       FontSize="20"
+                       VerticalOptions="Center" />
                 <Label Text="{Binding Providers.Count, StringFormat='{0} providers'}"
                        FontSize="16"
                        FontAttributes="Bold"
@@ -24,17 +27,119 @@
                        VerticalOptions="Center" />
             </HorizontalStackLayout>
 
-            <Label Text="Tap any marker to view provider details"
+            <Label Text="Tap any provider to view details and book"
                    FontSize="12"
                    TextColor="#999" />
         </VerticalStackLayout>
 
-        <!-- Map View -->
-        <maps:Map x:Name="map"
-                  Grid.Row="1"
-                  IsShowingUser="True"
-                  MapType="Street">
-        </maps:Map>
+        <!-- Provider List with Locations -->
+        <CollectionView Grid.Row="1"
+                       ItemsSource="{Binding Providers}"
+                       SelectionMode="None"
+                       BackgroundColor="#F5F5F5">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="40" Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="🗺️"
+                           FontSize="48"
+                           HorizontalOptions="Center" />
+                    <Label Text="No providers found"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           TextColor="#666" />
+                    <Label Text="Try searching in a different area"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="#999" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Provider">
+                    <Border Margin="12,6"
+                            BackgroundColor="White"
+                            StrokeThickness="0"
+                            Padding="12">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MapViewModel}}, Path=SelectProviderCommand}"
+                                                 CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+
+                            <!-- Pin Icon -->
+                            <Border Grid.Column="0"
+                                   WidthRequest="50"
+                                   HeightRequest="50"
+                                   BackgroundColor="#FFF5F5"
+                                   StrokeThickness="0"
+                                   VerticalOptions="Start">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="25" />
+                                </Border.StrokeShape>
+                                <Label Text="📍"
+                                      FontSize="24"
+                                      HorizontalOptions="Center"
+                                      VerticalOptions="Center" />
+                            </Border>
+
+                            <!-- Provider Info -->
+                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                <Label Text="{Binding BusinessName}"
+                                      FontSize="16"
+                                      FontAttributes="Bold"
+                                      TextColor="#1A1A1A" />
+
+                                <HorizontalStackLayout Spacing="4">
+                                    <Label Text="★"
+                                          FontSize="12"
+                                          TextColor="#FF6B35" />
+                                    <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                          FontSize="12"
+                                          FontAttributes="Bold"
+                                          TextColor="#2A2A2A" />
+                                    <Label Text="{Binding RatingCount, StringFormat='({0})'}"
+                                          FontSize="12"
+                                          TextColor="#757575" />
+                                </HorizontalStackLayout>
+
+                                <!-- Location -->
+                                <HorizontalStackLayout Spacing="4" IsVisible="{Binding Locations.Count}">
+                                    <Label Text="📍"
+                                          FontSize="10" />
+                                    <Label FontSize="12"
+                                          TextColor="#757575">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Locations[0].City}" />
+                                                <Span Text=", " />
+                                                <Span Text="{Binding Locations[0].StateProvince}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding Locations[0].AddressLine1}"
+                                      FontSize="11"
+                                      TextColor="#999"
+                                      IsVisible="{Binding Locations.Count}" />
+                            </VerticalStackLayout>
+
+                            <!-- Arrow -->
+                            <Label Grid.Column="2"
+                                  Text="›"
+                                  FontSize="24"
+                                  TextColor="#CCC"
+                                  VerticalOptions="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <!-- Loading Overlay -->
         <Grid Grid.Row="1"
