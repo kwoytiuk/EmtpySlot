@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmptySlot.Mobile.Services;
 using EmptySlot.Mobile.Pages;
+using EmptySlot.Mobile.Helpers;
 using EmptySlot.Shared.Models;
 
 namespace EmptySlot.Mobile.ViewModels;
@@ -193,13 +194,21 @@ public partial class MapViewModel : BaseViewModel
             System.Diagnostics.Debug.WriteLine($"Map centering on provider average: {centerLat}, {centerLng}");
         }
 
+        // Get time slots
+        var timeSlots = TimeSlotHelper.GetNext3TimeSlots();
+
         // Generate markers JavaScript
         var markers = string.Join("\n", Providers.Select(p =>
         {
             var loc = p.Locations.First();
-            var name = p.BusinessName.Replace("'", "\\'");
-            var address = $"{loc.AddressLine1}, {loc.City}".Replace("'", "\\'");
+            var name = p.BusinessName.Replace("'", "\\'").Replace("\"", "&quot;");
+            var address = $"{loc.AddressLine1}, {loc.City}".Replace("'", "\\'").Replace("\"", "&quot;");
             var rating = p.RatingAverage.ToString("F1");
+            var providerId = p.Id;
+
+            // Generate time slot buttons HTML
+            var timeSlotsHtml = string.Join("", timeSlots.Select(slot =>
+                $@"<a href=""emptyslot://book/{providerId}/{Uri.EscapeDataString(slot)}"" style=""display: inline-block; background: linear-gradient(135deg, #EC4899 0%, #A855F7 100%); color: white; padding: 6px 12px; margin: 3px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; cursor: pointer;"">{slot}</a>"));
 
             return $@"
                 L.marker([{loc.Latitude}, {loc.Longitude}], {{
@@ -211,14 +220,22 @@ public partial class MapViewModel : BaseViewModel
                     }})
                 }})
                 .bindPopup(`
-                    <div style=""font-family: system-ui, sans-serif; min-width: 200px;"">
-                        <h3 style=""margin: 0 0 8px 0; font-size: 16px; color: #1F2937;"">{name}</h3>
-                        <div style=""background: #FEF3C7; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 8px;"">
+                    <div style=""font-family: system-ui, sans-serif; min-width: 250px;"">
+                        <a href=""emptyslot://provider/{providerId}"" style=""text-decoration: none; color: #1F2937;"">
+                            <h3 style=""margin: 0 0 8px 0; font-size: 16px; font-weight: bold; cursor: pointer; border-bottom: 2px solid transparent; transition: border-color 0.2s;"" onmouseover=""this.style.borderColor='#A855F7'"" onmouseout=""this.style.borderColor='transparent'"">{name}</h3>
+                        </a>
+                        <div style=""background: #FEF3C7; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-bottom: 10px;"">
                             <span style=""color: #D97706; font-weight: bold;"">⭐ {rating}</span>
                         </div>
-                        <p style=""margin: 0; font-size: 13px; color: #6B7280;"">{address}</p>
+                        <p style=""margin: 0 0 10px 0; font-size: 13px; color: #6B7280;"">{address}</p>
+                        <div style=""border-top: 1px solid #E5E7EB; padding-top: 10px; margin-top: 10px;"">
+                            <p style=""margin: 0 0 6px 0; font-size: 12px; font-weight: bold; color: #6B7280;"">⚡ Available Now</p>
+                            <div style=""display: flex; flex-wrap: wrap; gap: 4px;"">
+                                {timeSlotsHtml}
+                            </div>
+                        </div>
                     </div>
-                `)
+                `, {{ maxWidth: 300 }})
                 .addTo(map);";
         }));
 
