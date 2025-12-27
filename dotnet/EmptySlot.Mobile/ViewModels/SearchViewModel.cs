@@ -12,6 +12,9 @@ public partial class SearchViewModel : BaseViewModel
 {
     private readonly IApiService _apiService;
 
+    // Static cache to share search results with MapViewModel
+    public static List<Provider>? LastSearchResults { get; private set; }
+
     [ObservableProperty]
     private ObservableCollection<Provider> providers = new();
 
@@ -193,6 +196,9 @@ public partial class SearchViewModel : BaseViewModel
                 results = results.Where(p => p.IsFeatured).ToList();
             }
 
+            // Store results for MapViewModel to use
+            LastSearchResults = results;
+
             Providers.Clear();
             foreach (var provider in results)
             {
@@ -202,6 +208,10 @@ public partial class SearchViewModel : BaseViewModel
             if (Providers.Count == 0)
             {
                 System.Diagnostics.Debug.WriteLine("No providers found with current filters");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"Search found {Providers.Count} providers. Stored for map view.");
             }
         }
         catch (Exception ex)

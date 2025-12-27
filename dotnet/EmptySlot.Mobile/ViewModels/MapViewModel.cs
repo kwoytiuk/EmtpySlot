@@ -66,31 +66,45 @@ public partial class MapViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            // Parse query parameters
-            Guid? catId = string.IsNullOrEmpty(CategoryId) ? (Guid?)null : Guid.Parse(CategoryId);
-            double? lat = string.IsNullOrEmpty(Latitude) ? null : double.Parse(Latitude);
-            double? lon = string.IsNullOrEmpty(Longitude) ? null : double.Parse(Longitude);
-            int radiusKm = string.IsNullOrEmpty(Radius) ? 50 : int.Parse(Radius);
-            bool? verified = VerifiedOnly == "true" ? true : null;
+            List<Provider> results;
 
-            System.Diagnostics.Debug.WriteLine($"MapViewModel - Loading providers with filters:");
-            System.Diagnostics.Debug.WriteLine($"  CategoryId: {catId?.ToString() ?? "null"}");
-            System.Diagnostics.Debug.WriteLine($"  Location: {lat?.ToString() ?? "null"}, {lon?.ToString() ?? "null"}");
-            System.Diagnostics.Debug.WriteLine($"  Radius: {radiusKm} km");
-            System.Diagnostics.Debug.WriteLine($"  Verified: {verified?.ToString() ?? "null"}");
+            // First, check if we have cached results from the search page
+            if (SearchViewModel.LastSearchResults != null && SearchViewModel.LastSearchResults.Count > 0)
+            {
+                System.Diagnostics.Debug.WriteLine($"MapViewModel - Using cached search results ({SearchViewModel.LastSearchResults.Count} providers)");
+                results = SearchViewModel.LastSearchResults;
+            }
+            else
+            {
+                // No cached results, perform fresh search
+                System.Diagnostics.Debug.WriteLine("MapViewModel - No cached results, performing fresh search");
 
-            // Search for providers using the same filters from search page
-            var request = new SearchProvidersRequest(
-                CategoryId: catId,
-                Latitude: lat,
-                Longitude: lon,
-                RadiusKm: radiusKm,
-                MinRating: null,
-                Verified: verified
-            );
+                // Parse query parameters
+                Guid? catId = string.IsNullOrEmpty(CategoryId) ? (Guid?)null : Guid.Parse(CategoryId);
+                double? lat = string.IsNullOrEmpty(Latitude) ? null : double.Parse(Latitude);
+                double? lon = string.IsNullOrEmpty(Longitude) ? null : double.Parse(Longitude);
+                int radiusKm = string.IsNullOrEmpty(Radius) ? 50 : int.Parse(Radius);
+                bool? verified = VerifiedOnly == "true" ? true : null;
 
-            var results = await _apiService.SearchProvidersAsync(request);
-            System.Diagnostics.Debug.WriteLine($"MapViewModel - API returned {results.Count} providers");
+                System.Diagnostics.Debug.WriteLine($"MapViewModel - Search filters:");
+                System.Diagnostics.Debug.WriteLine($"  CategoryId: {catId?.ToString() ?? "null"}");
+                System.Diagnostics.Debug.WriteLine($"  Location: {lat?.ToString() ?? "null"}, {lon?.ToString() ?? "null"}");
+                System.Diagnostics.Debug.WriteLine($"  Radius: {radiusKm} km");
+                System.Diagnostics.Debug.WriteLine($"  Verified: {verified?.ToString() ?? "null"}");
+
+                // Search for providers using the filters
+                var request = new SearchProvidersRequest(
+                    CategoryId: catId,
+                    Latitude: lat,
+                    Longitude: lon,
+                    RadiusKm: radiusKm,
+                    MinRating: null,
+                    Verified: verified
+                );
+
+                results = await _apiService.SearchProvidersAsync(request);
+                System.Diagnostics.Debug.WriteLine($"MapViewModel - API returned {results.Count} providers");
+            }
 
             Providers.Clear();
             int addedCount = 0;
