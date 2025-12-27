@@ -23,6 +23,26 @@ public static class DatabaseSeeder
         var providers = CreateProviders(categories);
         context.Providers.AddRange(providers);
         await context.SaveChangesAsync();
+
+        var profiles = CreateProfiles();
+        context.Profiles.AddRange(profiles);
+        await context.SaveChangesAsync();
+    }
+
+    private static List<Profile> CreateProfiles()
+    {
+        return new List<Profile>
+        {
+            new Profile  {
+                Id = Guid.NewGuid(),
+                UserType = UserType.Customer,
+                FullName = "Ken Woytiuk",
+                Email = "kenwoytiuk@gmail.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Jadeliam1!"),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            }
+        };
     }
 
     private static List<ServiceCategory> CreateCategories()
