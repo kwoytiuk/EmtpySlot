@@ -60,13 +60,23 @@
 
                 <CollectionView ItemsSource="{Binding Provider.Services}"
                                SelectionMode="Single"
-                               SelectedItem="{Binding SelectedService}"
-                               SelectionChangedCommand="{Binding ServiceSelectedCommand}">
+                               SelectedItem="{Binding SelectedService}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Service">
                             <Frame Padding="15" Margin="0,5" CornerRadius="10"
-                                   HasShadow="True"
-                                   BorderColor="{StaticResource Primary}">
+                                   HasShadow="True">
+                                <Frame.Triggers>
+                                    <DataTrigger TargetType="Frame"
+                                                Binding="{Binding Source={RelativeSource AncestorType={x:Type vm:BookingViewModel}}, Path=SelectedService.Id}"
+                                                Value="{Binding Id}">
+                                        <Setter Property="BorderColor" Value="#DA3743" />
+                                        <Setter Property="BackgroundColor" Value="#FFF5F5" />
+                                    </DataTrigger>
+                                </Frame.Triggers>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookingViewModel}}, Path=SelectServiceCommand}"
+                                                         CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
                                 <VerticalStackLayout Spacing="8">
                                     <HorizontalStackLayout Spacing="10">
                                         <Label Text="{Binding Name}"
@@ -77,7 +87,7 @@
                                         <Label Text="{Binding Price, StringFormat='${0:F2}'}"
                                                FontSize="18"
                                                FontAttributes="Bold"
-                                               TextColor="{StaticResource Primary}"
+                                               TextColor="#DA3743"
                                                VerticalOptions="Center" />
                                     </HorizontalStackLayout>
 

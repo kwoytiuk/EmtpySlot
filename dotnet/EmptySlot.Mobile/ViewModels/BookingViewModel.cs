@@ -74,6 +74,13 @@ public partial class BookingViewModel : BaseViewModel
         SelectedTimeSlot = timeSlot;
     }
 
+    [RelayCommand]
+    void SelectService(Service service)
+    {
+        SelectedService = service;
+        GenerateTimeSlots();
+    }
+
     public void OnDateChanged()
     {
         GenerateTimeSlots();
