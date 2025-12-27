@@ -117,7 +117,7 @@ public partial class MapViewModel : BaseViewModel
                 if (provider.Locations?.Any() == true)
                 {
                     var location = provider.Locations.First();
-                    if (location.Latitude > 0.0 && location.Longitude > 0.0)
+                    if (location.Latitude != 0.0 && location.Longitude != 0.0)
                     {
                         Providers.Add(provider);
                         addedCount++;
