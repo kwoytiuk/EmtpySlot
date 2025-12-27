@@ -32,19 +32,10 @@ public static class DatabaseSeeder
             new ServiceCategory
             {
                 Id = Guid.NewGuid(),
-                Name = "Restaurants",
-                Slug = "restaurants",
-                Icon = "🍽️",
-                DisplayOrder = 1,
-                CreatedAt = DateTime.UtcNow
-            },
-            new ServiceCategory
-            {
-                Id = Guid.NewGuid(),
                 Name = "Hair Salons",
                 Slug = "hair-salons",
                 Icon = "✂️",
-                DisplayOrder = 2,
+                DisplayOrder = 1,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -53,7 +44,7 @@ public static class DatabaseSeeder
                 Name = "Spa & Wellness",
                 Slug = "spa-wellness",
                 Icon = "💆",
-                DisplayOrder = 3,
+                DisplayOrder = 2,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -62,7 +53,7 @@ public static class DatabaseSeeder
                 Name = "Nail Salons",
                 Slug = "nail-salons",
                 Icon = "💅",
-                DisplayOrder = 4,
+                DisplayOrder = 3,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -71,7 +62,7 @@ public static class DatabaseSeeder
                 Name = "Fitness & Gym",
                 Slug = "fitness-gym",
                 Icon = "💪",
-                DisplayOrder = 5,
+                DisplayOrder = 4,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -80,7 +71,7 @@ public static class DatabaseSeeder
                 Name = "Medical & Dental",
                 Slug = "medical-dental",
                 Icon = "🏥",
-                DisplayOrder = 6,
+                DisplayOrder = 5,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -89,7 +80,7 @@ public static class DatabaseSeeder
                 Name = "Beauty & Esthetics",
                 Slug = "beauty-esthetics",
                 Icon = "✨",
-                DisplayOrder = 7,
+                DisplayOrder = 6,
                 CreatedAt = DateTime.UtcNow
             },
             new ServiceCategory
@@ -98,7 +89,7 @@ public static class DatabaseSeeder
                 Name = "Automotive",
                 Slug = "automotive",
                 Icon = "🚗",
-                DisplayOrder = 8,
+                DisplayOrder = 7,
                 CreatedAt = DateTime.UtcNow
             }
         };
@@ -110,7 +101,6 @@ public static class DatabaseSeeder
         var random = new Random(42); // Seed for consistent data
 
         // Get category references
-        var restaurantCat = categories.First(c => c.Slug == "restaurants");
         var hairCat = categories.First(c => c.Slug == "hair-salons");
         var spaCat = categories.First(c => c.Slug == "spa-wellness");
         var nailsCat = categories.First(c => c.Slug == "nail-salons");
@@ -119,134 +109,27 @@ public static class DatabaseSeeder
         var beautyCat = categories.First(c => c.Slug == "beauty-esthetics");
         var autoCat = categories.First(c => c.Slug == "automotive");
 
-        // Calgary Restaurants (30)
-        providers.AddRange(CreateRestaurants(restaurantCat, "Calgary", 51.0447, -114.0719, 30, random));
+        // Calgary Hair Salons (20)
+        providers.AddRange(CreateHairSalons(hairCat, "Calgary", 51.0447, -114.0719, 20, random));
 
-        // Edmonton Restaurants (20)
-        providers.AddRange(CreateRestaurants(restaurantCat, "Edmonton", 53.5461, -113.4938, 20, random));
+        // Edmonton Hair Salons (15)
+        providers.AddRange(CreateHairSalons(hairCat, "Edmonton", 53.5461, -113.4938, 15, random));
 
-        // Red Deer Restaurants (10)
-        providers.AddRange(CreateRestaurants(restaurantCat, "Red Deer", 52.2681, -113.8111, 10, random));
+        // Calgary Spas (15)
+        providers.AddRange(CreateSpas(spaCat, "Calgary", 51.0447, -114.0719, 15, random));
 
-        // Calgary Hair Salons (15)
-        providers.AddRange(CreateHairSalons(hairCat, "Calgary", 51.0447, -114.0719, 15, random));
+        // Edmonton Spas (10)
+        providers.AddRange(CreateSpas(spaCat, "Edmonton", 53.5461, -113.4938, 10, random));
 
-        // Edmonton Hair Salons (10)
-        providers.AddRange(CreateHairSalons(hairCat, "Edmonton", 53.5461, -113.4938, 10, random));
+        // Nail Salons (15 total)
+        providers.AddRange(CreateNailSalons(nailsCat, "Calgary", 51.0447, -114.0719, 10, random));
+        providers.AddRange(CreateNailSalons(nailsCat, "Edmonton", 53.5461, -113.4938, 5, random));
 
-        // Calgary Spas (10)
-        providers.AddRange(CreateSpas(spaCat, "Calgary", 51.0447, -114.0719, 10, random));
-
-        // Edmonton Spas (5)
-        providers.AddRange(CreateSpas(spaCat, "Edmonton", 53.5461, -113.4938, 5, random));
-
-        // Nail Salons (10 total)
-        providers.AddRange(CreateNailSalons(nailsCat, "Calgary", 51.0447, -114.0719, 6, random));
-        providers.AddRange(CreateNailSalons(nailsCat, "Edmonton", 53.5461, -113.4938, 4, random));
-
-        // Fitness Centers (8 total)
-        providers.AddRange(CreateFitnessCenters(fitnessCat, "Calgary", 51.0447, -114.0719, 5, random));
-        providers.AddRange(CreateFitnessCenters(fitnessCat, "Edmonton", 53.5461, -113.4938, 3, random));
+        // Fitness Centers (12 total)
+        providers.AddRange(CreateFitnessCenters(fitnessCat, "Calgary", 51.0447, -114.0719, 8, random));
+        providers.AddRange(CreateFitnessCenters(fitnessCat, "Edmonton", 53.5461, -113.4938, 4, random));
 
         return providers;
-    }
-
-    private static List<Provider> CreateRestaurants(ServiceCategory category, string city, double baseLat, double baseLng, int count, Random random)
-    {
-        var restaurants = new List<Provider>();
-        var restaurantNames = new[]
-        {
-            "The Keg Steakhouse", "Cactus Club Cafe", "Earls Kitchen + Bar", "Moxies Grill & Bar",
-            "State & Main", "Original Joe's", "The Sawmill", "Craft Beer Market", "Vintage Chophouse",
-            "River Cafe", "Teatro Restaurant", "Sky 360", "Charbar Restaurant", "Model Milk",
-            "Bridgette Bar", "Major Tom", "Foreign Concept", "Nupo", "Gaucho Brazilian BBQ",
-            "Sukiyaki House", "Jinzakaya", "Anju Restaurant", "Ten Foot Henry", "Pigeonhole",
-            "The Nash", "Shokunin", "Mercato", "Calcutta Cricket Club", "Alloy Dining",
-            "Bow Valley Ranche", "Q Haute Cuisine", "Rouge Restaurant", "Deane House",
-            "Bow Valley BBQ", "Sushi Hiro", "Wa's Japanese Restaurant", "Zipang Sushi"
-        };
-
-        var cuisineTypes = new[]
-        {
-            "Steakhouse", "Contemporary", "American", "Italian", "Japanese", "French",
-            "Mediterranean", "Asian Fusion", "Brazilian", "Indian", "Vietnamese"
-        };
-
-        for (int i = 0; i < count && i < restaurantNames.Length; i++)
-        {
-            var name = restaurantNames[i] + (city != "Calgary" ? $" {city}" : "");
-            var cuisine = cuisineTypes[random.Next(cuisineTypes.Length)];
-            var rating = 3.5m + (decimal)(random.NextDouble() * 1.5);
-            var reviewCount = random.Next(50, 3000);
-            var priceLevel = random.Next(1, 5);
-            var isFeatured = i < count / 3; // Top third are featured
-
-            var provider = new Provider
-            {
-                Id = Guid.NewGuid(),
-                UserId = null, // Seeded providers don't have user accounts
-                BusinessName = name,
-                Description = $"Experience {cuisine} cuisine at its finest. {name} offers an unforgettable dining experience with fresh, locally-sourced ingredients and exceptional service.",
-                Email = $"info@{name.ToLower().Replace(" ", "").Replace("&", "and")}.ca",
-                Phone = $"+1 ({GetAreaCode(city)}) {random.Next(200, 999)}-{random.Next(1000, 9999)}",
-                Website = $"https://{name.ToLower().Replace(" ", "")}.ca",
-                RatingAverage = Math.Round(rating, 1),
-                RatingCount = reviewCount,
-                Verified = random.Next(100) > 20, // 80% verified
-                IsFeatured = isFeatured,
-                CreatedAt = DateTime.UtcNow.AddDays(-random.Next(30, 365)),
-                Locations = new List<ProviderLocation>
-                {
-                    new ProviderLocation
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = $"{city} Location",
-                        AddressLine1 = $"{random.Next(100, 9999)} {GetStreetName(random)} {GetStreetType(random)}",
-                        City = city,
-                        StateProvince = "AB",
-                        PostalCode = GetPostalCode(random),
-                        Country = "Canada",
-                        Phone = $"+1 ({GetAreaCode(city)}) {random.Next(200, 999)}-{random.Next(1000, 9999)}",
-                        Latitude = baseLat + (random.NextDouble() - 0.5) * 0.1,
-                        Longitude = baseLng + (random.NextDouble() - 0.5) * 0.1,
-                        IsPrimary = true
-                    }
-                },
-                Services = new List<Service>
-                {
-                    new Service
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Dinner Reservation",
-                        Description = $"Reserve your table for an exceptional {cuisine} dining experience",
-                        CategoryId = category.Id,
-                        DurationMinutes = 120,
-                        Price = priceLevel * 25.00m,
-                        DepositRequired = priceLevel * 10.00m,
-                        ImageUrl = "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400",
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow
-                    },
-                    new Service
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = "Lunch Reservation",
-                        Description = "Enjoy our lunch menu in a relaxed atmosphere",
-                        CategoryId = category.Id,
-                        DurationMinutes = 90,
-                        Price = priceLevel * 18.00m,
-                        DepositRequired = 0m,
-                        ImageUrl = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400",
-                        IsActive = true,
-                        CreatedAt = DateTime.UtcNow
-                    }
-                }
-            };
-
-            restaurants.Add(provider);
-        }
-
-        return restaurants;
     }
 
     private static List<Provider> CreateHairSalons(ServiceCategory category, string city, double baseLat, double baseLng, int count, Random random)
