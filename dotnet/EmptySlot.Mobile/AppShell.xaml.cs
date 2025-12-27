@@ -10,6 +10,7 @@ public partial class AppShell : Shell
         InitializeComponent();
 
         Routing.RegisterRoute(nameof(BookingPage), typeof(BookingPage));
+        Routing.RegisterRoute(nameof(MapPage), typeof(MapPage));
 
         // Handle navigation after shell is loaded
         Loaded += OnShellLoaded;

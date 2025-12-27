@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             x:Class="EmptySlot.Mobile.Pages.MapPage"
+             x:DataType="vm:MapViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header with search info -->
+        <VerticalStackLayout Grid.Row="0" Padding="12" Spacing="8" BackgroundColor="White">
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="{Binding Providers.Count, StringFormat='{0} providers'}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="#DA3743"
+                       VerticalOptions="Center" />
+                <Label Text="{Binding SearchCity, StringFormat='in {0}'}"
+                       FontSize="14"
+                       TextColor="#666"
+                       VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <Label Text="Tap any marker to view provider details"
+                   FontSize="12"
+                   TextColor="#999" />
+        </VerticalStackLayout>
+
+        <!-- Map View -->
+        <maps:Map x:Name="map"
+                  Grid.Row="1"
+                  IsShowingUser="True"
+                  MapType="Street">
+        </maps:Map>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.Row="1"
+              IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80FFFFFF">
+            <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                  Color="#DA3743"
+                                  WidthRequest="40"
+                                  HeightRequest="40" />
+                <Label Text="Loading providers..."
+                       FontSize="14"
+                       TextColor="#666"
+                       FontAttributes="Bold" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+
+</ContentPage>

@@ -248,14 +248,8 @@ public partial class SearchViewModel : BaseViewModel
     [RelayCommand]
     async Task ShowMap()
     {
-        // Show simple map placeholder with provider count
-        var providerCount = Providers.Count;
-        var message = providerCount > 0
-            ? $"Showing {providerCount} providers in {SearchCity}.\n\nMap view with interactive pins coming soon!"
-            : "No providers to display on map.\n\nTry searching for providers first.";
-
-        await Shell.Current.DisplayAlert("Map View", message, "OK");
-        // TODO: Navigate to map page when implemented
+        // Navigate to interactive map page
+        await Shell.Current.GoToAsync(nameof(MapPage));
     }
 
     [RelayCommand]
