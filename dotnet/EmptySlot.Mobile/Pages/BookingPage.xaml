@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
              xmlns:sys="clr-namespace:System;assembly=netstandard"
              xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             xmlns:services="clr-namespace:EmptySlot.Mobile.Services"
              x:Class="EmptySlot.Mobile.Pages.BookingPage"
              x:DataType="vm:BookingViewModel"
              Title="{Binding Title}">
@@ -156,36 +157,53 @@
                        FontSize="18"
                        FontAttributes="Bold" />
 
-                <FlexLayout BindableLayout.ItemsSource="{Binding AvailableTimeSlots}"
-                           Wrap="Wrap"
-                           JustifyContent="Start"
-                           AlignItems="Start">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="x:String">
-                            <Frame Padding="10,8"
-                                   Margin="5"
-                                   CornerRadius="8"
-                                   HasShadow="False"
+                <CollectionView ItemsSource="{Binding AvailableTimeSlots}"
+                               SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="8" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="services:TimeSlotDto">
+                            <Frame Padding="15"
+                                   CornerRadius="10"
+                                   HasShadow="True"
                                    BackgroundColor="{StaticResource Gray100}">
+                                <Frame.Triggers>
+                                    <DataTrigger TargetType="Frame"
+                                                Binding="{Binding Source={RelativeSource AncestorType={x:Type vm:BookingViewModel}}, Path=SelectedTimeSlot.Id}"
+                                                Value="{Binding Id}">
+                                        <Setter Property="BorderColor" Value="#DA3743" />
+                                        <Setter Property="BackgroundColor" Value="#FFF5F5" />
+                                    </DataTrigger>
+                                </Frame.Triggers>
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookingViewModel}}, Path=SelectTimeSlotCommand}"
                                                          CommandParameter="{Binding .}" />
                                 </Frame.GestureRecognizers>
-                                <Label Text="{Binding .}"
-                                       FontSize="14"
-                                       FontAttributes="Bold"
-                                       TextColor="{StaticResource Gray900}" />
+                                <HorizontalStackLayout Spacing="15">
+                                    <Label Text="{Binding DisplayTime}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#DA3743"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Start" />
+                                    <Label Text="{Binding StaffMemberName, StringFormat='with {0}'}"
+                                           FontSize="14"
+                                           TextColor="{StaticResource Gray600}"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="StartAndExpand" />
+                                </HorizontalStackLayout>
                             </Frame>
                         </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </FlexLayout>
-
-                <Label Text="{Binding SelectedTimeSlot, StringFormat='Selected: {0}'}"
-                       FontSize="16"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource Primary}"
-                       IsVisible="{Binding SelectedTimeSlot, Converter={StaticResource IsNotNullConverter}}"
-                       Margin="5,10,0,0" />
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="No available time slots for this date"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,20" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
             </VerticalStackLayout>
 
             <!-- Notes -->

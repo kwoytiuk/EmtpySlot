@@ -124,4 +124,32 @@ public class ApiService : IApiService
             throw;
         }
     }
+
+    public async Task<List<TimeSlotDto>> GetAvailableTimeSlotsAsync(Guid providerId, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var queryParams = new List<string>();
+        if (startDate.HasValue) queryParams.Add($"startDate={startDate.Value:yyyy-MM-dd}");
+        if (endDate.HasValue) queryParams.Add($"endDate={endDate.Value:yyyy-MM-dd}");
+
+        var query = queryParams.Count > 0 ? "?" + string.Join("&", queryParams) : "";
+
+        var response = await _httpClient.GetAsync($"timeslots/provider/{providerId}/available{query}");
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<List<TimeSlotDto>>() ?? new List<TimeSlotDto>();
+    }
+
+    public async Task BlockTimeSlotAsync(Guid timeSlotId)
+    {
+        await AddAuthHeaderAsync();
+        var response = await _httpClient.PostAsync($"timeslots/{timeSlotId}/block", null);
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UnblockTimeSlotAsync(Guid timeSlotId)
+    {
+        await AddAuthHeaderAsync();
+        var response = await _httpClient.PostAsync($"timeslots/{timeSlotId}/unblock", null);
+        response.EnsureSuccessStatusCode();
+    }
 }

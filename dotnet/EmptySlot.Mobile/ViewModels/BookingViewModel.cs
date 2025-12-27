@@ -27,10 +27,10 @@ public partial class BookingViewModel : BaseViewModel
     private DateTime selectedDate = DateTime.Today;
 
     [ObservableProperty]
-    private ObservableCollection<string> availableTimeSlots = new();
+    private ObservableCollection<TimeSlotDto> availableTimeSlots = new();
 
     [ObservableProperty]
-    private string? selectedTimeSlot;
+    private TimeSlotDto? selectedTimeSlot;
 
     [ObservableProperty]
     private string? customerNotes;
@@ -50,7 +50,7 @@ public partial class BookingViewModel : BaseViewModel
         {
             IsBusy = true;
             Provider = await _apiService.GetProviderAsync(Guid.Parse(ProviderId));
-            GenerateTimeSlots();
+            await LoadTimeSlots();
         }
         catch (Exception ex)
         {
@@ -63,72 +63,57 @@ public partial class BookingViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    void ServiceSelected()
+    async Task ServiceSelected()
     {
-        GenerateTimeSlots();
+        await LoadTimeSlots();
     }
 
     [RelayCommand]
-    void SelectTimeSlot(string timeSlot)
+    void SelectTimeSlot(TimeSlotDto timeSlot)
     {
         SelectedTimeSlot = timeSlot;
     }
 
     [RelayCommand]
-    void SelectService(Service service)
+    async Task SelectService(Service service)
     {
         SelectedService = service;
-        GenerateTimeSlots();
+        await LoadTimeSlots();
     }
 
-    public void OnDateChanged()
+    public async void OnDateChanged()
     {
-        GenerateTimeSlots();
+        await LoadTimeSlots();
     }
 
-    private void GenerateTimeSlots()
+    private async Task LoadTimeSlots()
     {
-        AvailableTimeSlots.Clear();
+        if (Provider == null) return;
 
-        // Generate time slots starting from current time, rounded to next 30-min interval
-        var now = DateTime.Now;
-
-        // Round up to next 30-minute interval
-        int startMinute = now.Minute < 30 ? 30 : 0;
-        int startHour = now.Minute < 30 ? now.Hour : now.Hour + 1;
-
-        // If it's past 8 PM, start from 5:45 PM (next day context)
-        if (startHour >= 20)
+        try
         {
-            startHour = 17;
-            startMinute = 45;
-        }
+            AvailableTimeSlots.Clear();
 
-        var endHour = 21; // Extended to 9 PM for dinner reservations
+            // Fetch available time slots for the selected date
+            var slots = await _apiService.GetAvailableTimeSlotsAsync(
+                Provider.Id,
+                SelectedDate,
+                SelectedDate);
 
-        // Generate slots starting from the rounded time
-        var currentHour = startHour;
-        var currentMin = startMinute;
-
-        while (currentHour < endHour)
-        {
-            var time = new TimeSpan(currentHour, currentMin, 0);
-            var displayTime = DateTime.Today.Add(time).ToString("h:mm tt");
-            AvailableTimeSlots.Add(displayTime);
-
-            // Increment by 30 minutes
-            currentMin += 30;
-            if (currentMin >= 60)
+            foreach (var slot in slots)
             {
-                currentMin = 0;
-                currentHour++;
+                AvailableTimeSlots.Add(slot);
+            }
+
+            // Auto-select first slot if none selected
+            if (AvailableTimeSlots.Count > 0 && SelectedTimeSlot == null)
+            {
+                SelectedTimeSlot = AvailableTimeSlots[0];
             }
         }
-
-        // Auto-select first slot if none selected
-        if (AvailableTimeSlots.Count > 0 && string.IsNullOrEmpty(SelectedTimeSlot))
+        catch (Exception ex)
         {
-            SelectedTimeSlot = AvailableTimeSlots[0];
+            await Shell.Current.DisplayAlert("Error", $"Failed to load time slots: {ex.Message}", "OK");
         }
     }
 
@@ -141,7 +126,7 @@ public partial class BookingViewModel : BaseViewModel
             return;
         }
 
-        if (string.IsNullOrEmpty(SelectedTimeSlot))
+        if (SelectedTimeSlot == null)
         {
             await Shell.Current.DisplayAlert("Error", "Please select a time slot", "OK");
             return;
@@ -151,15 +136,9 @@ public partial class BookingViewModel : BaseViewModel
         {
             IsBusy = true;
 
-            // Parse the selected time slot (format: "h:mm tt")
-            if (!DateTime.TryParse(SelectedTimeSlot, out var parsedTime))
-            {
-                await Shell.Current.DisplayAlert("Error", "Invalid time slot format", "OK");
-                return;
-            }
-
-            var startTime = parsedTime.TimeOfDay;
-            var endTime = startTime.Add(TimeSpan.FromMinutes(SelectedService.DurationMinutes));
+            // Use the actual time slot data
+            var startTime = SelectedTimeSlot.StartTime.ToTimeSpan();
+            var endTime = SelectedTimeSlot.EndTime.ToTimeSpan();
 
             var dto = new CreateAppointmentDto(
                 ProviderId: Provider.Id,
@@ -175,9 +154,12 @@ public partial class BookingViewModel : BaseViewModel
 
             await _apiService.CreateAppointmentAsync(dto);
 
+            // Block the time slot after successful booking
+            await _apiService.BlockTimeSlotAsync(SelectedTimeSlot.Id);
+
             await Shell.Current.DisplayAlert(
                 "Success",
-                $"Appointment booked for {SelectedDate:MMM dd, yyyy} at {SelectedTimeSlot}!",
+                $"Appointment booked for {SelectedDate:MMM dd, yyyy} at {SelectedTimeSlot.DisplayTime} with {SelectedTimeSlot.StaffMemberName}!",
                 "OK");
 
             await Shell.Current.GoToAsync("///AppointmentsPage");

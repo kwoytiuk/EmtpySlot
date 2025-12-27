@@ -9,6 +9,9 @@ public interface IApiService
     Task<List<Appointment>> GetMyAppointmentsAsync();
     Task<Appointment> CreateAppointmentAsync(CreateAppointmentDto dto);
     Task<List<ServiceCategory>> GetCategoriesAsync();
+    Task<List<TimeSlotDto>> GetAvailableTimeSlotsAsync(Guid providerId, DateTime? startDate = null, DateTime? endDate = null);
+    Task BlockTimeSlotAsync(Guid timeSlotId);
+    Task UnblockTimeSlotAsync(Guid timeSlotId);
 }
 
 public record SearchProvidersRequest(
@@ -29,3 +32,11 @@ public record CreateAppointmentDto(
     TimeSpan EndTime,
     decimal Price,
     string? CustomerNotes);
+
+public record TimeSlotDto(
+    Guid Id,
+    DateOnly Date,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    string StaffMemberName,
+    string DisplayTime);
