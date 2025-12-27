@@ -277,7 +277,7 @@ public partial class MapViewModel : BaseViewModel
 <body>
     <div id=""map""></div>
     <script>
-        var map = L.map('map').setView([{centerLat}, {centerLng}], {(hasUserLocation ? "12" : "11")});
+        var map = L.map('map').setView([{centerLat}, {centerLng}], {(hasUserLocation ? "13" : "11")});
 
         L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
             attribution: '© OpenStreetMap contributors',
@@ -288,29 +288,23 @@ public partial class MapViewModel : BaseViewModel
 
         {markers}
 
-        // Fit bounds to show all markers and radius circle if user location available
+        // Only auto-fit bounds if user location is NOT available
+        // If user location is available, keep the centered view
         {(hasUserLocation ? @"
-        var bounds = L.latLngBounds();
-        bounds.extend([" + centerLat + ", " + centerLng + @"]);
-
-        // Extend bounds to include radius circle
-        var radiusInDegrees = " + radiusKm + @" / 111.32; // Approximate conversion
-        bounds.extend([" + centerLat + @" + radiusInDegrees, " + centerLng + @" + radiusInDegrees]);
-        bounds.extend([" + centerLat + @" - radiusInDegrees, " + centerLng + @" - radiusInDegrees]);
+        // User location is available - don't auto-fit, keep manual zoom level
+        console.log('Map centered on user location with manual zoom');
         " : @"
+        // No user location - fit bounds to show all providers
         var bounds = L.latLngBounds();
-        ")}
-
-        // Include all provider markers
         map.eachLayer(function(layer) {{
             if (layer instanceof L.Marker && layer.options.icon && layer.options.icon.options.className === 'custom-pin') {{
                 bounds.extend(layer.getLatLng());
             }}
         }});
-
         if (bounds.isValid()) {{
             map.fitBounds(bounds.pad(0.15));
         }}
+        ")}
     </script>
 </body>
 </html>";
