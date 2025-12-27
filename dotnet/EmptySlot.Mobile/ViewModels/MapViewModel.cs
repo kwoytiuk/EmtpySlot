@@ -171,9 +171,27 @@ public partial class MapViewModel : BaseViewModel
         if (Providers.Count == 0)
             return "";
 
-        // Calculate center point (average of all provider locations)
-        var avgLat = Providers.Average(p => p.Locations.First().Latitude);
-        var avgLng = Providers.Average(p => p.Locations.First().Longitude);
+        // Parse user location and radius
+        double? userLat = string.IsNullOrEmpty(Latitude) ? null : double.Parse(Latitude);
+        double? userLng = string.IsNullOrEmpty(Longitude) ? null : double.Parse(Longitude);
+        int radiusKm = string.IsNullOrEmpty(Radius) ? 50 : int.Parse(Radius);
+
+        // Determine center point - use user location if available, otherwise average of providers
+        double centerLat, centerLng;
+        bool hasUserLocation = userLat.HasValue && userLng.HasValue;
+
+        if (hasUserLocation)
+        {
+            centerLat = userLat.Value;
+            centerLng = userLng.Value;
+            System.Diagnostics.Debug.WriteLine($"Map centering on user location: {centerLat}, {centerLng}");
+        }
+        else
+        {
+            centerLat = Providers.Average(p => p.Locations.First().Latitude);
+            centerLng = Providers.Average(p => p.Locations.First().Longitude);
+            System.Diagnostics.Debug.WriteLine($"Map centering on provider average: {centerLat}, {centerLng}");
+        }
 
         // Generate markers JavaScript
         var markers = string.Join("\n", Providers.Select(p =>
@@ -204,6 +222,29 @@ public partial class MapViewModel : BaseViewModel
                 .addTo(map);";
         }));
 
+        // Generate user location marker and radius circle if location is available
+        var userLocationMarker = hasUserLocation ? $@"
+        // User location marker
+        L.marker([{centerLat}, {centerLng}], {{
+            icon: L.divIcon({{
+                className: 'user-location-pin',
+                html: '<div style=""background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); width: 24px; height: 24px; border-radius: 50%; border: 4px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;""><span style=""font-size: 12px; color: white;"">●</span></div>',
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            }})
+        }})
+        .bindPopup('<div style=""text-align: center; font-family: system-ui, sans-serif;""><strong>Your Location</strong></div>')
+        .addTo(map);
+
+        // Search radius circle
+        L.circle([{centerLat}, {centerLng}], {{
+            color: '#A855F7',
+            fillColor: '#A855F7',
+            fillOpacity: 0.1,
+            radius: {radiusKm * 1000}, // Convert km to meters
+            weight: 2
+        }}).addTo(map).bindPopup('<div style=""text-align: center; font-family: system-ui, sans-serif;""><strong>Search Radius</strong><br/>{radiusKm} km</div>');" : "";
+
         return $@"
 <!DOCTYPE html>
 <html>
@@ -219,24 +260,39 @@ public partial class MapViewModel : BaseViewModel
 <body>
     <div id=""map""></div>
     <script>
-        var map = L.map('map').setView([{avgLat}, {avgLng}], 12);
+        var map = L.map('map').setView([{centerLat}, {centerLng}], {(hasUserLocation ? "12" : "11")});
 
         L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
             attribution: '© OpenStreetMap contributors',
             maxZoom: 19
         }}).addTo(map);
 
+        {userLocationMarker}
+
         {markers}
 
-        // Fit bounds to show all markers
-        var group = L.featureGroup();
+        // Fit bounds to show all markers and radius circle if user location available
+        {(hasUserLocation ? @"
+        var bounds = L.latLngBounds();
+        bounds.extend([" + centerLat + ", " + centerLng + @"]);
+
+        // Extend bounds to include radius circle
+        var radiusInDegrees = " + radiusKm + @" / 111.32; // Approximate conversion
+        bounds.extend([" + centerLat + @" + radiusInDegrees, " + centerLng + @" + radiusInDegrees]);
+        bounds.extend([" + centerLat + @" - radiusInDegrees, " + centerLng + @" - radiusInDegrees]);
+        " : @"
+        var bounds = L.latLngBounds();
+        ")}
+
+        // Include all provider markers
         map.eachLayer(function(layer) {{
-            if (layer instanceof L.Marker) {{
-                group.addLayer(layer);
+            if (layer instanceof L.Marker && layer.options.icon && layer.options.icon.options.className === 'custom-pin') {{
+                bounds.extend(layer.getLatLng());
             }}
         }});
-        if (group.getLayers().length > 0) {{
-            map.fitBounds(group.getBounds().pad(0.1));
+
+        if (bounds.isValid()) {{
+            map.fitBounds(bounds.pad(0.15));
         }}
     </script>
 </body>
