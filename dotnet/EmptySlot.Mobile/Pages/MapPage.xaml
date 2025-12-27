@@ -10,26 +10,37 @@
 
     <Grid RowDefinitions="Auto,*">
 
-        <!-- Header with search info -->
-        <VerticalStackLayout Grid.Row="0" Padding="12" Spacing="8" BackgroundColor="White">
+        <!-- Header with search info - React website branding -->
+        <VerticalStackLayout Grid.Row="0" Padding="16" Spacing="10">
+            <VerticalStackLayout.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#7C3AED" Offset="0.0" />   <!-- violet-600 -->
+                    <GradientStop Color="#2563EB" Offset="0.5" />   <!-- blue-600 -->
+                    <GradientStop Color="#06B6D4" Offset="1.0" />   <!-- cyan-600 -->
+                </LinearGradientBrush>
+            </VerticalStackLayout.Background>
+
             <HorizontalStackLayout Spacing="8">
-                <Label Text="📍"
-                       FontSize="20"
+                <Label Text="🗺️"
+                       FontSize="24"
                        VerticalOptions="Center" />
-                <Label Text="{Binding Providers.Count, StringFormat='{0} providers'}"
-                       FontSize="16"
+                <Label Text="{Binding Providers.Count, StringFormat='{0} locations'}"
+                       FontSize="18"
                        FontAttributes="Bold"
-                       TextColor="#DA3743"
+                       TextColor="White"
                        VerticalOptions="Center" />
-                <Label Text="{Binding SearchCity, StringFormat='in {0}'}"
-                       FontSize="14"
-                       TextColor="#666"
+                <Label Text="{Binding SearchCity, StringFormat='near {0}'}"
+                       FontSize="15"
+                       TextColor="White"
+                       Opacity="0.9"
                        VerticalOptions="Center" />
             </HorizontalStackLayout>
 
-            <Label Text="Tap any provider to view details and book"
+            <Label Text="⚡ Tap any provider to view details and book your slot"
                    FontSize="12"
-                   TextColor="#999" />
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   Opacity="0.95" />
         </VerticalStackLayout>
 
         <!-- Provider List with Locations -->
@@ -39,7 +50,8 @@
                        BackgroundColor="#F5F5F5">
 
             <CollectionView.EmptyView>
-                <VerticalStackLayout Padding="40" Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Padding="40" Spacing="12" HorizontalOptions="Center" VerticalOptions="Center"
+                                   IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
                     <Label Text="🗺️"
                            FontSize="48"
                            HorizontalOptions="Center" />
@@ -48,9 +60,10 @@
                            FontAttributes="Bold"
                            HorizontalOptions="Center"
                            TextColor="#666" />
-                    <Label Text="Try searching in a different area"
+                    <Label Text="Try searching in a different area or different filters"
                            FontSize="14"
                            HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
                            TextColor="#999" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
@@ -59,81 +72,87 @@
                 <DataTemplate x:DataType="models:Provider">
                     <Border Margin="12,6"
                             BackgroundColor="White"
-                            StrokeThickness="0"
-                            Padding="12">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="8" />
-                        </Border.StrokeShape>
+                            StrokeThickness="2"
+                            Stroke="#E5E7EB"
+                            Padding="14"
+                            StrokeShape="RoundRectangle 16"
+                            Shadow="{Shadow Brush=Black, Radius=16, Opacity=0.08, Offset='0,4'}">
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MapViewModel}}, Path=SelectProviderCommand}"
                                                  CommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
 
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
 
-                            <!-- Pin Icon -->
+                            <!-- Pin Icon with Gradient -->
                             <Border Grid.Column="0"
-                                   WidthRequest="50"
-                                   HeightRequest="50"
-                                   BackgroundColor="#FFF5F5"
+                                   WidthRequest="56"
+                                   HeightRequest="56"
                                    StrokeThickness="0"
+                                   StrokeShape="RoundRectangle 28"
                                    VerticalOptions="Start">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="25" />
-                                </Border.StrokeShape>
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#EC4899" Offset="0.0" />   <!-- pink-500 -->
+                                        <GradientStop Color="#A855F7" Offset="1.0" />   <!-- purple-600 -->
+                                    </LinearGradientBrush>
+                                </Border.Background>
                                 <Label Text="📍"
-                                      FontSize="24"
+                                      FontSize="28"
                                       HorizontalOptions="Center"
                                       VerticalOptions="Center" />
                             </Border>
 
                             <!-- Provider Info -->
-                            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
                                 <Label Text="{Binding BusinessName}"
-                                      FontSize="16"
+                                      FontSize="17"
                                       FontAttributes="Bold"
-                                      TextColor="#1A1A1A" />
+                                      TextColor="#1F2937"
+                                      LineBreakMode="TailTruncation" />
 
                                 <HorizontalStackLayout Spacing="4">
-                                    <Label Text="★"
+                                    <Border BackgroundColor="#FEF3C7"
+                                           StrokeThickness="0"
+                                           StrokeShape="RoundRectangle 10"
+                                           Padding="6,3">
+                                        <HorizontalStackLayout Spacing="3">
+                                            <Label Text="⭐"
+                                                  FontSize="11" />
+                                            <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
+                                                  FontSize="12"
+                                                  FontAttributes="Bold"
+                                                  TextColor="#D97706" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Label Text="{Binding RatingCount, StringFormat='({0} reviews)'}"
                                           FontSize="12"
-                                          TextColor="#FF6B35" />
-                                    <Label Text="{Binding RatingAverage, StringFormat='{0:F1}'}"
-                                          FontSize="12"
-                                          FontAttributes="Bold"
-                                          TextColor="#2A2A2A" />
-                                    <Label Text="{Binding RatingCount, StringFormat='({0})'}"
-                                          FontSize="12"
-                                          TextColor="#757575" />
+                                          TextColor="#6B7280"
+                                          VerticalOptions="Center" />
                                 </HorizontalStackLayout>
 
                                 <!-- Location -->
                                 <HorizontalStackLayout Spacing="4" IsVisible="{Binding Locations.Count}">
                                     <Label Text="📍"
-                                          FontSize="10" />
-                                    <Label FontSize="12"
-                                          TextColor="#757575">
+                                          FontSize="11" />
+                                    <Label FontSize="13"
+                                          TextColor="#6B7280">
                                         <Label.FormattedText>
                                             <FormattedString>
-                                                <Span Text="{Binding Locations[0].City}" />
+                                                <Span Text="{Binding Locations[0].AddressLine1}" />
                                                 <Span Text=", " />
-                                                <Span Text="{Binding Locations[0].StateProvince}" />
+                                                <Span Text="{Binding Locations[0].City}" />
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
                                 </HorizontalStackLayout>
-
-                                <Label Text="{Binding Locations[0].AddressLine1}"
-                                      FontSize="11"
-                                      TextColor="#999"
-                                      IsVisible="{Binding Locations.Count}" />
                             </VerticalStackLayout>
 
                             <!-- Arrow -->
                             <Label Grid.Column="2"
                                   Text="›"
-                                  FontSize="24"
-                                  TextColor="#CCC"
+                                  FontSize="28"
+                                  TextColor="#D1D5DB"
                                   VerticalOptions="Center" />
                         </Grid>
                     </Border>
@@ -144,15 +163,15 @@
         <!-- Loading Overlay -->
         <Grid Grid.Row="1"
               IsVisible="{Binding IsBusy}"
-              BackgroundColor="#80FFFFFF">
+              BackgroundColor="#F0FFFFFF">
             <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
                 <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                  Color="#DA3743"
-                                  WidthRequest="40"
-                                  HeightRequest="40" />
-                <Label Text="Loading providers..."
-                       FontSize="14"
-                       TextColor="#666"
+                                  Color="#A855F7"
+                                  WidthRequest="48"
+                                  HeightRequest="48" />
+                <Label Text="Loading locations..."
+                       FontSize="16"
+                       TextColor="#1F2937"
                        FontAttributes="Bold" />
             </VerticalStackLayout>
         </Grid>
