@@ -300,4 +300,61 @@ public partial class SearchViewModel : BaseViewModel
             await Search();
         }
     }
+
+    [RelayCommand]
+    async Task ShowLocationFilter()
+    {
+        var result = await Shell.Current.DisplayPromptAsync(
+            "Change Location",
+            "Enter city name:",
+            initialValue: SearchCity,
+            placeholder: "Calgary");
+
+        if (!string.IsNullOrWhiteSpace(result))
+        {
+            SearchCity = result;
+            await Search();
+        }
+    }
+
+    [RelayCommand]
+    async Task ShowDistanceFilter()
+    {
+        var result = await Shell.Current.DisplayActionSheet(
+            "Search Radius",
+            "Cancel",
+            null,
+            "5 km",
+            "10 km",
+            "25 km",
+            "50 km",
+            "100 km");
+
+        if (result != null && result != "Cancel")
+        {
+            SelectedRadius = result;
+            await Search();
+        }
+    }
+
+    [RelayCommand]
+    async Task ShowSort()
+    {
+        var result = await Shell.Current.DisplayActionSheet(
+            "Sort By",
+            "Cancel",
+            null,
+            "Distance",
+            "Rating (High to Low)",
+            "Rating (Low to High)",
+            "Price (Low to High)",
+            "Price (High to Low)",
+            "Most Popular");
+
+        if (result != null && result != "Cancel")
+        {
+            // TODO: Implement sorting logic
+            await Shell.Current.DisplayAlert("Sort", $"Sorting by: {result}", "OK");
+        }
+    }
 }
