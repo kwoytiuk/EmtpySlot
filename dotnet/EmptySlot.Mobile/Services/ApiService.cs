@@ -152,4 +152,178 @@ public class ApiService : IApiService
         var response = await _httpClient.PostAsync($"timeslots/{timeSlotId}/unblock", null);
         response.EnsureSuccessStatusCode();
     }
+
+    // Provider Authentication
+    public async Task<ProviderAuthResponse> ProviderRegisterAsync(ProviderRegistrationRequest request)
+    {
+        var response = await _httpClient.PostAsJsonAsync("providerauth/register", request);
+        response.EnsureSuccessStatusCode();
+
+        var result = await response.Content.ReadFromJsonAsync<dynamic>();
+        return new ProviderAuthResponse(
+            result.profileId,
+            result.providerId,
+            request.FullName,
+            request.Email,
+            request.BusinessName,
+            null);
+    }
+
+    public async Task<ProviderAuthResponse> ProviderLoginAsync(string email, string password)
+    {
+        var response = await _httpClient.PostAsJsonAsync("providerauth/login", new { Email = email, Password = password });
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<ProviderAuthResponse>()
+            ?? throw new Exception("Failed to parse login response");
+    }
+
+    // Employee Authentication
+    public async Task<EmployeeAuthResponse> EmployeeLoginAsync(string email, string password)
+    {
+        var response = await _httpClient.PostAsJsonAsync("employeeauth/login", new { Email = email, Password = password });
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<EmployeeAuthResponse>()
+            ?? throw new Exception("Failed to parse login response");
+    }
+
+    // Staff Management
+    public async Task<List<StaffMember>> GetProviderStaffAsync(Guid providerId)
+    {
+        var response = await _httpClient.GetAsync($"staff/provider/{providerId}");
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<List<StaffMember>>() ?? new List<StaffMember>();
+    }
+
+    public async Task<StaffMember> CreateStaffMemberAsync(CreateStaffRequest request)
+    {
+        var staff = new StaffMember
+        {
+            ProviderId = request.ProviderId,
+            Name = request.Name,
+            Email = request.Email,
+            Phone = request.Phone,
+            Bio = request.Bio
+        };
+
+        var response = await _httpClient.PostAsJsonAsync("staff", staff);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<StaffMember>()
+            ?? throw new Exception("Failed to create staff member");
+    }
+
+    public async Task<StaffMember> UpdateStaffMemberAsync(Guid staffId, UpdateStaffRequest request)
+    {
+        var staff = new
+        {
+            Id = staffId,
+            request.Name,
+            request.Email,
+            request.Phone,
+            request.Bio,
+            request.IsActive
+        };
+
+        var response = await _httpClient.PutAsJsonAsync($"staff/{staffId}", staff);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<StaffMember>()
+            ?? throw new Exception("Failed to update staff member");
+    }
+
+    public async Task DeleteStaffMemberAsync(Guid staffId)
+    {
+        var response = await _httpClient.DeleteAsync($"staff/{staffId}");
+        response.EnsureSuccessStatusCode();
+    }
+
+    // Schedule Management
+    public async Task<List<StaffSchedule>> GetStaffSchedulesAsync(Guid staffId)
+    {
+        var response = await _httpClient.GetAsync($"staff/{staffId}/schedules");
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<List<StaffSchedule>>() ?? new List<StaffSchedule>();
+    }
+
+    public async Task<StaffSchedule> CreateScheduleAsync(Guid staffId, CreateScheduleRequest request)
+    {
+        var response = await _httpClient.PostAsJsonAsync($"staff/{staffId}/schedules", request);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<StaffSchedule>()
+            ?? throw new Exception("Failed to create schedule");
+    }
+
+    public async Task<StaffSchedule> UpdateScheduleAsync(Guid scheduleId, UpdateScheduleRequest request)
+    {
+        var schedule = new
+        {
+            Id = scheduleId,
+            request.DayOfWeek,
+            request.StartTime,
+            request.EndTime,
+            request.IsActive
+        };
+
+        var response = await _httpClient.PutAsJsonAsync($"staff/schedules/{scheduleId}", schedule);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<StaffSchedule>()
+            ?? throw new Exception("Failed to update schedule");
+    }
+
+    public async Task DeleteScheduleAsync(Guid scheduleId)
+    {
+        var response = await _httpClient.DeleteAsync($"staff/schedules/{scheduleId}");
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task GenerateTimeSlotsAsync(Guid staffId, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var queryParams = new List<string>();
+        if (startDate.HasValue) queryParams.Add($"startDate={startDate.Value:yyyy-MM-dd}");
+        if (endDate.HasValue) queryParams.Add($"endDate={endDate.Value:yyyy-MM-dd}");
+
+        var query = queryParams.Count > 0 ? "?" + string.Join("&", queryParams) : "";
+
+        var response = await _httpClient.PostAsync($"staff/{staffId}/generate-slots{query}", null);
+        response.EnsureSuccessStatusCode();
+    }
+
+    // Service Management
+    public async Task<List<Service>> GetProviderServicesAsync(Guid providerId)
+    {
+        var response = await _httpClient.GetAsync($"services/provider/{providerId}");
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<List<Service>>() ?? new List<Service>();
+    }
+
+    public async Task<Service> CreateServiceAsync(CreateServiceRequest request)
+    {
+        var response = await _httpClient.PostAsJsonAsync("services", request);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<Service>()
+            ?? throw new Exception("Failed to create service");
+    }
+
+    public async Task<Service> UpdateServiceAsync(Guid serviceId, UpdateServiceRequest request)
+    {
+        var response = await _httpClient.PutAsJsonAsync($"services/{serviceId}", request);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<Service>()
+            ?? throw new Exception("Failed to update service");
+    }
+
+    public async Task DeleteServiceAsync(Guid serviceId)
+    {
+        var response = await _httpClient.DeleteAsync($"services/{serviceId}");
+        response.EnsureSuccessStatusCode();
+    }
 }

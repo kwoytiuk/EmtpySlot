@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             x:Class="EmptySlot.Mobile.Pages.ProviderDashboardPage"
+             x:DataType="vm:ProviderDashboardViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Welcome Header -->
+            <Frame Padding="20" CornerRadius="15" HasShadow="True" BackgroundColor="{StaticResource Primary}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding BusinessName}"
+                           FontSize="26"
+                           FontAttributes="Bold"
+                           TextColor="White" />
+                    <Label Text="{Binding ProviderName, StringFormat='Welcome back, {0}!'}"
+                           FontSize="16"
+                           TextColor="White"
+                           Opacity="0.9" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Quick Actions -->
+            <Label Text="Management"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   Margin="0,10,0,0" />
+
+            <!-- Staff Management Card -->
+            <Frame Padding="20" CornerRadius="12" HasShadow="True">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ManageStaffCommand}" />
+                </Frame.GestureRecognizers>
+                <HorizontalStackLayout Spacing="15">
+                    <Label Text="👥"
+                           FontSize="40"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                        <Label Text="Staff Management"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        <Label Text="Manage employees and schedules"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}" />
+                    </VerticalStackLayout>
+                    <Label Text="›"
+                           FontSize="30"
+                           TextColor="{StaticResource Primary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Service Management Card -->
+            <Frame Padding="20" CornerRadius="12" HasShadow="True">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ManageServicesCommand}" />
+                </Frame.GestureRecognizers>
+                <HorizontalStackLayout Spacing="15">
+                    <Label Text="✂️"
+                           FontSize="40"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                        <Label Text="Service Management"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        <Label Text="Add and edit your services"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}" />
+                    </VerticalStackLayout>
+                    <Label Text="›"
+                           FontSize="30"
+                           TextColor="{StaticResource Primary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Appointments Card -->
+            <Frame Padding="20" CornerRadius="12" HasShadow="True">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ViewAppointmentsCommand}" />
+                </Frame.GestureRecognizers>
+                <HorizontalStackLayout Spacing="15">
+                    <Label Text="📅"
+                           FontSize="40"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Spacing="5" VerticalOptions="Center" HorizontalOptions="StartAndExpand">
+                        <Label Text="Appointments"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        <Label Text="View and manage bookings"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}" />
+                    </VerticalStackLayout>
+                    <Label Text="›"
+                           FontSize="30"
+                           TextColor="{StaticResource Primary}"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+            </Frame>
+
+            <!-- Logout Button -->
+            <Button Text="Logout"
+                    Command="{Binding LogoutCommand}"
+                    BackgroundColor="{StaticResource Gray200}"
+                    TextColor="{StaticResource Gray900}"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    FontSize="16"
+                    Margin="0,20,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
