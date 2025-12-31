@@ -1,0 +1,96 @@
+@page "/provider/login"
+@inject IApiService ApiService
+@inject NavigationManager Navigation
+
+<div class="page-container">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="font-size: 36px; font-weight: bold; color: var(--primary-color);">EmptySlot</h1>
+        <p style="font-size: 18px; color: var(--gray-600);">Provider Portal</p>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px;">Sign In</h2>
+
+        <EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+            <DataAnnotationsValidator />
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <InputText @bind-Value="loginModel.Email" class="form-control" placeholder="your@email.com" />
+                <ValidationMessage For="@(() => loginModel.Email)" />
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <InputText @bind-Value="loginModel.Password" type="password" class="form-control" placeholder="••••••••" />
+                <ValidationMessage For="@(() => loginModel.Password)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" disabled="@isLoading">
+                @if (isLoading)
+                {
+                    <span>Signing in...</span>
+                }
+                else
+                {
+                    <span>Sign In</span>
+                }
+            </button>
+        </EditForm>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div style="color: red; margin-top: 15px; text-align: center;">
+                @errorMessage
+            </div>
+        }
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <span style="color: var(--gray-600);">Don't have an account?</span>
+        <a href="/provider/register" style="color: var(--primary-color); font-weight: bold; margin-left: 5px;">Register here</a>
+    </div>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private bool isLoading = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = string.Empty;
+        isLoading = true;
+
+        try
+        {
+            var response = await ApiService.ProviderLoginAsync(loginModel.Email, loginModel.Password);
+
+            // Store in local storage or preferences (implementation will differ between MAUI and Web)
+            await OnLoginSuccess(response);
+
+            Navigation.NavigateTo("/provider/dashboard");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Login failed: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // This will be overridden by platform-specific implementations
+    protected virtual Task OnLoginSuccess(ProviderAuthResponse response)
+    {
+        // Default implementation - can be overridden
+        return Task.CompletedTask;
+    }
+
+    public class LoginModel
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}
