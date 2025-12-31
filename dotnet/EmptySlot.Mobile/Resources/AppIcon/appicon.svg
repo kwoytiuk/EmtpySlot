@@ -1,42 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background with modern gradient -->
-  <defs>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#E0E7FF;stop-opacity:1" />
-    </linearGradient>
-  </defs>
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="EmptySlot App Icon">
 
-  <!-- Rounded rectangle background -->
-  <rect width="456" height="456" rx="110" fill="url(#bgGradient)"/>
+  <rect width="512" height="512" rx="128" fill="#0B1220"/>
 
-  <!-- Calendar icon -->
-  <g transform="translate(90, 90)">
-    <!-- Calendar body -->
-    <rect x="20" y="50" width="240" height="210" rx="20" fill="url(#iconGradient)" opacity="0.95"/>
+  <!-- Calendar slots forming E -->
+  <rect x="156" y="168" width="200" height="36" rx="18" fill="#2B3448"/>
+  <rect x="156" y="238" width="200" height="36" rx="18" fill="#2B3448"/>
+  <rect x="156" y="308" width="200" height="36" rx="18" fill="#22C55E"/>
 
-    <!-- Calendar header -->
-    <rect x="20" y="50" width="240" height="60" rx="20" fill="#FFFFFF" opacity="0.3"/>
-
-    <!-- Binding rings -->
-    <circle cx="80" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
-    <circle cx="140" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
-    <circle cx="200" cy="40" r="12" fill="#FFFFFF" opacity="0.9"/>
-
-    <!-- Empty slot highlight (centered) -->
-    <rect x="50" y="140" width="60" height="50" rx="10" fill="#34D399" opacity="0.9"/>
-
-    <!-- Other calendar slots (subtle) -->
-    <rect x="130" y="140" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="210" y="140" width="30" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
-
-    <rect x="50" y="205" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="130" y="205" width="60" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
-    <rect x="210" y="205" width="30" height="50" rx="10" fill="#FFFFFF" opacity="0.4"/>
-  </g>
 </svg>

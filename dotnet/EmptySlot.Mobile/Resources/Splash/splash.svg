@@ -1,78 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg">
-  <!-- Splash screen matching React website - Purple/Pink/Blue gradients -->
-  <defs>
-    <!-- Background gradient - violet to blue to cyan -->
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#7C3AED;stop-opacity:1" />   <!-- violet-600 -->
-      <stop offset="50%" style="stop-color:#2563EB;stop-opacity:1" />  <!-- blue-600 -->
-      <stop offset="100%" style="stop-color:#06B6D4;stop-opacity:1" /> <!-- cyan-600 -->
-    </linearGradient>
-
-    <!-- Icon gradient - yellow to pink to purple -->
-    <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#FDE047;stop-opacity:1" />   <!-- yellow-300 -->
-      <stop offset="50%" style="stop-color:#FDA4AF;stop-opacity:1" />  <!-- pink-300 -->
-      <stop offset="100%" style="stop-color:#D8B4FE;stop-opacity:1" /> <!-- purple-300 -->
-    </linearGradient>
-
-    <!-- Badge background -->
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
+<svg
+  width="1170"
+  height="2532"
+  viewBox="0 0 1170 2532"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="EmptySlot MAUI Splash Screen">
 
   <!-- Background -->
-  <rect width="456" height="456" fill="url(#bgGradient)"/>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B1220"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
 
-  <!-- Decorative elements -->
-  <circle cx="60" cy="60" r="80" fill="#FFFFFF" opacity="0.05"/>
-  <circle cx="396" cy="396" r="100" fill="#000000" opacity="0.08"/>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22C55E" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#22C55E" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
 
-  <!-- Main Icon - Lightning Bolt -->
-  <g transform="translate(228, 140)">
-    <!-- Lightning bolt representing speed and urgency -->
-    <path d="M 0,-60 L -25,-10 L 10,-10 L 0,60 L 25,10 L -10,10 Z"
-          fill="url(#iconGradient)"
-          stroke="none"
-          filter="url(#glow)"/>
+  <rect width="1170" height="2532" fill="url(#bg)"/>
 
-    <!-- White outline for contrast -->
-    <path d="M 0,-60 L -25,-10 L 10,-10 L 0,60 L 25,10 L -10,10 Z"
-          fill="none"
-          stroke="#FFFFFF"
-          stroke-width="3"
-          opacity="0.8"/>
+  <!-- Accent glow -->
+  <circle cx="860" cy="520" r="420" fill="url(#glow)"/>
+  <circle cx="300" cy="1860" r="520" fill="url(#glow)" opacity="0.5"/>
+
+  <!-- Center Icon -->
+  <g transform="translate(355,720)">
+    <rect width="460" height="460" rx="120" fill="#0B1220"/>
+
+    <rect x="130" y="160" width="200" height="36" rx="18" fill="#2B3448"/>
+    <rect x="130" y="230" width="200" height="36" rx="18" fill="#2B3448"/>
+    <rect x="130" y="300" width="200" height="36" rx="18" fill="#22C55E"/>
   </g>
 
-  <!-- Badge -->
-  <g transform="translate(228, 250)">
-    <rect x="-100" y="-18" width="200" height="36" rx="18" fill="#FFFFFF" opacity="0.2"/>
-    <text x="0" y="6" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700">
-      ⚡ STOP WASTING TIME
-    </text>
-  </g>
+  <!-- Calendar E Wordmark -->
+  <g transform="translate(360,1370)">
+    <!-- E -->
+    <rect x="0" y="0" width="96" height="20" rx="10" fill="#E5E7EB"/>
+    <rect x="0" y="40" width="96" height="20" rx="10" fill="#E5E7EB"/>
+    <rect x="0" y="80" width="96" height="20" rx="10" fill="#22C55E"/>
 
-  <!-- Brand name with gradient text effect -->
-  <g transform="translate(228, 310)">
-    <!-- Main title -->
-    <text x="0" y="0" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="900" letter-spacing="-1">
-      Life's Too Short
-    </text>
-
-    <!-- Gradient subtitle -->
-    <text x="0" y="45" text-anchor="middle" fill="url(#iconGradient)" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="900" letter-spacing="-1" filter="url(#glow)">
-      For Empty Slots
+    <!-- Rest of text -->
+    <text
+      x="120"
+      y="96"
+      font-size="96"
+      font-weight="600"
+      font-family="Inter, SF Pro Display, Segoe UI, Roboto, Arial, sans-serif"
+      fill="#E5E7EB">
+      mptySlot
     </text>
   </g>
 
   <!-- Tagline -->
-  <text x="228" y="400" text-anchor="middle" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" opacity="0.95">
-    Book it. Now.
+  <text
+    x="585"
+    y="1525"
+    text-anchor="middle"
+    font-size="42"
+    fill="#94A3B8"
+    font-family="Inter, SF Pro Text, Segoe UI, Roboto, Arial, sans-serif">
+    Book last-minute services instantly
   </text>
 
 </svg>
