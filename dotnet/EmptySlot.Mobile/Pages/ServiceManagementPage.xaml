@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             x:Class="EmptySlot.Mobile.Pages.ServiceManagementPage"
+             x:DataType="vm:ServiceManagementViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+
+        <!-- Services List -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20" Spacing="15">
+
+                <Label Text="Your Services"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       Margin="0,0,0,10" />
+
+                <CollectionView ItemsSource="{Binding Services}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Service">
+                            <Frame Padding="15" Margin="0,5" CornerRadius="12" HasShadow="True">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+
+                                    <!-- Name -->
+                                    <Label Text="{Binding Name}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           Grid.Row="0"
+                                           Grid.Column="0" />
+
+                                    <!-- Description -->
+                                    <Label Text="{Binding Description}"
+                                           FontSize="14"
+                                           TextColor="{StaticResource Gray600}"
+                                           Grid.Row="1"
+                                           Grid.Column="0"
+                                           LineBreakMode="WordWrap"
+                                           IsVisible="{Binding Description, Converter={StaticResource IsNotNullConverter}}" />
+
+                                    <!-- Duration and Price -->
+                                    <HorizontalStackLayout Spacing="15"
+                                                          Grid.Row="2"
+                                                          Grid.Column="0"
+                                                          Margin="0,5,0,0">
+                                        <Label Text="{Binding DurationMinutes, StringFormat='⏱ {0} min'}"
+                                               FontSize="14"
+                                               TextColor="{StaticResource Gray600}" />
+                                        <Label Text="{Binding Price, StringFormat='${0:F2}'}"
+                                               FontSize="16"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}" />
+                                    </HorizontalStackLayout>
+
+                                    <!-- Active Status -->
+                                    <Label Text="{Binding IsActive, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Active|Inactive'}"
+                                           FontSize="12"
+                                           TextColor="{Binding IsActive, Converter={StaticResource BoolToColorConverter}}"
+                                           Grid.Row="3"
+                                           Grid.Column="0"
+                                           Margin="0,5,0,0" />
+
+                                    <!-- Delete Button -->
+                                    <Button Text="🗑️"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ServiceManagementViewModel}}, Path=DeleteServiceCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{StaticResource Gray200}"
+                                            TextColor="#DA3743"
+                                            FontSize="18"
+                                            Padding="10"
+                                            CornerRadius="8"
+                                            WidthRequest="45"
+                                            Grid.Row="0"
+                                            Grid.RowSpan="4"
+                                            Grid.Column="1"
+                                            VerticalOptions="Center" />
+
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <VerticalStackLayout Padding="40" Spacing="10" VerticalOptions="Center">
+                            <Label Text="No services yet"
+                                   FontSize="18"
+                                   TextColor="{StaticResource Gray600}"
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="Add your first service to get started"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Gray600}"
+                                   HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </CollectionView.EmptyView>
+                </CollectionView>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                  IsVisible="{Binding IsBusy}"
+                                  Color="{StaticResource Primary}"
+                                  Margin="0,20" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Add Button -->
+        <Button Text="+ Add Service"
+                Command="{Binding AddServiceCommand}"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                HeightRequest="55"
+                FontSize="18"
+                FontAttributes="Bold"
+                Margin="20,10"
+                CornerRadius="10"
+                Grid.Row="1" />
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:EmptySlot.Mobile.ViewModels"
+             xmlns:models="clr-namespace:EmptySlot.Shared.Models;assembly=EmptySlot.Shared"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             x:Class="EmptySlot.Mobile.Pages.ScheduleManagementPage"
+             x:DataType="vm:ScheduleManagementViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Staff Header -->
+            <Frame Padding="15" CornerRadius="12" HasShadow="True" BackgroundColor="{StaticResource Primary}">
+                <Label Text="{Binding StaffName, StringFormat='Schedule for {0}'}"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+            </Frame>
+
+            <!-- Add Schedule Form -->
+            <Frame Padding="15" CornerRadius="12" HasShadow="True">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Add Weekly Schedule"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Day of Week" FontSize="14" TextColor="{StaticResource Gray600}" />
+                        <Picker SelectedItem="{Binding SelectedDay}" FontSize="16">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type sys:DayOfWeek}">
+                                    <sys:DayOfWeek>Monday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Tuesday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Wednesday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Thursday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Friday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Saturday</sys:DayOfWeek>
+                                    <sys:DayOfWeek>Sunday</sys:DayOfWeek>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </VerticalStackLayout>
+
+                    <HorizontalStackLayout Spacing="10">
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="FillAndExpand">
+                            <Label Text="Start Time" FontSize="14" TextColor="{StaticResource Gray600}" />
+                            <TimePicker Time="{Binding StartTime}" FontSize="16" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="5" HorizontalOptions="FillAndExpand">
+                            <Label Text="End Time" FontSize="14" TextColor="{StaticResource Gray600}" />
+                            <TimePicker Time="{Binding EndTime}" FontSize="16" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+
+                    <Button Text="+ Add Schedule"
+                            Command="{Binding AddScheduleCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            HeightRequest="45"
+                            CornerRadius="8"
+                            FontSize="16"
+                            Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Current Schedules -->
+            <Label Text="Current Schedules"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+            <CollectionView ItemsSource="{Binding Schedules}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:StaffSchedule">
+                        <Frame Padding="15" Margin="0,5" CornerRadius="10" HasShadow="True">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="{Binding DayOfWeek}"
+                                           FontSize="16"
+                                           FontAttributes="Bold" />
+                                    <Label FontSize="14" TextColor="{StaticResource Gray600}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding StartTime, StringFormat='{0:hh\\:mm tt}'}" />
+                                                <Span Text=" - " />
+                                                <Span Text="{Binding EndTime, StringFormat='{0:hh\\:mm tt}'}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </VerticalStackLayout>
+
+                                <Button Text="🗑️"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ScheduleManagementViewModel}}, Path=DeleteScheduleCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="{StaticResource Gray200}"
+                                        TextColor="#DA3743"
+                                        FontSize="18"
+                                        Padding="10"
+                                        CornerRadius="8"
+                                        WidthRequest="45"
+                                        HeightRequest="45"
+                                        Grid.Column="1"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.EmptyView>
+                    <Label Text="No schedules yet. Add a weekly schedule above."
+                           FontSize="14"
+                           TextColor="{StaticResource Gray600}"
+                           HorizontalTextAlignment="Center"
+                           Margin="0,20" />
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <!-- Generate Slots Button -->
+            <Button Text="Generate Time Slots (Next 14 Days)"
+                    Command="{Binding GenerateSlotsCommand}"
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="10"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    Margin="0,10,0,20" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                              IsVisible="{Binding IsBusy}"
+                              Color="{StaticResource Primary}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
