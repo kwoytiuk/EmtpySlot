@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg
-  width="1170"
-  height="2532"
-  viewBox="0 0 1170 2532"
+  width="456"
+  height="456"
+  viewBox="0 0 456 456"
   xmlns="http://www.w3.org/2000/svg"
-  aria-label="EmptySlot MAUI Splash Screen">
+  aria-label="EmptySlot Splash Screen">
 
   <!-- Background -->
   <defs>
@@ -14,54 +14,33 @@
     </linearGradient>
 
     <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#22C55E" stop-opacity="0.35"/>
+      <stop offset="0%" stop-color="#22C55E" stop-opacity="0.4"/>
       <stop offset="100%" stop-color="#22C55E" stop-opacity="0"/>
     </linearGradient>
   </defs>
 
-  <rect width="1170" height="2532" fill="url(#bg)"/>
+  <rect width="456" height="456" fill="url(#bg)"/>
 
   <!-- Accent glow -->
-  <circle cx="860" cy="520" r="420" fill="url(#glow)"/>
-  <circle cx="300" cy="1860" r="520" fill="url(#glow)" opacity="0.5"/>
+  <circle cx="350" cy="100" r="120" fill="url(#glow)"/>
+  <circle cx="100" cy="350" r="140" fill="url(#glow)" opacity="0.5"/>
 
-  <!-- Center Icon -->
-  <g transform="translate(355,720)">
-    <rect width="460" height="460" rx="120" fill="#0B1220"/>
+  <!-- Center Icon/Logo -->
+  <g transform="translate(78,78)">
+    <!-- Calendar-style container -->
+    <rect width="300" height="300" rx="80" fill="#0B1220" stroke="#2B3448" stroke-width="3"/>
 
-    <rect x="130" y="160" width="200" height="36" rx="18" fill="#2B3448"/>
-    <rect x="130" y="230" width="200" height="36" rx="18" fill="#2B3448"/>
-    <rect x="130" y="300" width="200" height="36" rx="18" fill="#22C55E"/>
+    <!-- Calendar slots -->
+    <rect x="85" y="105" width="130" height="24" rx="12" fill="#2B3448"/>
+    <rect x="85" y="150" width="130" height="24" rx="12" fill="#2B3448"/>
+    <rect x="85" y="195" width="130" height="24" rx="12" fill="#22C55E"/>
+
+    <!-- "E" Logo below -->
+    <g transform="translate(85,240)">
+      <rect x="0" y="0" width="40" height="8" rx="4" fill="#E5E7EB"/>
+      <rect x="0" y="16" width="40" height="8" rx="4" fill="#E5E7EB"/>
+      <rect x="0" y="32" width="40" height="8" rx="4" fill="#22C55E"/>
+    </g>
   </g>
-
-  <!-- Calendar E Wordmark -->
-  <g transform="translate(360,1370)">
-    <!-- E -->
-    <rect x="0" y="0" width="96" height="20" rx="10" fill="#E5E7EB"/>
-    <rect x="0" y="40" width="96" height="20" rx="10" fill="#E5E7EB"/>
-    <rect x="0" y="80" width="96" height="20" rx="10" fill="#22C55E"/>
-
-    <!-- Rest of text -->
-    <text
-      x="120"
-      y="96"
-      font-size="96"
-      font-weight="600"
-      font-family="Inter, SF Pro Display, Segoe UI, Roboto, Arial, sans-serif"
-      fill="#E5E7EB">
-      mptySlot
-    </text>
-  </g>
-
-  <!-- Tagline -->
-  <text
-    x="585"
-    y="1525"
-    text-anchor="middle"
-    font-size="42"
-    fill="#94A3B8"
-    font-family="Inter, SF Pro Text, Segoe UI, Roboto, Arial, sans-serif">
-    Book last-minute services instantly
-  </text>
 
 </svg>
