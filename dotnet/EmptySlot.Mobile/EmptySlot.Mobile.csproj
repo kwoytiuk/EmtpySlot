@@ -15,6 +15,7 @@
 
     <!-- Enable Blazor Hybrid -->
     <EnableDefaultCssItems>false</EnableDefaultCssItems>
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
 
     <WindowsPackageType>None</WindowsPackageType>
     
