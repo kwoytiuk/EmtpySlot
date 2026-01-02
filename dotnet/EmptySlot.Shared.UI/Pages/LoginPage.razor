@@ -1,0 +1,142 @@
+@page "/login"
+@inject IApiService ApiService
+@inject NavigationManager Navigation
+
+<div class="login-page">
+    <!-- Header Section with Brand Gradient -->
+    <div class="header-gradient">
+        <div class="header-content">
+            <!-- Lightning Icon -->
+            <div class="icon-container">
+                ⚡
+            </div>
+
+            <!-- Brand Name -->
+            <h1 class="brand-name">EmptySlot</h1>
+            <h2 class="welcome-title">Welcome Back</h2>
+            <p class="welcome-subtitle">Sign in to continue booking</p>
+        </div>
+    </div>
+
+    <!-- Login Form Card -->
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-content">
+                <!-- Email Input -->
+                <div class="input-group">
+                    <label class="input-label">Email</label>
+                    <div class="input-border">
+                        <input type="email"
+                               class="input-field"
+                               placeholder="your@email.com"
+                               @bind="email" />
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <div class="input-border">
+                        <input type="password"
+                               class="input-field"
+                               placeholder="Enter your password"
+                               @bind="password" />
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-container">
+                        <span class="error-icon">⚠️</span>
+                        <span class="error-text">@errorMessage</span>
+                    </div>
+                }
+
+                <!-- Login Button -->
+                <button class="login-button"
+                        @onclick="LoginAsync"
+                        disabled="@isBusy">
+                    @if (isBusy)
+                    {
+                        <span>Signing in...</span>
+                    }
+                    else
+                    {
+                        <span>Sign In</span>
+                    }
+                </button>
+
+                <!-- Loading Indicator -->
+                @if (isBusy)
+                {
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="signup-link">
+            <span class="signup-text">Don't have an account?</span>
+            <a class="signup-button" @onclick="NavigateToRegister">Sign Up</a>
+        </div>
+
+        <!-- Branding Footer -->
+        <div class="branding-footer">
+            <span class="brand-empty">Empty</span><span class="brand-slot">Slot</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string? errorMessage;
+    private bool isBusy = false;
+
+    private async Task LoginAsync()
+    {
+        if (isBusy) return;
+
+        // Validate inputs
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            errorMessage = "Please enter your email address";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Please enter your password";
+            return;
+        }
+
+        try
+        {
+            isBusy = true;
+            errorMessage = null;
+
+            // TODO: Call API login service
+            // For now, just navigate to search page
+            await Task.Delay(500); // Simulate API call
+
+            // Navigate to search page after successful login
+            Navigation.NavigateTo("/search");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Login failed: {ex.Message}";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+}
