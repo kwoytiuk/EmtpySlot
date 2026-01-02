@@ -1,0 +1,18 @@
+@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="main">
+        @Body
+    </div>
+
+    <nav class="bottom-nav">
+        <NavLink class="nav-item" href="/search" Match="NavLinkMatch.All">
+            <span class="nav-icon">🔍</span>
+            <span class="nav-label">Search</span>
+        </NavLink>
+        <NavLink class="nav-item" href="/appointments">
+            <span class="nav-icon">📅</span>
+            <span class="nav-label">Appointments</span>
+        </NavLink>
+    </nav>
+</div>

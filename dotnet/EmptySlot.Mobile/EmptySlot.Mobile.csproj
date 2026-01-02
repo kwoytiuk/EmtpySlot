@@ -13,6 +13,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
+    <!-- Enable Blazor Hybrid -->
+    <EnableDefaultCssItems>false</EnableDefaultCssItems>
+
     <WindowsPackageType>None</WindowsPackageType>
     
     <!-- App info -->
@@ -60,12 +63,14 @@
 <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="$(MauiVersion)" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EmptySlot.Shared\EmptySlot.Shared.csproj" />
+    <ProjectReference Include="..\EmptySlot.Shared.UI\EmptySlot.Shared.UI.csproj" />
   </ItemGroup>
 
 </Project>

@@ -5,39 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:EmptySlot.Mobile.Pages"
     Shell.FlyoutBehavior="Disabled"
-    Shell.TabBarBackgroundColor="{StaticResource White}"
-    Shell.TabBarForegroundColor="{StaticResource Primary}"
-    Shell.TabBarUnselectedColor="{StaticResource Gray600}"
-    Shell.TabBarTitleColor="{StaticResource Primary}">
+    Shell.TabBarIsVisible="False">
 
-    <!-- Auth Pages (no tab bar) -->
-    <ShellContent Route="LoginPage"
-                  ContentTemplate="{DataTemplate pages:LoginPage}"
-                  Shell.TabBarIsVisible="False" />
-
-    <ShellContent Route="RegisterPage"
-                  ContentTemplate="{DataTemplate pages:RegisterPage}"
-                  Shell.TabBarIsVisible="False" />
-
-    <ShellContent Route="MapPage"
-                  ContentTemplate="{DataTemplate pages:MapPage}"
-                  Shell.TabBarIsVisible="False" />
-
-    <!-- Main App (with tab bar) -->
-    <TabBar>
-        <Tab Title="Search" Route="SearchPage">
-            <Tab.Icon>
-                <FontImageSource Glyph="🔍" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
-            </Tab.Icon>
-            <ShellContent ContentTemplate="{DataTemplate pages:SearchPage}" />
-        </Tab>
-
-        <Tab Title="Appointments" Route="AppointmentsPage">
-            <Tab.Icon>
-                <FontImageSource Glyph="📅" FontFamily="SegoeUI" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" Size="24"/>
-            </Tab.Icon>
-            <ShellContent ContentTemplate="{DataTemplate pages:AppointmentsPage}" />
-        </Tab>
-    </TabBar>
+    <!-- Blazor Hybrid Main Page -->
+    <ShellContent ContentTemplate="{DataTemplate pages:MainPage}" />
 
 </Shell>

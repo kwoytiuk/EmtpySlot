@@ -19,12 +19,20 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        // Add Blazor Hybrid support
+        builder.Services.AddMauiBlazorWebView();
+
+#if DEBUG
+        builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Logging.AddDebug();
+#endif
+
         // Register services
         builder.Services.AddSingleton<ICacheService, CacheService>();
         builder.Services.AddSingleton<IApiService, ApiService>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
 
-        // Register pages and view models
+        // Register pages and view models (still needed for legacy XAML pages if any)
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterPage>();
@@ -37,10 +45,6 @@ public static class MauiProgram
         builder.Services.AddTransient<AppointmentsViewModel>();
         builder.Services.AddTransient<MapPage>();
         builder.Services.AddTransient<MapViewModel>();
-
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
 
         return builder.Build();
     }
