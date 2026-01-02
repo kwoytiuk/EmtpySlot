@@ -1,0 +1,74 @@
+@page "/appointments"
+@inject IApiService ApiService
+
+<div class="appointments-page">
+    <div class="page-header">
+        <h1 class="page-title">My Appointments</h1>
+    </div>
+
+    <div class="appointments-list">
+        @if (isBusy)
+        {
+            <div class="loading">Loading appointments...</div>
+        }
+        else if (appointments == null || !appointments.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                <div class="empty-title">No appointments yet</div>
+                <div class="empty-subtitle">Book your first service to get started</div>
+            </div>
+        }
+        else
+        {
+            @foreach (var appointment in appointments)
+            {
+                <div class="appointment-card">
+                    <div class="appointment-date">
+                        @appointment.AppointmentDate.ToString("MMM dd, yyyy")
+                    </div>
+                    <div class="appointment-time">
+                        @appointment.StartTime.ToString(@"hh\:mm") - @appointment.EndTime.ToString(@"hh\:mm")
+                    </div>
+                    <div class="appointment-provider">
+                        @(appointment.Provider?.BusinessName ?? "Unknown Provider")
+                    </div>
+                    <div class="appointment-service">
+                        @(appointment.Service?.Name ?? "Service")
+                    </div>
+                    <div class="appointment-status status-@appointment.Status.ToString().ToLower()">
+                        @appointment.Status
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<Appointment>? appointments;
+    private bool isBusy = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppointmentsAsync();
+    }
+
+    private async Task LoadAppointmentsAsync()
+    {
+        try
+        {
+            isBusy = true;
+            appointments = await ApiService.GetMyAppointmentsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading appointments: {ex.Message}");
+            appointments = new List<Appointment>();
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+}

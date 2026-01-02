@@ -1,0 +1,154 @@
+@page "/booking/{ProviderId:guid}"
+@inject IApiService ApiService
+@inject NavigationManager Navigation
+
+<div class="booking-page">
+    @if (isBusy || provider == null)
+    {
+        <div class="loading">Loading...</div>
+    }
+    else
+    {
+        <div class="provider-header">
+            <h1 class="provider-name">@provider.BusinessName</h1>
+            <div class="provider-rating">⭐ @provider.RatingAverage.ToString("F1")</div>
+        </div>
+
+        <div class="booking-form">
+            <h2 class="section-title">Select a Service</h2>
+            <div class="service-list">
+                @foreach (var service in provider.Services)
+                {
+                    <div class="service-item @(selectedService?.Id == service.Id ? "selected" : "")"
+                         @onclick="() => SelectService(service)">
+                        <div class="service-name">@service.Name</div>
+                        <div class="service-duration">@service.DurationMinutes min</div>
+                        <div class="service-price">$@service.Price</div>
+                    </div>
+                }
+            </div>
+
+            @if (selectedService != null)
+            {
+                <h2 class="section-title">Select Date & Time</h2>
+                <input type="date" class="date-picker" @bind="selectedDate" @bind:event="oninput" @bind:after="LoadTimeSlotsAsync" />
+
+                @if (availableTimeSlots != null && availableTimeSlots.Any())
+                {
+                    <div class="timeslot-grid">
+                        @foreach (var slot in availableTimeSlots)
+                        {
+                            <div class="timeslot-item @(selectedTimeSlot?.Id == slot.Id ? "selected" : "")"
+                                 @onclick="() => selectedTimeSlot = slot">
+                                @slot.DisplayTime
+                            </div>
+                        }
+                    </div>
+                }
+
+                <button class="book-button"
+                        @onclick="BookAppointmentAsync"
+                        disabled="@(selectedTimeSlot == null || isBooking)">
+                    @(isBooking ? "Booking..." : "Confirm Booking")
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid ProviderId { get; set; }
+
+    private Provider? provider;
+    private Service? selectedService;
+    private DateTime selectedDate = DateTime.Today;
+    private List<TimeSlotDto>? availableTimeSlots;
+    private TimeSlotDto? selectedTimeSlot;
+    private bool isBusy = false;
+    private bool isBooking = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProviderAsync();
+    }
+
+    private async Task LoadProviderAsync()
+    {
+        try
+        {
+            isBusy = true;
+            provider = await ApiService.GetProviderAsync(ProviderId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading provider: {ex.Message}");
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void SelectService(Service service)
+    {
+        selectedService = service;
+        selectedTimeSlot = null;
+        _ = LoadTimeSlotsAsync();
+    }
+
+    private async Task LoadTimeSlotsAsync()
+    {
+        if (selectedService == null) return;
+
+        try
+        {
+            var endDate = selectedDate.AddDays(1);
+            availableTimeSlots = await ApiService.GetAvailableTimeSlotsAsync(ProviderId, selectedDate, endDate);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading time slots: {ex.Message}");
+        }
+    }
+
+    private async Task BookAppointmentAsync()
+    {
+        if (selectedService == null || selectedTimeSlot == null || provider == null) return;
+
+        try
+        {
+            isBooking = true;
+
+            var location = provider.Locations.FirstOrDefault();
+            if (location == null)
+            {
+                Console.WriteLine("No location available");
+                return;
+            }
+
+            var dto = new CreateAppointmentDto(
+                ProviderId: ProviderId,
+                LocationId: location.Id,
+                ServiceId: selectedService.Id,
+                StaffId: null,
+                AppointmentDate: selectedDate,
+                StartTime: TimeSpan.FromHours(selectedTimeSlot.StartTime.Hour).Add(TimeSpan.FromMinutes(selectedTimeSlot.StartTime.Minute)),
+                EndTime: TimeSpan.FromHours(selectedTimeSlot.EndTime.Hour).Add(TimeSpan.FromMinutes(selectedTimeSlot.EndTime.Minute)),
+                Price: selectedService.Price,
+                CustomerNotes: null
+            );
+
+            await ApiService.CreateAppointmentAsync(dto);
+            Navigation.NavigateTo("/appointments");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error booking appointment: {ex.Message}");
+        }
+        finally
+        {
+            isBooking = false;
+        }
+    }
+}

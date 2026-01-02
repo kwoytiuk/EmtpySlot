@@ -1,0 +1,144 @@
+.booking-page {
+    min-height: 100vh;
+    background-color: #F9FAFB;
+    padding: 20px;
+}
+
+.provider-header {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.provider-name {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111827;
+    margin: 0 0 8px 0;
+}
+
+.provider-rating {
+    font-size: 16px;
+    color: #6B7280;
+}
+
+.booking-form {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #111827;
+    margin: 0 0 16px 0;
+}
+
+.service-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.service-item {
+    padding: 16px;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.service-item:hover {
+    border-color: #DA3743;
+}
+
+.service-item.selected {
+    border-color: #DA3743;
+    background-color: #FEF2F2;
+}
+
+.service-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.service-duration {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 4px;
+}
+
+.service-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #DA3743;
+}
+
+.date-picker {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.timeslot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.timeslot-item {
+    padding: 12px;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.timeslot-item:hover {
+    border-color: #DA3743;
+}
+
+.timeslot-item.selected {
+    border-color: #DA3743;
+    background-color: #DA3743;
+    color: white;
+}
+
+.book-button {
+    width: 100%;
+    padding: 16px;
+    background-color: #DA3743;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.book-button:hover:not(:disabled) {
+    background-color: #B82D38;
+}
+
+.book-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #6B7280;
+}

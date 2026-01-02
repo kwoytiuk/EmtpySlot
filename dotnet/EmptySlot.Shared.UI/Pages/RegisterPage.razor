@@ -1,0 +1,179 @@
+@page "/register"
+@inject IApiService ApiService
+@inject NavigationManager Navigation
+
+<div class="register-page">
+    <!-- Header Section -->
+    <div class="header-section">
+        <div class="header-content">
+            <!-- Logo Icon -->
+            <div class="icon-container">
+                ✨
+            </div>
+
+            <h1 class="brand-title">Join EmptySlot</h1>
+            <p class="brand-subtitle">Create an account to start booking</p>
+        </div>
+    </div>
+
+    <!-- Register Form Card -->
+    <div class="form-container">
+        <div class="form-card">
+            <div class="form-content">
+                <!-- Full Name Input -->
+                <div class="input-group">
+                    <label class="input-label">Full Name</label>
+                    <div class="input-border">
+                        <input type="text"
+                               class="input-field"
+                               placeholder="John Doe"
+                               @bind="fullName" />
+                    </div>
+                </div>
+
+                <!-- Email Input -->
+                <div class="input-group">
+                    <label class="input-label">Email</label>
+                    <div class="input-border">
+                        <input type="email"
+                               class="input-field"
+                               placeholder="your@email.com"
+                               @bind="email" />
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div class="input-group">
+                    <label class="input-label">Password</label>
+                    <div class="input-border">
+                        <input type="password"
+                               class="input-field"
+                               placeholder="At least 6 characters"
+                               @bind="password" />
+                    </div>
+                </div>
+
+                <!-- Confirm Password Input -->
+                <div class="input-group">
+                    <label class="input-label">Confirm Password</label>
+                    <div class="input-border">
+                        <input type="password"
+                               class="input-field"
+                               placeholder="Re-enter your password"
+                               @bind="confirmPassword" />
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="error-container">
+                        <span class="error-icon">⚠️</span>
+                        <span class="error-text">@errorMessage</span>
+                    </div>
+                }
+
+                <!-- Register Button -->
+                <button class="register-button"
+                        @onclick="RegisterAsync"
+                        disabled="@isBusy">
+                    @if (isBusy)
+                    {
+                        <span>Creating Account...</span>
+                    }
+                    else
+                    {
+                        <span>Create Account</span>
+                    }
+                </button>
+
+                <!-- Loading Indicator -->
+                @if (isBusy)
+                {
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sign In Link -->
+        <div class="signin-link">
+            <span class="signin-text">Already have an account?</span>
+            <a class="signin-button" @onclick="NavigateToLogin">Sign In</a>
+        </div>
+
+        <!-- Branding Footer -->
+        <div class="branding-footer">EmptySlot</div>
+    </div>
+</div>
+
+@code {
+    private string fullName = string.Empty;
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private string confirmPassword = string.Empty;
+    private string? errorMessage;
+    private bool isBusy = false;
+
+    private async Task RegisterAsync()
+    {
+        if (isBusy) return;
+
+        // Validate inputs
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
+            errorMessage = "Please enter your full name";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            errorMessage = "Please enter your email address";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "Please enter a password";
+            return;
+        }
+
+        if (password.Length < 6)
+        {
+            errorMessage = "Password must be at least 6 characters";
+            return;
+        }
+
+        if (password != confirmPassword)
+        {
+            errorMessage = "Passwords do not match";
+            return;
+        }
+
+        try
+        {
+            isBusy = true;
+            errorMessage = null;
+
+            // TODO: Call API registration service
+            await Task.Delay(500); // Simulate API call
+
+            // Navigate to search page after successful registration
+            Navigation.NavigateTo("/search");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Registration failed: {ex.Message}";
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private void NavigateToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}

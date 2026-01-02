@@ -1,0 +1,47 @@
+@page "/map"
+@inject IApiService ApiService
+
+<div class="map-page">
+    <div class="map-header">
+        <h1 class="map-title">Provider Map</h1>
+    </div>
+
+    <div class="map-container">
+        <div class="map-placeholder">
+            <div class="map-icon">🗺️</div>
+            <div class="map-text">Map view coming soon</div>
+            <p class="map-description">
+                This will show an interactive map of providers in your area.
+            </p>
+        </div>
+    </div>
+
+    @if (providers != null && providers.Any())
+    {
+        <div class="provider-list">
+            <h2 class="list-title">Nearby Providers</h2>
+            @foreach (var provider in providers)
+            {
+                <div class="provider-item">
+                    <div class="provider-name">@provider.BusinessName</div>
+                    <div class="provider-rating">⭐ @provider.RatingAverage.ToString("F1")</div>
+                    @if (provider.Locations.Any())
+                    {
+                        <div class="provider-location">📍 @provider.Locations.First().City</div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Provider>? providers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // In a real implementation, this would load providers based on map bounds
+        // For now, we'll leave it empty or could call the search API
+        await Task.CompletedTask;
+    }
+}
