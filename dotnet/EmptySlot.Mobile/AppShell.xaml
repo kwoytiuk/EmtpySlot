@@ -19,6 +19,10 @@
                   ContentTemplate="{DataTemplate pages:RegisterPage}"
                   Shell.TabBarIsVisible="False" />
 
+    <ShellContent Route="MapPage"
+                  ContentTemplate="{DataTemplate pages:MapPage}"
+                  Shell.TabBarIsVisible="False" />
+
     <!-- Main App (with tab bar) -->
     <TabBar>
         <Tab Title="Search" Route="SearchPage">

@@ -18,6 +18,9 @@ public partial class SearchViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<Provider> providers = new();
 
+    // Track available slot counts per provider
+    private Dictionary<Guid, int> _providerSlotCounts = new();
+
     [ObservableProperty]
     private ObservableCollection<ServiceCategory> categories = new();
 
@@ -53,6 +56,12 @@ public partial class SearchViewModel : BaseViewModel
 
     // Dynamic time slots based on current time
     public List<string> AvailableTimeSlots => TimeSlotHelper.GetNext3TimeSlots();
+
+    // Get slot count for a specific provider
+    public int GetProviderSlotCount(Guid providerId)
+    {
+        return _providerSlotCounts.TryGetValue(providerId, out var count) ? count : 0;
+    }
 
     public SearchViewModel(IApiService apiService)
     {
@@ -212,6 +221,9 @@ public partial class SearchViewModel : BaseViewModel
             else
             {
                 System.Diagnostics.Debug.WriteLine($"Search found {Providers.Count} providers. Stored for map view.");
+
+                // Load available slot counts for today
+                _ = LoadProviderSlotCountsAsync(); // Fire and forget - loads in background
             }
         }
         catch (Exception ex)
@@ -355,6 +367,48 @@ public partial class SearchViewModel : BaseViewModel
         {
             // TODO: Implement sorting logic
             await Shell.Current.DisplayAlert("Sort", $"Sorting by: {result}", "OK");
+        }
+    }
+
+    private async Task LoadProviderSlotCountsAsync()
+    {
+        try
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            // Fetch slot counts for all providers in parallel
+            var tasks = Providers.Select(async provider =>
+            {
+                try
+                {
+                    var slots = await _apiService.GetAvailableTimeSlotsAsync(
+                        provider.Id,
+                        today,
+                        tomorrow);
+
+                    // Count slots for today only
+                    var todaySlots = slots.Where(s => s.Date == DateOnly.FromDateTime(today)).Count();
+                    _providerSlotCounts[provider.Id] = todaySlots;
+
+                    return (provider.Id, todaySlots);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error loading slots for {provider.BusinessName}: {ex.Message}");
+                    _providerSlotCounts[provider.Id] = 0;
+                    return (provider.Id, 0);
+                }
+            });
+
+            await Task.WhenAll(tasks);
+
+            // Notify UI to refresh
+            OnPropertyChanged(nameof(Providers));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading slot counts: {ex.Message}");
         }
     }
 }
