@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmptySlot.Mobile.Services;
+using EmptySlot.Shared.Services;
 using EmptySlot.Mobile.Pages;
 using EmptySlot.Mobile.Helpers;
 using EmptySlot.Shared.Models;

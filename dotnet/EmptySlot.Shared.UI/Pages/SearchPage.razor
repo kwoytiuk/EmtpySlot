@@ -1,0 +1,243 @@
+@page "/search"
+@inject IApiService ApiService
+@using System.Collections.ObjectModel
+
+<div class="search-page">
+    <!-- Clean Search Bar -->
+    <div class="search-bar">
+        <input type="text"
+               class="search-input"
+               placeholder="What are you looking for?"
+               @bind="searchQuery"
+               @bind:event="oninput" />
+        <button class="search-btn" @onclick="SearchAsync">
+            🔍
+        </button>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips-container">
+        <div class="filter-chips">
+            <!-- Bookmark Button -->
+            <div class="filter-chip">
+                🔖
+            </div>
+
+            <!-- Location Dropdown -->
+            <div class="filter-chip" @onclick="ShowLocationFilter">
+                <span class="chip-text">@(searchCity ?? "Calgary")</span>
+                <span class="chip-arrow">▼</span>
+            </div>
+
+            <!-- Distance Dropdown -->
+            <div class="filter-chip" @onclick="ShowDistanceFilter">
+                <span class="chip-text">@(selectedRadius ?? "50 km")</span>
+                <span class="chip-arrow">▼</span>
+            </div>
+
+            <!-- Filters Button -->
+            <div class="filter-chip" @onclick="ShowFilters">
+                <span class="chip-icon">⚙️</span>
+                <span class="chip-text">Filters</span>
+            </div>
+
+            <!-- Sort Button -->
+            <div class="filter-chip" @onclick="ShowSort">
+                <span class="chip-icon">↕️</span>
+                <span class="chip-text">Sort</span>
+            </div>
+
+            <!-- Map View Button -->
+            <div class="filter-chip" @onclick="NavigateToMap">
+                <span class="chip-icon">🗺️</span>
+                <span class="chip-text">Map</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Provider Grid (2 columns) -->
+    <div class="provider-grid">
+        @if (isBusy)
+        {
+            <div class="loading">Loading...</div>
+        }
+        else if (providers == null || !providers.Any())
+        {
+            <div class="empty-view">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">No providers found</div>
+                <div class="empty-subtitle">Try adjusting your filters</div>
+            </div>
+        }
+        else
+        {
+            @foreach (var provider in providers)
+            {
+                <div class="provider-card" @onclick="() => SelectProvider(provider)">
+                    <!-- Provider Image with Slot Count Overlay -->
+                    <div class="provider-image">
+                        <div class="gradient-bg"></div>
+                        <div class="business-initial">@GetBusinessInitial(provider.BusinessName)</div>
+                        <div class="slot-overlay">
+                            @GetSlotCountText(provider.Id)
+                        </div>
+                    </div>
+
+                    <!-- Provider Info -->
+                    <div class="provider-info">
+                        <div class="provider-rating">
+                            ⭐ @provider.RatingAverage.ToString("F1")
+                        </div>
+                        <div class="provider-name">@provider.BusinessName</div>
+                        @if (provider.Locations.Any())
+                        {
+                            <div class="provider-location">@provider.Locations.First().City</div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private string? searchQuery;
+    private string? searchCity = "Calgary";
+    private string? selectedRadius = "50 km";
+    private bool verifiedOnly = false;
+    private bool featuredOnly = false;
+    private bool isBusy = false;
+    private double? currentLatitude;
+    private double? currentLongitude;
+    private List<Provider>? providers;
+    private Dictionary<Guid, int> providerSlotCounts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SearchAsync();
+    }
+
+    private async Task SearchAsync()
+    {
+        if (isBusy) return;
+
+        try
+        {
+            isBusy = true;
+
+            var radiusKm = double.TryParse(selectedRadius?.Split(' ')[0] ?? "50", out var radius) ? (double?)radius : null;
+
+            var request = new SearchProvidersRequest(
+                Latitude: currentLatitude,
+                Longitude: currentLongitude,
+                RadiusKm: radiusKm,
+                Verified: verifiedOnly ? true : null
+            );
+
+            var results = await ApiService.SearchProvidersAsync(request);
+
+            if (featuredOnly)
+            {
+                results = results.Where(p => p.IsFeatured).ToList();
+            }
+
+            providers = results;
+
+            if (providers.Any())
+            {
+                _ = LoadProviderSlotCountsAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Search failed: {ex.Message}");
+        }
+        finally
+        {
+            isBusy = false;
+        }
+    }
+
+    private async Task LoadProviderSlotCountsAsync()
+    {
+        try
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            if (providers == null) return;
+
+            var tasks = providers.Select(async provider =>
+            {
+                try
+                {
+                    var slots = await ApiService.GetAvailableTimeSlotsAsync(provider.Id, today, tomorrow);
+                    var todaySlots = slots.Where(s => s.Date == DateOnly.FromDateTime(today)).Count();
+                    providerSlotCounts[provider.Id] = todaySlots;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error loading slots for {provider.BusinessName}: {ex.Message}");
+                    providerSlotCounts[provider.Id] = 0;
+                }
+            });
+
+            await Task.WhenAll(tasks);
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading slot counts: {ex.Message}");
+        }
+    }
+
+    private string GetSlotCountText(Guid providerId)
+    {
+        if (providerSlotCounts.TryGetValue(providerId, out var count))
+        {
+            return count == 0 ? "No slots today" : count == 1 ? "1 slot today" : $"{count} slots today";
+        }
+        return "Loading...";
+    }
+
+    private string GetBusinessInitial(string businessName)
+    {
+        return string.IsNullOrEmpty(businessName) ? "?" : businessName[0].ToString().ToUpper();
+    }
+
+    private void SelectProvider(Provider provider)
+    {
+        // TODO: Navigate to booking page
+        Console.WriteLine($"Selected provider: {provider.BusinessName}");
+    }
+
+    private void ShowLocationFilter()
+    {
+        // TODO: Show location filter dialog
+        Console.WriteLine("Show location filter");
+    }
+
+    private void ShowDistanceFilter()
+    {
+        // TODO: Show distance filter dialog
+        Console.WriteLine("Show distance filter");
+    }
+
+    private void ShowFilters()
+    {
+        // TODO: Show filters dialog
+        Console.WriteLine("Show filters");
+    }
+
+    private void ShowSort()
+    {
+        // TODO: Show sort dialog
+        Console.WriteLine("Show sort");
+    }
+
+    private void NavigateToMap()
+    {
+        // TODO: Navigate to map page
+        Console.WriteLine("Navigate to map");
+    }
+}

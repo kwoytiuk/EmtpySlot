@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using EmptySlot.Shared.Models;
+using EmptySlot.Shared.Services;
 
 namespace EmptySlot.Mobile.Services;
 

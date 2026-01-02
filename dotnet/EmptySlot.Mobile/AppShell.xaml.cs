@@ -1,5 +1,6 @@
 using EmptySlot.Mobile.Pages;
 using EmptySlot.Mobile.Services;
+using EmptySlot.Shared.Services;
 
 namespace EmptySlot.Mobile;
 

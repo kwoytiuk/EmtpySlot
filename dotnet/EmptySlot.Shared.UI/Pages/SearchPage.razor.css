@@ -1,0 +1,232 @@
+.search-page {
+    background-color: #F9FAFB;
+    min-height: 100vh;
+    padding-bottom: 20px;
+}
+
+/* Search Bar */
+.search-bar {
+    margin: 12px;
+    margin-bottom: 8px;
+    padding: 12px 16px;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    color: #1F2937;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #9CA3AF;
+}
+
+.search-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+/* Filter Chips */
+.filter-chips-container {
+    overflow-x: auto;
+    margin: 0 12px 12px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.filter-chips-container::-webkit-scrollbar {
+    display: none;
+}
+
+.filter-chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #1F2937;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.filter-chip:hover {
+    background-color: #F3F4F6;
+}
+
+.chip-icon {
+    font-size: 14px;
+}
+
+.chip-text {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.chip-arrow {
+    font-size: 10px;
+    color: #6B7280;
+}
+
+/* Provider Grid */
+.provider-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 6px;
+}
+
+@media (max-width: 600px) {
+    .provider-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+}
+
+@media (min-width: 768px) {
+    .provider-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .provider-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Provider Card */
+.provider-card {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.provider-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Provider Image */
+.provider-image {
+    position: relative;
+    height: 160px;
+    overflow: hidden;
+}
+
+.gradient-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #3B82F6 0%, #A855F7 50%, #EC4899 100%);
+}
+
+.business-initial {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+    opacity: 0.3;
+}
+
+.slot-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background-color: rgba(16, 185, 129, 0.9);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Provider Info */
+.provider-info {
+    padding: 8px;
+}
+
+.provider-rating {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1F2937;
+    margin-bottom: 4px;
+}
+
+.provider-name {
+    font-size: 14px;
+    color: #1F2937;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.provider-location {
+    font-size: 12px;
+    color: #6B7280;
+}
+
+/* Loading and Empty States */
+.loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    font-size: 18px;
+    color: #6B7280;
+}
+
+.empty-view {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 12px;
+}
+
+.empty-icon {
+    font-size: 56px;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1F2937;
+}
+
+.empty-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+}

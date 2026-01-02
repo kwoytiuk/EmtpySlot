@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EmptySlot.Mobile.Services;
+using EmptySlot.Shared.Services;
 
 namespace EmptySlot.Mobile.ViewModels;
 

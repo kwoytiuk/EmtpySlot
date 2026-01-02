@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using EmptySlot.Mobile.Services;
+using EmptySlot.Shared.Services;
 using EmptySlot.Mobile.Pages;
 using EmptySlot.Mobile.ViewModels;
 

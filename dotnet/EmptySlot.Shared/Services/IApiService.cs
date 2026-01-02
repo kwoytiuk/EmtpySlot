@@ -1,6 +1,6 @@
 using EmptySlot.Shared.Models;
 
-namespace EmptySlot.Mobile.Services;
+namespace EmptySlot.Shared.Services;
 
 public interface IApiService
 {
