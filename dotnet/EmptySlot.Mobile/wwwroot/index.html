@@ -45,7 +45,33 @@
         }, 2000);
     </script>
 
-    <script src="_framework/blazor.webview.js"></script>
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script>
+        // Wait for MAUI WebView bridge to be ready before starting Blazor
+        (async function() {
+            log('Waiting for WebView bridge...');
+            var attempts = 0;
+            var maxAttempts = 50;
+
+            // Poll until bridge is ready
+            while (attempts < maxAttempts) {
+                if (window.external && typeof window.external.receiveMessage === 'function') {
+                    log('Bridge ready! Starting Blazor...');
+                    try {
+                        await Blazor.start();
+                        log('Blazor started successfully');
+                    } catch (error) {
+                        log('ERROR starting Blazor: ' + error.message);
+                    }
+                    return;
+                }
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            log('ERROR: WebView bridge never became ready after ' + (maxAttempts * 100) + 'ms');
+        })();
+    </script>
 </body>
 
 </html>
