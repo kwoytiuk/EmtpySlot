@@ -73,8 +73,9 @@
     <ProjectReference Include="..\EmptySlot.Shared.UI\EmptySlot.Shared.UI.csproj" />
   </ItemGroup>
 
-  <!-- Workaround for Blazor Hybrid StaticWebAssets target -->
+  <!-- Workaround for Blazor Hybrid StaticWebAssets targets -->
   <Target Name="StaticWebAssetsPrepareForRun" />
   <Target Name="StaticWebAssetsPrepareForPublish" />
+  <Target Name="LoadStaticWebAssetsPublishManifest" />
 
 </Project>
