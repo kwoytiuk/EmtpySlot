@@ -81,7 +81,7 @@
                         <div class="gradient-bg"></div>
                         <div class="business-initial">@GetBusinessInitial(provider.BusinessName)</div>
                         <div class="slot-overlay">
-                            @GetSlotCountText(provider.Id)
+                            @GetUpcomingSlotsText(provider.Id)
                         </div>
                     </div>
 
@@ -113,7 +113,7 @@
     private double? currentLatitude;
     private double? currentLongitude;
     private List<Provider>? providers;
-    private Dictionary<Guid, int> providerSlotCounts = new();
+    private Dictionary<Guid, List<TimeSlot>> providerUpcomingSlots = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -154,7 +154,7 @@
 
             if (providers.Any())
             {
-                _ = LoadProviderSlotCountsAsync();
+                _ = LoadProviderUpcomingSlotsAsync();
             }
         }
         catch (Exception ex)
@@ -167,11 +167,13 @@
         }
     }
 
-    private async Task LoadProviderSlotCountsAsync()
+    private async Task LoadProviderUpcomingSlotsAsync()
     {
         try
         {
-            var today = DateTime.Today;
+            var now = DateTime.Now;
+            var twoHoursLater = now.AddHours(2);
+            var today = now.Date;
             var tomorrow = today.AddDays(1);
 
             if (providers == null) return;
@@ -180,14 +182,26 @@
             {
                 try
                 {
+                    // Get slots for today and tomorrow
                     var slots = await ApiService.GetAvailableTimeSlotsAsync(provider.Id, today, tomorrow);
-                    var todaySlots = slots.Where(s => s.Date == DateOnly.FromDateTime(today)).Count();
-                    providerSlotCounts[provider.Id] = todaySlots;
+
+                    // Filter to get slots within next 2 hours
+                    var upcomingSlots = slots
+                        .Where(s => {
+                            var slotDateTime = s.Date.ToDateTime(s.StartTime);
+                            return slotDateTime >= now && slotDateTime <= twoHoursLater;
+                        })
+                        .OrderBy(s => s.Date)
+                        .ThenBy(s => s.StartTime)
+                        .Take(3) // Show max 3 slots
+                        .ToList();
+
+                    providerUpcomingSlots[provider.Id] = upcomingSlots;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error loading slots for {provider.BusinessName}: {ex.Message}");
-                    providerSlotCounts[provider.Id] = 0;
+                    providerUpcomingSlots[provider.Id] = new List<TimeSlot>();
                 }
             });
 
@@ -196,15 +210,22 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading slot counts: {ex.Message}");
+            Console.WriteLine($"Error loading upcoming slots: {ex.Message}");
         }
     }
 
-    private string GetSlotCountText(Guid providerId)
+    private string GetUpcomingSlotsText(Guid providerId)
     {
-        if (providerSlotCounts.TryGetValue(providerId, out var count))
+        if (providerUpcomingSlots.TryGetValue(providerId, out var slots))
         {
-            return count == 0 ? "No slots today" : count == 1 ? "1 slot today" : $"{count} slots today";
+            if (!slots.Any())
+            {
+                return "No slots in 2h";
+            }
+
+            // Format time slots
+            var slotTimes = slots.Select(s => s.StartTime.ToString("h:mm tt")).ToList();
+            return string.Join(", ", slotTimes);
         }
         return "Loading...";
     }

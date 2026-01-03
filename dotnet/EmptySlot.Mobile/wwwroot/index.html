@@ -23,7 +23,28 @@
         <a class="dismiss" style="margin-left: 1.5rem;">🗙</a>
     </div>
 
-    <script src="_framework/blazor.webview.js"></script>
+    <script src="_framework/blazor.webview.js" autostart="false"></script>
+    <script>
+        console.log('Initializing Blazor...');
+
+        Blazor.start().then(() => {
+            console.log('Blazor started successfully');
+        }).catch(err => {
+            console.error('Blazor failed to start:', err);
+            document.getElementById('app').innerHTML =
+                '<div style="padding: 20px; background: white;"><h2 style="color: red;">Blazor Error</h2><pre>' +
+                err.toString() + '</pre></div>';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const dismiss = document.querySelector('#blazor-error-ui .dismiss');
+            if (dismiss) {
+                dismiss.addEventListener('click', () => {
+                    document.getElementById('blazor-error-ui').style.display = 'none';
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
