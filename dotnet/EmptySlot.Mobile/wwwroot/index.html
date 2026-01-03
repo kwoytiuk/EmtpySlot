@@ -6,6 +6,8 @@
     <title>EmptySlot</title>
     <base href="/" />
     <link rel="stylesheet" href="css/app.css" />
+    <!-- Leaflet CSS for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <body>
@@ -42,6 +44,53 @@
                 log('Waiting for app to load...');
             }
         }, 2000);
+    </script>
+
+    <!-- Leaflet JS for maps -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Map functions -->
+    <script>
+        var map = null;
+        var markers = [];
+
+        window.initializeMap = function(lat, lng, zoom) {
+            if (map != null) {
+                map.remove();
+            }
+
+            map = L.map('map').setView([lat, lng], zoom);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Fix map size issues
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 100);
+        };
+
+        window.addMarker = function(lat, lng, title, popup) {
+            if (map == null) return;
+
+            var marker = L.marker([lat, lng]).addTo(map);
+            marker.bindPopup('<b>' + title + '</b><br>' + popup);
+            markers.push(marker);
+        };
+
+        window.centerMap = function(lat, lng, zoom) {
+            if (map == null) return;
+            map.setView([lat, lng], zoom);
+        };
+
+        window.clearMarkers = function() {
+            markers.forEach(function(marker) {
+                map.removeLayer(marker);
+            });
+            markers = [];
+        };
     </script>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
