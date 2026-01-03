@@ -1,4 +1,5 @@
 @page "/map"
+@using Microsoft.JSInterop
 @inject IApiService ApiService
 @inject IJSRuntime JSRuntime
 
@@ -52,14 +53,13 @@
             StateHasChanged();
 
             // Get providers from API
-            var searchResults = await ApiService.SearchProvidersAsync(
-                searchQuery: "",
-                latitude: 37.7749,
-                longitude: -122.4194,
-                radiusMiles: 25
+            var request = new SearchProvidersRequest(
+                Latitude: 37.7749,
+                Longitude: -122.4194,
+                RadiusKm: 40  // ~25 miles
             );
 
-            providers = searchResults?.Providers ?? new List<Provider>();
+            providers = await ApiService.SearchProvidersAsync(request);
 
             // Add markers for each provider
             if (mapInitialized && providers.Any())
@@ -69,11 +69,12 @@
                     if (provider.Locations.Any())
                     {
                         var location = provider.Locations.First();
+                        var address = $"{location.AddressLine1}, {location.City}, {location.StateProvince}";
                         await JSRuntime.InvokeVoidAsync("addMarker",
                             location.Latitude,
                             location.Longitude,
                             provider.BusinessName,
-                            $"⭐ {provider.RatingAverage:F1} | {location.Address}"
+                            $"⭐ {provider.RatingAverage:F1} | {address}"
                         );
                     }
                 }
