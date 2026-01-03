@@ -14,6 +14,7 @@
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
             <h1 style="font-size: 48px; margin: 0;">⚡</h1>
             <p style="color: #6B7280; margin: 16px 0;">Loading...</p>
+            <p id="debug-message" style="font-size: 10px; color: red; margin-top: 20px;"></p>
         </div>
     </div>
 
@@ -23,7 +24,39 @@
         <a class="dismiss" style="margin-left: 1.5rem;">🗙</a>
     </div>
 
+    <script>
+        // Debug logging
+        var debugEl = document.getElementById('debug-message');
+        function log(msg) {
+            console.log('[INDEX.HTML] ' + msg);
+            if (debugEl) debugEl.textContent = msg;
+        }
+
+        log('index.html loaded');
+
+        window.addEventListener('error', function(e) {
+            log('Global error: ' + e.message);
+        });
+
+        // Check if blazor.webview.js loads
+        var scripts = document.getElementsByTagName('script');
+        log('Found ' + scripts.length + ' scripts');
+    </script>
+
     <script src="_framework/blazor.webview.js"></script>
+
+    <script>
+        log('After blazor.webview.js script tag');
+
+        // Check if Blazor object exists
+        setTimeout(function() {
+            if (typeof Blazor !== 'undefined') {
+                log('Blazor object found!');
+            } else {
+                log('ERROR: Blazor object NOT found!');
+            }
+        }, 1000);
+    </script>
 </body>
 
 </html>
