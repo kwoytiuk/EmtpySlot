@@ -199,17 +199,48 @@
     bottom: 8px;
     left: 8px;
     right: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.slot-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.slot-button {
     background-color: rgba(16, 185, 129, 0.95);
-    padding: 6px 10px;
-    border-radius: 8px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.slot-button:hover {
+    background-color: rgba(16, 185, 129, 1);
+    transform: scale(1.05);
+}
+
+.slot-button:active {
+    transform: scale(0.95);
+}
+
+.no-slots,
+.loading-slots {
+    background-color: rgba(107, 114, 128, 0.9);
+    padding: 4px 8px;
+    border-radius: 6px;
     font-size: 11px;
     font-weight: bold;
     color: white;
     text-align: center;
-    line-height: 1.4;
-    max-height: 40px;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* Provider Info */

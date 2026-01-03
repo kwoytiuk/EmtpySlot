@@ -18,6 +18,18 @@
 
     <!-- Filter Controls -->
     <div class="filter-controls">
+        <!-- Category Dropdown -->
+        <select class="filter-select" @bind="selectedCategoryId" @bind:after="SearchAsync">
+            <option value="">All Services</option>
+            @if (categories != null)
+            {
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id">@category.Icon @category.Name</option>
+                }
+            }
+        </select>
+
         <!-- Location Input -->
         <input type="text"
                class="filter-input"
@@ -76,12 +88,30 @@
             @foreach (var provider in providers)
             {
                 <div class="provider-card" @onclick="() => SelectProvider(provider)">
-                    <!-- Provider Image with Slot Count Overlay -->
+                    <!-- Provider Image with Time Slot Buttons -->
                     <div class="provider-image">
                         <div class="gradient-bg"></div>
                         <div class="business-initial">@GetBusinessInitial(provider.BusinessName)</div>
                         <div class="slot-overlay">
-                            @GetUpcomingSlotsText(provider.Id)
+                            @if (providerUpcomingSlots.TryGetValue(provider.Id, out var slots) && slots.Any())
+                            {
+                                <div class="slot-buttons">
+                                    @foreach (var slot in slots)
+                                    {
+                                        <button class="slot-button" @onclick="() => BookSlot(provider, slot)" @onclick:stopPropagation="true">
+                                            @slot.StartTime.ToString("h:mm tt")
+                                        </button>
+                                    }
+                                </div>
+                            }
+                            else if (providerUpcomingSlots.ContainsKey(provider.Id))
+                            {
+                                <span class="no-slots">No slots in 2h</span>
+                            }
+                            else
+                            {
+                                <span class="loading-slots">Loading...</span>
+                            }
                         </div>
                     </div>
 
@@ -106,6 +136,7 @@
     private string? searchQuery;
     private string? searchCity = "Calgary";
     private string? selectedRadius = "50 km";
+    private string? selectedCategoryId = "";
     private string? sortBy = "";
     private bool verifiedOnly = false;
     private bool featuredOnly = false;
@@ -113,11 +144,26 @@
     private double? currentLatitude;
     private double? currentLongitude;
     private List<Provider>? providers;
+    private List<ServiceCategory>? categories;
     private Dictionary<Guid, List<TimeSlotDto>> providerUpcomingSlots = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCategoriesAsync();
         await SearchAsync();
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        try
+        {
+            categories = await ApiService.GetCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to load categories: {ex.Message}");
+            categories = new List<ServiceCategory>();
+        }
     }
 
     private async Task SearchAsync()
@@ -129,11 +175,13 @@
             isBusy = true;
 
             var radiusKm = double.TryParse(selectedRadius?.Split(' ')[0] ?? "50", out var radius) ? (double?)radius : null;
+            Guid? categoryId = !string.IsNullOrEmpty(selectedCategoryId) && Guid.TryParse(selectedCategoryId, out var catId) ? catId : null;
 
             var request = new SearchProvidersRequest(
                 Latitude: currentLatitude,
                 Longitude: currentLongitude,
                 RadiusKm: radiusKm,
+                CategoryId: categoryId,
                 Verified: verifiedOnly ? true : null
             );
 
@@ -214,20 +262,12 @@
         }
     }
 
-    private string GetUpcomingSlotsText(Guid providerId)
+    private void BookSlot(Provider provider, TimeSlotDto slot)
     {
-        if (providerUpcomingSlots.TryGetValue(providerId, out var slots))
-        {
-            if (!slots.Any())
-            {
-                return "No slots in 2h";
-            }
-
-            // Format time slots
-            var slotTimes = slots.Select(s => s.StartTime.ToString("h:mm tt")).ToList();
-            return string.Join(", ", slotTimes);
-        }
-        return "Loading...";
+        // Navigate to booking page with provider and slot info
+        Console.WriteLine($"Booking slot: {slot.StartTime} with {provider.BusinessName}");
+        // TODO: Navigate to booking page with parameters
+        // Navigation.NavigateTo($"/booking?providerId={provider.Id}&slotId={slot.Id}");
     }
 
     private string GetBusinessInitial(string businessName)
