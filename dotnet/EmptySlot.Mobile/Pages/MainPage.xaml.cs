@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Components.WebView.Maui;
+
 namespace EmptySlot.Mobile.Pages;
 
 public partial class MainPage : ContentPage
@@ -6,15 +8,16 @@ public partial class MainPage : ContentPage
     {
         System.Diagnostics.Debug.WriteLine("===== MAINPAGE CONSTRUCTOR START =====");
         InitializeComponent();
-        System.Diagnostics.Debug.WriteLine("===== MAINPAGE INITIALIZED =====");
+        System.Diagnostics.Debug.WriteLine("===== MAINPAGE InitializeComponent DONE =====");
 
-        // Verify root components were added
-        var webView = (Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebView)Content;
-        System.Diagnostics.Debug.WriteLine($"===== BlazorWebView has {webView.RootComponents.Count} root components =====");
-
-        foreach (var component in webView.RootComponents)
+        // Add root component programmatically
+        blazorWebView.RootComponents.Add(new RootComponent
         {
-            System.Diagnostics.Debug.WriteLine($"===== Component: Selector={component.Selector}, Type={component.ComponentType?.FullName} =====");
-        }
+            Selector = "#app",
+            ComponentType = typeof(EmptySlot.Shared.UI.App)
+        });
+
+        System.Diagnostics.Debug.WriteLine($"===== ROOT COMPONENT ADDED: {blazorWebView.RootComponents.Count} components =====");
+        System.Diagnostics.Debug.WriteLine($"===== Component Type: {typeof(EmptySlot.Shared.UI.App).FullName} =====");
     }
 }
