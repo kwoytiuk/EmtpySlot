@@ -48,14 +48,40 @@
     <script>
         log('After blazor.webview.js script tag');
 
-        // Check if Blazor object exists
+        // Check if Blazor object exists and monitor app div
         setTimeout(function() {
             if (typeof Blazor !== 'undefined') {
                 log('Blazor object found!');
+
+                // Check app div content after another second
+                setTimeout(function() {
+                    var appDiv = document.getElementById('app');
+                    var hasContent = appDiv && appDiv.innerHTML.indexOf('BLAZOR LOADED') > -1;
+
+                    if (hasContent) {
+                        log('SUCCESS: App rendered!');
+                    } else {
+                        log('ERROR: App NOT rendered');
+                        // Show what's actually in the app div
+                        if (appDiv) {
+                            var content = appDiv.innerHTML.substring(0, 100);
+                            console.log('[INDEX.HTML] App div content: ' + content);
+                        }
+                    }
+                }, 2000);
             } else {
                 log('ERROR: Blazor object NOT found!');
             }
         }, 1000);
+
+        // Listen for Blazor events
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[INDEX.HTML] DOM loaded');
+        });
+
+        window.addEventListener('load', function() {
+            console.log('[INDEX.HTML] Window loaded');
+        });
     </script>
 </body>
 
