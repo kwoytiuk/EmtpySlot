@@ -1,6 +1,6 @@
 @using EmptySlot.Shared.UI.Shared
 
-<Router AppAssembly="typeof(EmptySlot.Shared.UI._Imports).Assembly">
+<Router AppAssembly="typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
@@ -8,10 +8,15 @@
     <NotFound>
         <PageTitle>Not found</PageTitle>
         <LayoutView Layout="typeof(MainLayout)">
-            <div class="not-found">
+            <div class="not-found" style="padding: 20px; text-align: center;">
                 <h1>404 - Page Not Found</h1>
                 <p>Sorry, there's nothing at this address.</p>
+                <p style="color: #666;">Looking for: @System.Net.WebUtility.UrlDecode(NavigationManager?.Uri ?? "unknown")</p>
             </div>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+}

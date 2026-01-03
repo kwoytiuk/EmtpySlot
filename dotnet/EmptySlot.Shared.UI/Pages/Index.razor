@@ -1,11 +1,24 @@
 @page "/"
 @inject NavigationManager Navigation
 
+<div style="padding: 20px;">
+    <p>Index page loaded. Redirecting...</p>
+</div>
+
 @code {
     protected override void OnInitialized()
     {
-        // TODO: Add authentication check
-        // For now, redirect to login page
-        Navigation.NavigateTo("/login");
+        Console.WriteLine("Index.razor OnInitialized called");
+        try
+        {
+            // TODO: Add authentication check
+            // For now, redirect to login page
+            Console.WriteLine("Navigating to /login");
+            Navigation.NavigateTo("/login", forceLoad: false);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Navigation error: {ex.Message}");
+        }
     }
 }
