@@ -75,5 +75,6 @@
 
   <!-- Workaround for Blazor Hybrid StaticWebAssets target -->
   <Target Name="StaticWebAssetsPrepareForRun" />
+  <Target Name="StaticWebAssetsPrepareForPublish" />
 
 </Project>
