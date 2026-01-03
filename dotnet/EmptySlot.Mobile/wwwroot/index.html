@@ -28,60 +28,21 @@
         // Debug logging
         var debugEl = document.getElementById('debug-message');
         function log(msg) {
-            console.log('[INDEX.HTML] ' + msg);
+            console.log('[MOBILE] ' + msg);
             if (debugEl) debugEl.textContent = msg;
         }
 
-        log('index.html loaded');
+        log('Mobile app starting...');
 
-        window.addEventListener('error', function(e) {
-            log('Global error: ' + e.message);
-        });
-
-        // Check if blazor.webview.js loads
-        var scripts = document.getElementsByTagName('script');
-        log('Found ' + scripts.length + ' scripts');
-    </script>
-
-    <script src="_framework/blazor.webview.js"></script>
-
-    <script>
-        log('After blazor.webview.js script tag');
-
-        // Check if Blazor object exists and monitor app div
+        // Monitor for successful Blazor startup
         setTimeout(function() {
-            if (typeof Blazor !== 'undefined') {
-                log('Blazor object found!');
-
-                // Check app div content after another second
-                setTimeout(function() {
-                    var appDiv = document.getElementById('app');
-                    var hasContent = appDiv && appDiv.innerHTML.indexOf('BLAZOR LOADED') > -1;
-
-                    if (hasContent) {
-                        log('SUCCESS: App rendered!');
-                    } else {
-                        log('ERROR: App NOT rendered');
-                        // Show what's actually in the app div
-                        if (appDiv) {
-                            var content = appDiv.innerHTML.substring(0, 100);
-                            console.log('[INDEX.HTML] App div content: ' + content);
-                        }
-                    }
-                }, 2000);
+            var appDiv = document.getElementById('app');
+            if (appDiv && appDiv.innerHTML.indexOf('BLAZOR LOADED') > -1) {
+                log('App loaded successfully!');
             } else {
-                log('ERROR: Blazor object NOT found!');
+                log('Waiting for app to load...');
             }
-        }, 1000);
-
-        // Listen for Blazor events
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('[INDEX.HTML] DOM loaded');
-        });
-
-        window.addEventListener('load', function() {
-            console.log('[INDEX.HTML] Window loaded');
-        });
+        }, 2000);
     </script>
 </body>
 
