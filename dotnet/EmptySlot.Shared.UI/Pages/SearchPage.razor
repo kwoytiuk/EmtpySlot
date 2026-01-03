@@ -1,5 +1,6 @@
 @page "/search"
 @inject IApiService ApiService
+@inject NavigationManager Navigation
 @using System.Collections.ObjectModel
 
 <div class="search-page">
@@ -15,44 +16,45 @@
         </button>
     </div>
 
-    <!-- Filter Chips -->
-    <div class="filter-chips-container">
-        <div class="filter-chips">
-            <!-- Bookmark Button -->
-            <div class="filter-chip">
-                🔖
-            </div>
+    <!-- Filter Controls -->
+    <div class="filter-controls">
+        <!-- Location Input -->
+        <input type="text"
+               class="filter-input"
+               placeholder="📍 City"
+               @bind="searchCity"
+               @bind:event="oninput"
+               @bind:after="SearchAsync" />
 
-            <!-- Location Dropdown -->
-            <div class="filter-chip" @onclick="ShowLocationFilter">
-                <span class="chip-text">@(searchCity ?? "Calgary")</span>
-                <span class="chip-arrow">▼</span>
-            </div>
+        <!-- Distance Dropdown -->
+        <select class="filter-select" @bind="selectedRadius" @bind:after="SearchAsync">
+            <option value="5 km">5 km</option>
+            <option value="10 km">10 km</option>
+            <option value="25 km">25 km</option>
+            <option value="50 km">50 km</option>
+            <option value="100 km">100 km</option>
+        </select>
 
-            <!-- Distance Dropdown -->
-            <div class="filter-chip" @onclick="ShowDistanceFilter">
-                <span class="chip-text">@(selectedRadius ?? "50 km")</span>
-                <span class="chip-arrow">▼</span>
-            </div>
+        <!-- Sort Dropdown -->
+        <select class="filter-select" @bind="sortBy" @bind:after="SearchAsync">
+            <option value="">Sort by</option>
+            <option value="distance">Distance</option>
+            <option value="rating-high">Rating (High)</option>
+            <option value="rating-low">Rating (Low)</option>
+            <option value="price-low">Price (Low)</option>
+            <option value="price-high">Price (High)</option>
+        </select>
 
-            <!-- Filters Button -->
-            <div class="filter-chip" @onclick="ShowFilters">
-                <span class="chip-icon">⚙️</span>
-                <span class="chip-text">Filters</span>
-            </div>
+        <!-- Verified Filter -->
+        <label class="filter-checkbox">
+            <input type="checkbox" @bind="verifiedOnly" @bind:after="SearchAsync" />
+            <span>✓ Verified</span>
+        </label>
 
-            <!-- Sort Button -->
-            <div class="filter-chip" @onclick="ShowSort">
-                <span class="chip-icon">↕️</span>
-                <span class="chip-text">Sort</span>
-            </div>
-
-            <!-- Map View Button -->
-            <div class="filter-chip" @onclick="NavigateToMap">
-                <span class="chip-icon">🗺️</span>
-                <span class="chip-text">Map</span>
-            </div>
-        </div>
+        <!-- Map Button -->
+        <button class="filter-button" @onclick="NavigateToMap">
+            🗺️ Map
+        </button>
     </div>
 
     <!-- Provider Grid (2 columns) -->
@@ -104,6 +106,7 @@
     private string? searchQuery;
     private string? searchCity = "Calgary";
     private string? selectedRadius = "50 km";
+    private string? sortBy = "";
     private bool verifiedOnly = false;
     private bool featuredOnly = false;
     private bool isBusy = false;
@@ -141,7 +144,13 @@
                 results = results.Where(p => p.IsFeatured).ToList();
             }
 
-            providers = results;
+            // Apply sorting
+            providers = sortBy switch
+            {
+                "rating-high" => results.OrderByDescending(p => p.RatingAverage).ToList(),
+                "rating-low" => results.OrderBy(p => p.RatingAverage).ToList(),
+                _ => results
+            };
 
             if (providers.Any())
             {
@@ -211,33 +220,9 @@
         Console.WriteLine($"Selected provider: {provider.BusinessName}");
     }
 
-    private void ShowLocationFilter()
-    {
-        // TODO: Show location filter dialog
-        Console.WriteLine("Show location filter");
-    }
-
-    private void ShowDistanceFilter()
-    {
-        // TODO: Show distance filter dialog
-        Console.WriteLine("Show distance filter");
-    }
-
-    private void ShowFilters()
-    {
-        // TODO: Show filters dialog
-        Console.WriteLine("Show filters");
-    }
-
-    private void ShowSort()
-    {
-        // TODO: Show sort dialog
-        Console.WriteLine("Show sort");
-    }
-
     private void NavigateToMap()
     {
-        // TODO: Navigate to map page
-        Console.WriteLine("Navigate to map");
+        // Navigate to map page
+        Navigation.NavigateTo("/map");
     }
 }

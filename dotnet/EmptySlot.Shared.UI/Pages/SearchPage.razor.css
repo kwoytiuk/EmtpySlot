@@ -39,28 +39,66 @@
     margin: 0;
 }
 
-/* Filter Chips */
-.filter-chips-container {
-    overflow-x: auto;
-    margin: 0 12px 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-}
-
-.filter-chips-container::-webkit-scrollbar {
-    display: none;
-}
-
-.filter-chips {
+/* Filter Controls */
+.filter-controls {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
+    margin: 0 12px 12px;
     padding: 4px 0;
 }
 
-.filter-chip {
+.filter-input,
+.filter-select {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #1F2937;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    border-color: #3B82F6;
+}
+
+.filter-input::placeholder {
+    color: #9CA3AF;
+}
+
+.filter-checkbox {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    padding: 8px 12px;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #1F2937;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filter-checkbox:hover {
+    background-color: #F3F4F6;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+.filter-checkbox span {
+    font-weight: bold;
+}
+
+.filter-button {
     padding: 8px 12px;
     background-color: white;
     border: 1px solid #E5E7EB;
@@ -69,26 +107,23 @@
     font-weight: bold;
     color: #1F2937;
     cursor: pointer;
-    white-space: nowrap;
     transition: background-color 0.2s;
 }
 
-.filter-chip:hover {
+.filter-button:hover {
     background-color: #F3F4F6;
 }
 
-.chip-icon {
-    font-size: 14px;
-}
+@media (max-width: 600px) {
+    .filter-controls {
+        gap: 6px;
+    }
 
-.chip-text {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.chip-arrow {
-    font-size: 10px;
-    color: #6B7280;
+    .filter-input,
+    .filter-select {
+        min-width: 100px;
+        font-size: 13px;
+    }
 }
 
 /* Provider Grid */
