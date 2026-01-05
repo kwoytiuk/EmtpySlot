@@ -1,6 +1,5 @@
 // CRITICAL: Import polyfills in specific order
 // This MUST be the first import in your app
-import './react-use-polyfill'; // Polyfill for React.use() (React 19 feature) - MUST BE FIRST!
 import 'react-native-get-random-values'; // For crypto/uuid support
 import 'react-native-url-polyfill/auto'; // For URL/URLSearchParams
 import { Buffer } from 'buffer';
