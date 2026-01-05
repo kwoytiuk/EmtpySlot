@@ -1,16 +1,15 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { supabase, type Profile } from 'shared'
+import { authApi, type User, type Profile } from 'shared'
 
 interface AuthContextType {
   user: User | null
   profile: Profile | null
-  session: Session | null
   loading: boolean
   signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -18,76 +17,60 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single()
-
-      if (error) throw error
-      setProfile(data)
+      const profileData = await authApi.getProfile()
+      setProfile(profileData)
     } catch (error) {
       console.error('Error fetching profile:', error)
       setProfile(null)
     }
   }
 
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id)
+  const fetchUser = async () => {
+    try {
+      const userData = await authApi.getUser()
+      setUser(userData)
+      if (userData) {
+        await fetchProfile()
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error)
+      setUser(null)
+      setProfile(null)
     }
   }
 
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      }
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-
-      if (session?.user) {
-        await fetchProfile(session.user.id)
-      } else {
-        setProfile(null)
-      }
-      setLoading(false)
-    })
-
-    return () => {
-      subscription.unsubscribe()
+  const refreshProfile = async () => {
+    if (user) {
+      await fetchProfile()
     }
+  }
+
+  const refreshUser = async () => {
+    await fetchUser()
+  }
+
+  useEffect(() => {
+    // Get initial user and profile
+    fetchUser().finally(() => setLoading(false))
   }, [])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    await authApi.signOut()
     setUser(null)
     setProfile(null)
-    setSession(null)
   }
 
   const value = {
     user,
     profile,
-    session,
     loading,
     signOut,
     refreshProfile,
+    refreshUser,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

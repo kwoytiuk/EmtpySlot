@@ -1,47 +1,31 @@
 /**
- * Supabase client configuration
+ * Supabase client configuration (LEGACY - Not used, kept for migration reference)
  * This file provides Supabase clients for both browser and server environments
+ *
+ * NOTE: This project now uses .NET API backend. See packages/shared/src/lib/apiClient.ts
  */
 
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '../types/database.types'
 import { env } from '../config/env'
 
-// Validate environment variables
-if (!env.supabase.url || env.supabase.url === 'your-project-url-here' || !env.supabase.url.includes('supabase.co')) {
-  throw new Error(
-    '❌ SUPABASE URL NOT CONFIGURED!\n\n' +
-    'Please update your .env.local file with your actual Supabase credentials:\n' +
-    '1. Go to https://app.supabase.com/project/_/settings/api\n' +
-    '2. Copy your Project URL and anon/public key\n' +
-    '3. Update apps/web/.env.local\n\n' +
-    `Current value: "${env.supabase.url}"`
-  )
-}
-
-if (!env.supabase.anonKey || env.supabase.anonKey === 'your-anon-key-here' || env.supabase.anonKey.length < 100) {
-  throw new Error(
-    '❌ SUPABASE ANON KEY NOT CONFIGURED!\n\n' +
-    'Please update your .env.local file with your actual Supabase anon key.\n' +
-    `Current value length: ${env.supabase.anonKey.length} characters`
-  )
-}
-
 /**
- * Browser-side Supabase client
- * Use this in React components and client-side code
+ * Browser-side Supabase client (LEGACY - DO NOT USE)
+ * Use the .NET API client from apiClient.ts instead
  */
-export const supabase = createClient<Database>(
-  env.supabase.url,
-  env.supabase.anonKey,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-    },
-  }
-)
+export const supabase = env.supabase.url && env.supabase.anonKey
+  ? createClient<Database>(
+      env.supabase.url,
+      env.supabase.anonKey,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true,
+        },
+      }
+    )
+  : null as any // Return null if Supabase not configured (using .NET API instead)
 
 /**
  * Type-safe database helpers
