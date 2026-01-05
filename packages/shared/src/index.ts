@@ -9,7 +9,10 @@ export * from './types/database.types'
 // Configuration
 export * from './config/env'
 
-// Supabase client and types
+// API Client
+export * from './lib/apiClient'
+
+// Supabase client and types (legacy - for migration)
 export * from './lib/supabase'
 
 // API
@@ -28,3 +31,42 @@ export type {
   CreateEmployeeInput,
   CreateScheduleInput,
 } from './api/employees'
+
+// Provider types
+export type {
+  Provider,
+  ProviderLocation,
+  Service,
+  SearchProvidersParams,
+  SearchProvidersResponse,
+  CreateProviderData,
+  Review,
+} from './api/providers'
+
+// Category types
+export type {
+  ServiceCategory,
+} from './api/categories'
+
+// Appointment types
+export type {
+  Appointment,
+  CreateAppointmentData,
+  TimeSlot,
+} from './api/appointments'
+
+// Auth types
+export type {
+  User,
+  Profile,
+  SignUpData,
+  SignInData,
+  AuthResponse,
+  UserType,
+} from './api/auth'
+
+// Review types
+export type {
+  ReviewResponse,
+  CreateReviewData,
+} from './api/reviews'

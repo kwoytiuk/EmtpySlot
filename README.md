@@ -1,6 +1,14 @@
 # EmptySlot
 
-A modern monorepo application with Next.js for web and React Native (Expo) for mobile, sharing common code and utilities.
+A modern cross-platform appointment booking application using React Native (Expo) for iOS, Android, and Web, with a .NET backend API.
+
+## 🚀 Architecture
+
+- **Frontend**: React Native (Expo) - Single codebase for iOS, Android, and Web
+- **Backend**: .NET API (REST endpoints with JWT authentication)
+- **Shared Code**: TypeScript packages for API clients, types, and utilities
+
+📖 **See [DOTNET_API_SETUP.md](./DOTNET_API_SETUP.md) for complete .NET API integration guide.**
 
 ## Project Structure
 

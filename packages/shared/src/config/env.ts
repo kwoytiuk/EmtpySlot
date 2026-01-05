@@ -5,6 +5,9 @@
  */
 
 export const env = {
+  api: {
+    url: process.env.NEXT_PUBLIC_API_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000/api',
+  },
   supabase: {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL || '',
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '',
@@ -20,27 +23,15 @@ export const env = {
  * Call this at app startup to ensure all required vars are present
  */
 export function validateEnv() {
-  const requiredEnvVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-  ]
-
-  const missing = requiredEnvVars.filter((key) => !process.env[key])
-
-  if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables:\n${missing.map((key) => `  - ${key}`).join('\n')}\n\n` +
-        `Please check your .env.local file.`
-    )
-  }
-
-  // Validate URLs
-  try {
-    new URL(env.supabase.url)
-  } catch {
-    throw new Error(
-      `Invalid NEXT_PUBLIC_SUPABASE_URL: ${env.supabase.url}\n` +
-        `Please provide a valid URL (e.g., https://xxx.supabase.co)`
-    )
+  // API URL is optional - defaults to localhost:5000/api
+  if (env.api.url && env.api.url !== 'http://localhost:5000/api') {
+    try {
+      new URL(env.api.url)
+    } catch {
+      throw new Error(
+        `Invalid API URL: ${env.api.url}\n` +
+          `Please provide a valid URL (e.g., https://api.example.com)`
+      )
+    }
   }
 }

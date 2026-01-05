@@ -3,8 +3,9 @@
  * Handles user authentication, registration, and session management
  */
 
-import { supabase } from '../lib/supabase'
-import type { UserType } from '../lib/supabase'
+import { post, authApi, tokenStorage } from '../lib/apiClient'
+
+export type UserType = 'customer' | 'provider' | 'admin'
 
 export interface SignUpData {
   email: string
@@ -18,150 +19,139 @@ export interface SignInData {
   password: string
 }
 
+export interface AuthResponse {
+  token: string
+  user: User
+}
+
+export interface User {
+  id: string
+  email: string
+  fullName: string | null
+  phone: string | null
+  avatarUrl: string | null
+  userType: UserType
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Profile {
+  id: string
+  userType: UserType
+  fullName: string | null
+  phone: string | null
+  avatarUrl: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 /**
  * Sign up a new user
  */
-export async function signUp(data: SignUpData) {
-  const { email, password, fullName, userType = 'customer' } = data
-
-  const { data: authData, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        full_name: fullName,
-        user_type: userType,
-      },
-    },
+export async function signUp(data: SignUpData): Promise<AuthResponse> {
+  const response = await post<AuthResponse>('/auth/register', {
+    email: data.email,
+    password: data.password,
+    fullName: data.fullName,
+    userType: data.userType || 'customer',
   })
 
-  if (error) throw error
+  // Store the token
+  tokenStorage.set(response.token)
 
-  return authData
+  return response
 }
 
 /**
  * Sign in an existing user
  */
-export async function signIn(data: SignInData) {
-  const { email, password } = data
-
-  const { data: authData, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+export async function signIn(data: SignInData): Promise<AuthResponse> {
+  const response = await post<AuthResponse>('/auth/login', {
+    email: data.email,
+    password: data.password,
   })
 
-  if (error) throw error
+  // Store the token
+  tokenStorage.set(response.token)
 
-  return authData
+  return response
 }
 
 /**
  * Sign out the current user
  */
-export async function signOut() {
-  const { error } = await supabase.auth.signOut()
-
-  if (error) throw error
-}
-
-/**
- * Get the current user session
- */
-export async function getSession() {
-  const { data, error } = await supabase.auth.getSession()
-
-  if (error) throw error
-
-  return data.session
+export async function signOut(): Promise<void> {
+  tokenStorage.clear()
 }
 
 /**
  * Get the current user
  */
-export async function getUser() {
-  const { data, error } = await supabase.auth.getUser()
-
-  if (error) throw error
-
-  return data.user
+export async function getUser(): Promise<User | null> {
+  try {
+    return await authApi.get<User>('/auth/me')
+  } catch (error: any) {
+    if (error.status === 401) {
+      return null
+    }
+    throw error
+  }
 }
 
 /**
  * Get the current user's profile
  */
-export async function getProfile() {
-  const user = await getUser()
-
-  if (!user) return null
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single()
-
-  if (error) throw error
-
-  return data
+export async function getProfile(): Promise<Profile | null> {
+  try {
+    return await authApi.get<Profile>('/auth/profile')
+  } catch (error: any) {
+    if (error.status === 401 || error.status === 404) {
+      return null
+    }
+    throw error
+  }
 }
 
 /**
  * Update the current user's profile
  */
 export async function updateProfile(updates: {
-  full_name?: string
+  fullName?: string
   phone?: string
-  avatar_url?: string
-}) {
-  const user = await getUser()
-
-  if (!user) throw new Error('Not authenticated')
-
-  const { data, error } = await supabase
-    .from('profiles')
-    .update(updates)
-    .eq('id', user.id)
-    .select()
-    .single()
-
-  if (error) throw error
-
-  return data
+  avatarUrl?: string
+}): Promise<Profile> {
+  return authApi.put<Profile>('/auth/profile', {
+    fullName: updates.fullName,
+    phone: updates.phone,
+    avatarUrl: updates.avatarUrl,
+  })
 }
 
 /**
  * Send password reset email
  */
-export async function resetPassword(email: string) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/auth/reset-password`,
-  })
-
-  if (error) throw error
+export async function resetPassword(email: string): Promise<void> {
+  await post('/auth/forgot-password', { email })
 }
 
 /**
  * Update password
  */
-export async function updatePassword(newPassword: string) {
-  const { error } = await supabase.auth.updateUser({
-    password: newPassword,
-  })
-
-  if (error) throw error
+export async function updatePassword(newPassword: string): Promise<void> {
+  await authApi.put('/auth/password', { newPassword })
 }
 
 /**
  * Sign in with OAuth provider
  */
-export async function signInWithProvider(provider: 'google' | 'apple') {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-    },
-  })
+export async function signInWithProvider(provider: 'google' | 'apple'): Promise<{ redirectUrl: string }> {
+  return post<{ redirectUrl: string }>('/auth/oauth/url', { provider })
+}
 
-  if (error) throw error
+/**
+ * Get the current session (check if token is valid)
+ */
+export async function getSession(): Promise<{ user: User } | null> {
+  const user = await getUser()
+  return user ? { user } : null
 }

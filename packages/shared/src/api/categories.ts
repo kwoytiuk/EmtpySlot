@@ -2,48 +2,36 @@
  * Service Categories API
  */
 
-import { supabase } from '../lib/supabase'
+import { get } from '../lib/apiClient'
+
+export interface ServiceCategory {
+  id: string
+  name: string
+  slug: string
+  icon: string | null
+  description: string | null
+  parentId: string | null
+  displayOrder: number
+  createdAt: string
+}
 
 /**
  * Get all service categories
  */
-export async function getCategories() {
-  const { data, error } = await supabase
-    .from('service_categories')
-    .select('*')
-    .order('display_order', { ascending: true })
-
-  if (error) throw error
-
-  return data
+export async function getCategories(): Promise<ServiceCategory[]> {
+  return get<ServiceCategory[]>('/categories')
 }
 
 /**
  * Get a single category by ID
  */
-export async function getCategory(id: string) {
-  const { data, error } = await supabase
-    .from('service_categories')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error) throw error
-
-  return data
+export async function getCategory(id: string): Promise<ServiceCategory> {
+  return get<ServiceCategory>(`/categories/${id}`)
 }
 
 /**
  * Get a category by slug
  */
-export async function getCategoryBySlug(slug: string) {
-  const { data, error} = await supabase
-    .from('service_categories')
-    .select('*')
-    .eq('slug', slug)
-    .single()
-
-  if (error) throw error
-
-  return data
+export async function getCategoryBySlug(slug: string): Promise<ServiceCategory> {
+  return get<ServiceCategory>(`/categories/slug/${slug}`)
 }

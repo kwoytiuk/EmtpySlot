@@ -1,140 +1,86 @@
-import { supabase } from '../lib/supabase';
+/**
+ * Employees API
+ * Functions for managing employees/staff members
+ */
+
+import { authApi } from '../lib/apiClient'
 
 export interface Employee {
-  id: string;
-  provider_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  position?: string;
-  is_active: boolean;
-  hire_date?: string;
-  created_at: string;
-  updated_at: string;
+  id: string
+  providerId: string
+  firstName: string
+  lastName: string
+  email: string
+  phone?: string | null
+  position?: string | null
+  isActive: boolean
+  hireDate?: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export interface EmployeeSchedule {
-  id: string;
-  employee_id: string;
-  day_of_week: number; // 0-6 (Sunday-Saturday)
-  start_time: string;
-  end_time: string;
-  is_available: boolean;
-  created_at: string;
-  updated_at: string;
+  id: string
+  employeeId: string
+  dayOfWeek: number // 0-6 (Sunday-Saturday)
+  startTime: string
+  endTime: string
+  isAvailable: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface EmployeeTimeOff {
-  id: string;
-  employee_id: string;
-  start_date: string;
-  end_date: string;
-  reason?: string;
-  created_at: string;
+  id: string
+  employeeId: string
+  startDate: string
+  endDate: string
+  reason?: string | null
+  createdAt: string
 }
 
 export interface CreateEmployeeInput {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  position?: string;
-  hire_date?: string;
+  firstName: string
+  lastName: string
+  email: string
+  phone?: string
+  position?: string
+  hireDate?: string
 }
 
 export interface CreateScheduleInput {
-  employee_id: string;
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
+  employeeId: string
+  dayOfWeek: number
+  startTime: string
+  endTime: string
 }
 
 /**
  * Get all employees for the current provider
  */
 export async function getProviderEmployees(): Promise<Employee[]> {
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('id')
-    .eq('id', (await supabase.auth.getUser()).data.user?.id)
-    .single();
-
-  if (!profile) return [];
-
-  const { data: provider } = await supabase
-    .from('providers')
-    .select('id')
-    .eq('user_id', profile.id)
-    .single();
-
-  if (!provider) return [];
-
-  const { data, error } = await supabase
-    .from('employees')
-    .select('*')
-    .eq('provider_id', provider.id)
-    .eq('is_active', true)
-    .order('last_name', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
+  return authApi.get<Employee[]>('/employees')
 }
 
 /**
  * Get a single employee by ID
  */
 export async function getEmployeeById(employeeId: string): Promise<Employee | null> {
-  const { data, error } = await supabase
-    .from('employees')
-    .select('*')
-    .eq('id', employeeId)
-    .single();
-
-  if (error) throw error;
-  return data;
+  try {
+    return await authApi.get<Employee>(`/employees/${employeeId}`)
+  } catch (error: any) {
+    if (error.status === 404) {
+      return null
+    }
+    throw error
+  }
 }
 
 /**
  * Create a new employee
  */
-export async function createEmployee(
-  input: CreateEmployeeInput
-): Promise<{ employee: Employee | null; error: any }> {
-  try {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', (await supabase.auth.getUser()).data.user?.id)
-      .single();
-
-    if (!profile) {
-      return { employee: null, error: { message: 'Not authenticated' } };
-    }
-
-    const { data: provider } = await supabase
-      .from('providers')
-      .select('id')
-      .eq('user_id', profile.id)
-      .single();
-
-    if (!provider) {
-      return { employee: null, error: { message: 'Provider not found' } };
-    }
-
-    const { data, error } = await supabase
-      .from('employees')
-      .insert({
-        provider_id: provider.id,
-        ...input,
-      })
-      .select()
-      .single();
-
-    return { employee: data, error };
-  } catch (error) {
-    return { employee: null, error };
-  }
+export async function createEmployee(input: CreateEmployeeInput): Promise<Employee> {
+  return authApi.post<Employee>('/employees', input)
 }
 
 /**
@@ -143,154 +89,74 @@ export async function createEmployee(
 export async function updateEmployee(
   employeeId: string,
   updates: Partial<CreateEmployeeInput>
-): Promise<{ error: any }> {
-  const { error } = await supabase
-    .from('employees')
-    .update(updates)
-    .eq('id', employeeId);
-
-  return { error };
+): Promise<Employee> {
+  return authApi.put<Employee>(`/employees/${employeeId}`, updates)
 }
 
 /**
  * Deactivate an employee (soft delete)
  */
-export async function deactivateEmployee(employeeId: string): Promise<{ error: any }> {
-  const { error } = await supabase
-    .from('employees')
-    .update({ is_active: false })
-    .eq('id', employeeId);
-
-  return { error };
+export async function deactivateEmployee(employeeId: string): Promise<void> {
+  await authApi.put(`/employees/${employeeId}/deactivate`, {})
 }
 
 /**
- * Get schedule for an employee
+ * Get schedules for an employee
  */
-export async function getEmployeeSchedule(employeeId: string): Promise<EmployeeSchedule[]> {
-  const { data, error } = await supabase
-    .from('employee_schedules')
-    .select('*')
-    .eq('employee_id', employeeId)
-    .order('day_of_week', { ascending: true })
-    .order('start_time', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
+export async function getEmployeeSchedules(employeeId: string): Promise<EmployeeSchedule[]> {
+  return authApi.get<EmployeeSchedule[]>(`/employees/${employeeId}/schedules`)
 }
 
 /**
- * Create or update employee schedule
+ * Create a new schedule for an employee
  */
-export async function upsertEmployeeSchedule(
-  schedule: CreateScheduleInput
-): Promise<{ error: any }> {
-  const { error } = await supabase
-    .from('employee_schedules')
-    .upsert(schedule, {
-      onConflict: 'employee_id,day_of_week,start_time',
-    });
-
-  return { error };
+export async function createEmployeeSchedule(input: CreateScheduleInput): Promise<EmployeeSchedule> {
+  return authApi.post<EmployeeSchedule>('/employees/schedules', input)
 }
 
 /**
- * Delete a schedule entry
+ * Update an employee schedule
  */
-export async function deleteEmployeeSchedule(scheduleId: string): Promise<{ error: any }> {
-  const { error } = await supabase
-    .from('employee_schedules')
-    .delete()
-    .eq('id', scheduleId);
-
-  return { error };
+export async function updateEmployeeSchedule(
+  scheduleId: string,
+  updates: Partial<CreateScheduleInput>
+): Promise<EmployeeSchedule> {
+  return authApi.put<EmployeeSchedule>(`/employees/schedules/${scheduleId}`, updates)
 }
 
 /**
- * Get available employees for a specific date/time
+ * Delete an employee schedule
  */
-export async function getAvailableEmployees(
-  providerId: string,
-  date: string,
-  startTime: string
-): Promise<Employee[]> {
-  const dayOfWeek = new Date(date).getDay();
-
-  // Get all active employees for the provider
-  const { data: employees, error: employeesError } = await supabase
-    .from('employees')
-    .select('*')
-    .eq('provider_id', providerId)
-    .eq('is_active', true);
-
-  if (employeesError || !employees) return [];
-
-  // Filter employees based on schedules and time off
-  const availableEmployees: Employee[] = [];
-
-  for (const employee of employees) {
-    // Check if employee has a schedule for this day
-    const { data: schedules } = await supabase
-      .from('employee_schedules')
-      .select('*')
-      .eq('employee_id', employee.id)
-      .eq('day_of_week', dayOfWeek)
-      .eq('is_available', true);
-
-    if (!schedules || schedules.length === 0) continue;
-
-    // Check if the requested time falls within any schedule
-    const isWithinSchedule = schedules.some((schedule) => {
-      return startTime >= schedule.start_time && startTime < schedule.end_time;
-    });
-
-    if (!isWithinSchedule) continue;
-
-    // Check if employee has time off on this date
-    const { data: timeOff } = await supabase
-      .from('employee_time_off')
-      .select('*')
-      .eq('employee_id', employee.id)
-      .lte('start_date', date)
-      .gte('end_date', date);
-
-    if (timeOff && timeOff.length > 0) continue;
-
-    availableEmployees.push(employee);
-  }
-
-  return availableEmployees;
+export async function deleteEmployeeSchedule(scheduleId: string): Promise<void> {
+  await authApi.delete(`/employees/schedules/${scheduleId}`)
 }
 
 /**
- * Add time off for an employee
+ * Get time off requests for an employee
  */
-export async function addEmployeeTimeOff(
+export async function getEmployeeTimeOff(employeeId: string): Promise<EmployeeTimeOff[]> {
+  return authApi.get<EmployeeTimeOff[]>(`/employees/${employeeId}/time-off`)
+}
+
+/**
+ * Create a time off request for an employee
+ */
+export async function createEmployeeTimeOff(
   employeeId: string,
   startDate: string,
   endDate: string,
   reason?: string
-): Promise<{ error: any }> {
-  const { error } = await supabase.from('employee_time_off').insert({
-    employee_id: employeeId,
-    start_date: startDate,
-    end_date: endDate,
+): Promise<EmployeeTimeOff> {
+  return authApi.post<EmployeeTimeOff>(`/employees/${employeeId}/time-off`, {
+    startDate,
+    endDate,
     reason,
-  });
-
-  return { error };
+  })
 }
 
 /**
- * Get time off for an employee
+ * Delete a time off request
  */
-export async function getEmployeeTimeOff(employeeId: string): Promise<EmployeeTimeOff[]> {
-  const { data, error } = await supabase
-    .from('employee_time_off')
-    .select('*')
-    .eq('employee_id', employeeId)
-    .order('start_date', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
+export async function deleteEmployeeTimeOff(timeOffId: string): Promise<void> {
+  await authApi.delete(`/employees/time-off/${timeOffId}`)
 }
