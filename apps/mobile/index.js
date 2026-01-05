@@ -37,5 +37,3 @@ if (!React.use) {
 } else {
   console.log('✅ React.use() already exists');
 }
-
-module.exports = {};
