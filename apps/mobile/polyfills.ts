@@ -3,6 +3,7 @@
 import 'react-native-get-random-values'; // For crypto/uuid support
 import 'react-native-url-polyfill/auto'; // For URL/URLSearchParams
 import { Buffer } from 'buffer';
+import './react-use-polyfill'; // Polyfill for React.use() (React 19 feature)
 
 // Polyfill Buffer
 global.Buffer = Buffer;
