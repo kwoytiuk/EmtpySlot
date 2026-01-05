@@ -45,3 +45,4 @@ yarn-error.log*
 /dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.assets.cache
 /dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.GeneratedMSBuildEditorConfig.editorconfig
 /dotnet/EmptySlot.Shared/obj/Debug/net8.0/EmptySlot.Shared.GlobalUsings.g.cs
+/package-lock.json
