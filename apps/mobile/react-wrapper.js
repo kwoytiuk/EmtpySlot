@@ -1,13 +1,16 @@
 /**
- * React wrapper that ensures React.use() polyfill is always present
+ * React wrapper that adds React.use() polyfill
+ * This intercepts all React imports and ensures the polyfill is present
  */
 
-// Load the real React
-const React = require('react/cjs/react.development.js');
+// Get the actual React module
+const ActualReact = require('react/index.js');
 
 // Add polyfill if not present
-if (!React.use) {
-  React.use = function use(usable) {
+if (!ActualReact.use) {
+  console.log('🔧 Patching React.use() in react-wrapper');
+
+  ActualReact.use = function use(usable) {
     // Handle React Context
     if (usable && typeof usable === 'object' && usable.$$typeof) {
       if ('_currentValue' in usable) {
@@ -30,6 +33,9 @@ if (!React.use) {
 
     return usable;
   };
+
+  console.log('✅ React.use() polyfill applied in react-wrapper');
 }
 
-module.exports = React;
+// Export everything from React
+module.exports = ActualReact;
