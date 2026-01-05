@@ -25,10 +25,5 @@
       },
       "package": "com.emptyslot.mobile"
     },
-    "web": {
-      "bundler": "metro",
-      "favicon": "./assets/favicon.png",
-      "output": "static"
-    }
   }
 }
